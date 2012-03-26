@@ -1,46 +1,8 @@
 <?php
 
 require_once( 'fxAssert.php' );
+require_once( 'fxCSRFToken.php' );
 
-
-class fxCSRFToken
-{
-	static public function get( $form_name )
-	{
-		$tok = fCryptography::randomString(32);
-		wire()->session->set( $form_name . '.CSRFToken', $tok );
-		return $tok;
-	}
-
-	static public function check( $form_name, $value )
-	{
-		$stored = wire()->session->get( $form_name . '.CSRFToken' );
-		return ( $stored === $value );
-	}
-
-	static public function clear( $form_name )
-	{
-		wire()->session->remove( $form_name . '.CSRFToken' );
-		return $this;
-	}
-}
-
-
-class fxDumpable
-{
-	public function dump()
-	{
-		$html = true;
-		static $bool = array( 0=>'false', 1=>'true' );
-		foreach (func_get_args() as $a) {
-			if( $html )
-				echo "\n<pre>", (is_array($a)) ? htmlspecialchars(var_export($a, true)) : ((is_bool($a)) ? $bool[(int)$a] : htmlspecialchars($a)), "</pre>\n";
-			else
-				echo "\n", (is_array($a)) ? var_export($a,true) : ((is_bool($a)) ? $bool[(int)$a] : $a), "\n";
-		}
-		return $this;
-	}
-}
 
 /**
  * Generic NamedSet class implementing setters via fluent __call() invocations.
