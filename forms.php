@@ -6,9 +6,9 @@ require_once( 'fxCSRFToken.php' );
 
 /**
  * Generic NamedSet class implementing setters via fluent __call() invocations.
- * eg. $set->class('xyz')->id('abc'); adds 'class' => 'xyz' and 'id' => 'abc' to the set.
+ * eg. $s = fxNamedSet('NAME')->class('xyz')->id('abc'); adds 'class' => 'xyz' and 'id' => 'abc' to a set called 'NAME'.
  **/
-class fxNamedSet extends fxDumpable
+class fxNamedSet /* extends fxDumpable */
 {
 	protected $_data;
 	protected $_ds_name;
@@ -19,7 +19,6 @@ class fxNamedSet extends fxDumpable
 		$this->_ds_name = $name;
 		$this->_data    = array();
 	}
-//	public function __toString() { return var_export($this->data, true); }
 
 	public function __call( $name, $args )
 	{
@@ -62,7 +61,7 @@ class fxNamedSet extends fxDumpable
 	static public function simplify($name)
 	{
 		$name = strtolower( $name );
-		$name = strtr( $name, array(' '=>'') );
+		$name = strtr( $name, array(' '=>'-') );
 		return $name;
 	}
 }
@@ -129,13 +128,42 @@ class fxRadioSet extends fxElement
  **/
 class fxForm extends fxNamedSet
 {
+	/**
+	 * Stores the elements of the form...
+	 **/
 	protected $_elements;
+
+	/**
+	 * References the last added element. Used to apply calls subsequent to an add() to
+	 * the element that was last added.
+	 **/
 	protected $_last_added = null;
+
+	/**
+	 * Stores which renderer will be used to output the form.
+	 **/
 	protected $_renderer   = null;
+
+	/**
+	 * Function to call on successful form submission...
+	 **/
 	protected $_onSuccess  = null;
+
+	/**
+	 * The form's HTML action parameter...
+	 **/
 	protected $_action     = null;
+
+	/**
+	 * The form's HTML method parameter...
+	 **/
 	protected $_method     = null;
+
+	/**
+	 * The form's validation method (if any)...
+	 **/
 	protected $_validator  = null;
+
 
 	public function __construct($name, $action, $method = "post")
 	{
@@ -149,14 +177,18 @@ class fxForm extends fxNamedSet
 		$this->_method = $method;
 	}
 
+
+	/**
+	 * Sets the form's onSuccess callback function.
+	 **/
 	public function onSuccess( $fn )
 	{
 		fxAssert::isNull( $this->_onSuccess );
 		fxAssert::isCallable( $fn );
 		$this->_onSuccess = $fn;
-
 		return $this;
 	}
+
 
 	public function __call( $name, $args )
 	{
@@ -167,6 +199,7 @@ class fxForm extends fxNamedSet
 			$this->_last_added->__call($name, $args);
 		return $this; # Allow chaining for multiple calls.
 	}
+
 
 	public function match($pattern)
 	{
@@ -179,22 +212,28 @@ class fxForm extends fxNamedSet
 		return $this;
 	}
 
+
 	public function add( $element )
 	{
+		#
+		#	If its a radio or checkbox, add it but check if it needs expanding when new
+		#	items are added.
+		#
 		fxAssert::isNotEmpty( $element, 'element' );
 		$this->_elements[] = $this->_last_added = $element;
 		return $this;
 	}
 
-	public function dump()
-	{
-		parent::dump("=== Data for $this->_ds_name... ===");
-		parent::dump( array( '_data' => $this->_data) );
-		//parent::dump( array( '_meta' => $this->_meta) );
-		parent::dump( array( '_elements' => $this->_elements) );
-		parent::dump( array( 'fingerprint' => $this->fingerprint()) );
-		return $this;
-	}
+	/* public function dump() */
+	/* { */
+	/* 	parent::dump("=== Data for $this->_ds_name... ==="); */
+	/* 	parent::dump( array( '_data' => $this->_data) ); */
+	/* 	//parent::dump( array( '_meta' => $this->_meta) ); */
+	/* 	parent::dump( array( '_elements' => $this->_elements) ); */
+	/* 	parent::dump( array( 'fingerprint' => $this->fingerprint()) ); */
+	/* 	return $this; */
+	/* } */
+
 
 	public function optional()
 	{
