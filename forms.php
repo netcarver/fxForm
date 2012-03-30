@@ -72,10 +72,9 @@ class fxHTMLStatement
 
 	static public function simplify($name)
 	{
-		return fURL::makeFriendly($name);
+		return wire()->sanitizer->pageName($name, true);
 	}
 }
-
 
 
 /**
@@ -85,6 +84,8 @@ class fxHTMLStatement
 class fxFormElement extends fxHTMLStatement
 {
 	protected $_meta;
+	static public $radio_types = array('radio','checkbox');
+
 
 	public function __construct($name)
 	{
@@ -107,10 +108,46 @@ class fxFormElement extends fxHTMLStatement
 	public function optional() 				{ $this->_meta['required'] = false; return $this; }
 	public function note($note)				{ $this->_meta['note'] = $note;     return $this; }
 	public function getMeta()				{ return $this->_meta; }
+
+
+	public function isValid()
+	{
+		//
+		//	Store the submitted value in the meta info
+		//
+		$this->_meta['value'] = fRequest::encode($this->_atts['name']);
+$subval = var_export( $this->_meta['value'], true );
+echo sed_dump("Validating {$this->_ds_name} :: get({$this->_atts['name']}) gives [$subval]");
+
+		//
+		//	Store the checkedness of the element based on the submitted value
+		//
+		if( in_array($this->_atts['type'], self::$radio_types ) ) {
+			$this->_meta['checked'] = ($this->_atts['value'] === $this->_meta['value']);
+		}
+
+		//
+		//	Perform any needed validation...
+		//
+
+
+		return false;
+	}
+
+	/**
+	 * Allow Form Elements to determine what HTML tag to use in the markup. eg fxSubmit can orchistrate the output of a button element.
+	 **/
+	public function getHTMLType()
+	{
+		return get_class($this);
+	}
+
 }
 
 class fxInput    extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'text'; } }
-class fxButton   extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'submit'; } }
+class fxButton   extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'button'; $this->_atts['value'] = fxHTMLStatement::simplify($name); } }
+class fxSubmit   extends fxButton { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'submit'; } public function getHTMLType() { return 'fxButton'; } }
+class fxReset    extends fxButton { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'reset'; }  public function getHTMLType() { return 'fxButton'; } }
 class fxTextArea extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['maxlength'] = 2000; } }
 //class fxUpload   extends fxFormElement {}
 
@@ -210,6 +247,7 @@ class fxRadioset extends fxFormElementSet
 	public function _getExpandedElements()
 	{
 		$r = array();
+//echo sed_dump($this->_members);
 		foreach( $this->_members as $k => $v ) {
 			$simple_v = $simple_k = fxHTMLStatement::simplify($v);
 			if( is_string( $k ) )
@@ -224,7 +262,7 @@ class fxRadioset extends fxFormElementSet
 		return $r;
 	}
 }
-function fxRadioset( $name, $members = array('agree'=>'I agree') ) { return new fxRadioset($name, $members); }
+function fxRadioset( $name, $members ) { return new fxRadioset($name, $members); }
 
 
 
@@ -243,6 +281,10 @@ function fxRadioset( $name, $members = array('agree'=>'I agree') ) { return new 
  **/
 class fxForm extends fxFormElementSet
 {
+	CONST	HTML5     = 'html5';
+	CONST	BASIC     = 'basic';
+	CONST	BOOTSTRAP = 'bootstrap';
+
 	/**
 	 * Stores which renderer will be used to output the form.
 	 **/
@@ -305,6 +347,7 @@ class fxForm extends fxFormElementSet
 	public function setRenderer( $name )
 	{
 		fxAssert::isNonEmptyString($name, 'name', "Renderer name must be a non-empty string.");
+		$name = ucfirst($name);
 		$className = "fx{$name}Renderer";
 		if( !class_exists( $className ) )
 			throw new exception( "Class $className cannot be found." );
@@ -314,7 +357,69 @@ class fxForm extends fxFormElementSet
 	}
 
 
-	public function render( $pre = true )
+	public function process($x)
+	{
+		$submitted      = false;
+		$fields_ok      = true;
+		$form_ok        = true;
+		$src            = strtoupper($this->_method);
+		$this->_form_id = $this->fingerprint();
+
+		//
+		//	Has process been called following a form submission? Submission => method matches form
+		//
+		if( strtoupper( $_SERVER['REQUEST_METHOD'] ) === $src ) {
+			$array = "_$src";
+echo sed_dump( $GLOBALS[$array], $array );
+			$submitted = !empty($GLOBALS[$array]);
+		}
+
+		if( !$submitted ) {
+			// Genetate form id and anti-CSRF token and store them for rendering in the form...
+			$this->_form_token = fxCSRFToken::get( $this->_form_id );
+//echo sed_dump( "ID[$this->_form_id], Token[$this->_form_token]" );
+		}
+		else {
+			// Do the id and token match what is expected?
+			$id_ok    = ($this->_form_id === fRequest::get('_form_id') );
+			if( !$id_ok )
+				return '<p>An unexpected error occured. Form id mismatch.</p>';
+
+			$this->_form_token = fRequest::get('_form_token');
+			$token_ok = CSRFToken::check( $this->_form_id, $this->_form_token );
+			if( !$token_ok )
+				return '<p>An unexpected error occured. Token mismatch.</p>';
+
+			//
+			//	Iterate over elements, populating their values & evaluating them
+			//
+			foreach( $this->_elements as $e ) {
+				if( $e instanceof fxFormElement )
+					$fields_ok = $fields_ok & $e->isValid();
+			}
+
+			if( $fields_ok ) {
+				//
+				//	Run the form validator (if any)
+				//
+
+
+				if( $form_ok ) {
+					if( is_callable($this->_onSuccess) ) {
+						$fn = $this->_onSuccess;
+						return $fn($this);
+					}
+					else
+						return sed_dump("Huzzah!");
+				}
+			}
+
+		}
+
+		return $this->_render($x);
+	}
+
+	protected function _render( $pre = true )
 	{
 //echo "<pre>", htmlspecialchars( var_export( $this, true ) ), "</pre>";
 
@@ -323,6 +428,11 @@ class fxForm extends fxFormElementSet
 		$renderer = new $renderer();
 		$atts = $this->getAttrList();
 		$o[] = "<form action=\"{$this->_action}\" method=\"{$this->_method}\"$atts>";
+		if( !$this->_form_id || !$this->_form_token )
+			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );
+
+		$o[] = "<input type=\"hidden\" name=\"_form_id\" value=\"{$this->_form_id}\" />";
+		$o[] = "<input type=\"hidden\" name=\"_form_token\" value=\"{$this->_form_token}\" />";
 		foreach( $this->_elements as $e ) {
 			if( is_string($e) ) {
 				$o[] = $e;
@@ -348,30 +458,35 @@ class fxBasicRenderer
 		$lname = htmlspecialchars($e->name);
 		$meta  = $e->getMeta();
 		$cls   = htmlspecialchars($e->class);
-		$def   = htmlspecialchars($e->value);
+		$subval= $meta['value'];
+		$elval = htmlspecialchars($e->value);
 		$id    = htmlspecialchars($e->id);
-		$attr  = $e->getAttrList( 'class' );
+		$chckd = (@$meta['checked']) ? 'checked' : '';
+		$attr  = $e->getAttrList( 'class,value' );
 		$o = array();
 
 		if( $meta['required'] ) {
-			$cls .= ' required';
+			$cls  .= ' required';
 			$attr .= ' required'; // HTML5, client-side validation!
 		}
 		else
 			$cls .= ' optional';
 		$cls = trim( $cls );
 
-		$type = htmlspecialchars( strtr( strtolower(get_class( $e )), array('fx'=>'') ) );
+		$type = htmlspecialchars( strtr( strtolower($e->getHTMLType()), array('fx'=>'') ) );
 
 		$o[] = "<label for=\"$id\">$name</label><$type$attr";
 		$o[] = "class=\"$cls\"";
+		$o[] = $chckd;
 
 		if( 'textarea' == $type )
-			$o[] = "></textarea>";
-		elseif( 'button' == $type )
-			$o[] = ">$name</button>";
+			$o[] = ">$subval</textarea>";
+		elseif( 'button' == $type || 'submit' == $type || 'reset' == $type )
+			$o[] = "value=\"$elval\" />$name</button>";
+		elseif( in_array( $e->type, fxFormElement::$radio_types) )
+			$o[] = "value=\"$elval\" />";
 		else
-			$o[] = "/>";
+			$o[] = "value=\"$subval\" />";
 
 		return join( " ", $o );
 	}
@@ -385,5 +500,7 @@ function fxForm( $name, $action, $method="post" )	 { return new fxForm( $name, $
 function fxInput( $name )	 { return new fxInput   ( $name ); }
 function fxTextArea( $name ) { return new fxTextArea( $name ); }
 function fxButton( $name ) 	 { return new fxButton  ( $name ); }
+function fxSubmit( $name ) 	 { return new fxSubmit  ( $name ); }
+function fxReset ( $name ) 	 { return new fxReset   ( $name ); }
 
 #eof
