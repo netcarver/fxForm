@@ -22,17 +22,11 @@ abstract class fxNamedSet
 	protected $_meta;
 
 
-	/**
-	 * TODO: The displayed text or title or name of the statement. Subclasses of this will define what the statement actually is
-	 **/
-	protected $_set_name;
-
-
 	public function __construct($name)
 	{
 		fxAssert::isNonEmptyString($name, 'name', "HTML statement must be 'named'.");
 		$this->_atts = $this->_meta = array();
-		$this->_set_name = $name;
+		$this->_meta['name'] = $name;
 	}
 
 
@@ -73,7 +67,7 @@ abstract class fxNamedSet
 
 	public function _getName()
 	{
-		return $this->_set_name;
+		return $this->_meta['name'];
 	}
 
 
