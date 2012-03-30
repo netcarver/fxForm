@@ -4,21 +4,15 @@
  * Basic HTML form element.
  * Adds _meta elements for behaviour control.
  **/
-abstract class fxFormElement extends fxHTMLStatement
+abstract class fxFormElement extends fxNamedSet
 {
-	protected $_meta;
 	static public $radio_types = array('radio','checkbox');
 
 
 	public function __construct($name)
 	{
 		parent::__construct($name);
-		$this->_atts['name'] = $this->_atts['id'] = fxHTMLStatement::_simplify( $name );
-		$this->_meta = array(
-			'required' => true,
-			'label'    => true,
-			'owner'    => null,
-		);
+		$this->_atts['name'] = $this->_atts['id'] = fxNamedSet::_simplify( $name );
 	}
 
 	public function match($pattern)
@@ -72,7 +66,7 @@ echo sed_dump("Validating {$this->_set_name} :: get({$this->_atts['name']}) give
 /**
  * Radiosets, checkboxes and Selects are implemented by having multiple elements.
  **/
-abstract class fxFormElementSet extends fxHTMLStatement
+abstract class fxFormElementSet extends fxNamedSet
 {
 	protected $_elements;
 

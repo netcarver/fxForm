@@ -8,7 +8,7 @@ require_once( 'fxForm.php' );
 
 
 class fxFormInput    extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'text'; } }
-class fxFormButton   extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'button'; $this->_atts['value'] = fxHTMLStatement::_simplify($name); } }
+class fxFormButton   extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'button'; $this->_atts['value'] = fxNamedSet::_simplify($name); } }
 class fxFormTextArea extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['maxlength'] = 2000; } }
 //class fxFormUpload   extends fxFormElement {}
 
@@ -71,14 +71,14 @@ class fxFormRadioset extends fxFormElementSet
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		if( count($members) < 2 ) throw new exception( 'There must be 2 or more members for a RadioSet to be populated.' );
 		$this->_members = $members;
-		$this->_atts['name'] = fxHTMLStatement::_simplify($name);
+		$this->_atts['name'] = fxNamedSet::_simplify($name);
 	}
 
 	public function _getExpandedElements()
 	{
 		$r = array();
 		foreach( $this->_members as $k => $v ) {
-			$simple_v = $simple_k = fxHTMLStatement::_simplify($v);
+			$simple_v = $simple_k = fxNamedSet::_simplify($v);
 			if( is_string( $k ) )
 				$simple_k = $k;
 			$el = new fxFormInput($v);

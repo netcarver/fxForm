@@ -9,12 +9,17 @@
  * methods in the class and valid HTML attributes all the method names will start with a single underscore.
  *
  **/
-abstract class fxHTMLStatement
+abstract class fxNamedSet
 {
 	/**
-	 * Holds the attributes for this statement
+	 * Holds the data for this set
 	 **/
 	protected $_atts;
+
+	/**
+	 * Holds the meta data for this set
+	 **/
+	protected $_meta;
 
 
 	/**
@@ -26,18 +31,25 @@ abstract class fxHTMLStatement
 	public function __construct($name)
 	{
 		fxAssert::isNonEmptyString($name, 'name', "HTML statement must be 'named'.");
+		$this->_atts = $this->_meta = array();
 		$this->_set_name = $name;
-		$this->_atts    = array();
 	}
 
 
 	/**
-	 * Used as a generic setter to allow fluent calls to set attributes
+	 * Used as a generic setter to allow fluent calls to set data or meta-data for the set.
+	 *
+	 * NB, unmatched calls using names starting with a leading underscore set the meta-data.
+	 * eg. $set->_renderer('xyz');	causes 'renderer' => 'xyz' to be added to the $_meta array whilst
+	 *     $set->required();  	    causes 'required' => null  to be added to the $_data array.
 	 **/
 	public function __call( $name, $args )
 	{
-		//fxAssert::isNonEmptyString(@$args[0], 'name', "Please supply a value for set member [$name].");
-		$this->_atts[$name] = $args[0]; # Unknown methods act as setters
+		if( mb_substr($name,0,1) === '_' && mb_strlen($name) > 1 ) {
+			$this->_meta[mb_substr($name,1)] = $args[0];
+		}
+		else
+			$this->_atts[$name] = $args[0];
 		return $this;
 	}
 
