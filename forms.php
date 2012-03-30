@@ -42,7 +42,7 @@ class fxHTMLStatement
 
 	public function getData()			{ return $this->_atts; }
 	public function getName()			{ return $this->_ds_name; }
-	protected function fingerprint( )	{ return sha1( serialize($this) ); }
+	protected function fingerprint( )	{ return md5( serialize($this) ); }
 
 	public function getAttrList( $excludes='' )
 	{
