@@ -3,7 +3,7 @@
 /**
  * Generic HTMLStatement class implementing setters via fluent __call() invocations.
  *
- * eg. $s = fxHTMLStatement('NAME')->class('xyz')->id('abc'); adds 'class' => 'xyz' and 'id' => 'abc' to a set called 'NAME'.
+ * eg. $s = fxNamedSet('NAME')->class('xyz')->id('abc'); adds 'class' => 'xyz' and 'id' => 'abc' to a set called 'NAME'.
  *
  * Intended for use in defining the attributes that will go in each element's HTML. To avoid possible name collisions between
  * methods in the class and valid HTML attributes all the method names will start with a single underscore.

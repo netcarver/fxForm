@@ -3,6 +3,11 @@
 /**
  * Basic HTML form element.
  * Adds _meta elements for behaviour control.
+ *
+ * Note, this extends fxNamedSet but that *doesn't* mean it *is* a set of elements; it means that
+ * an element *has* an associated set of data and meta-data. In this case, that data holds an
+ * element's attributes and the meta data holds other information such as the name associated with
+ * the element.
  **/
 abstract class fxFormElement extends fxNamedSet
 {
