@@ -23,6 +23,9 @@ class fxHTMLStatement
 		$this->_atts    = array();
 	}
 
+	/**
+	 * Used as a generic setter to allow fluent calls to set attributes
+	 **/
 	public function __call( $name, $args )
 	{
 		//fxAssert::isNonEmptyString(@$args[0], 'name', "Please supply a value for set member [$name].");
@@ -40,11 +43,11 @@ class fxHTMLStatement
 		return $r;
 	}
 
-	public function getData()			{ return $this->_atts; }
-	public function getName()			{ return $this->_ds_name; }
-	protected function fingerprint( )	{ return md5( serialize($this) ); }
+	public function _getAtts()			{ return $this->_atts; }
+	public function _getName()			{ return $this->_ds_name; }
+	protected function _fingerprint( )	{ return md5( serialize($this) ); }
 
-	public function getAttrList( $excludes='' )
+	public function _getAttrList( $excludes='' )
 	{
 		$o = '';
 		if( !empty( $this->_atts ) ) {
@@ -70,7 +73,7 @@ class fxHTMLStatement
 	}
 
 
-	static public function simplify($name)
+	static public function _simplify($name)
 	{
 		return wire()->sanitizer->pageName($name, true);
 	}
@@ -90,7 +93,7 @@ class fxFormElement extends fxHTMLStatement
 	public function __construct($name)
 	{
 		parent::__construct($name);
-		$this->_atts['name'] = $this->_atts['id'] = fxHTMLStatement::simplify( $name );
+		$this->_atts['name'] = $this->_atts['id'] = fxHTMLStatement::_simplify( $name );
 		$this->_meta = array(
 			'required' => true,
 			'label'    => true,
@@ -107,10 +110,10 @@ class fxFormElement extends fxHTMLStatement
 
 	public function optional() 				{ $this->_meta['required'] = false; return $this; }
 	public function note($note)				{ $this->_meta['note'] = $note;     return $this; }
-	public function getMeta()				{ return $this->_meta; }
+	public function _getMeta()				{ return $this->_meta; }
 
 
-	public function isValid()
+	public function _isValid()
 	{
 		//
 		//	Store the submitted value in the meta info
@@ -137,7 +140,7 @@ echo sed_dump("Validating {$this->_ds_name} :: get({$this->_atts['name']}) gives
 	/**
 	 * Allow Form Elements to determine what HTML tag to use in the markup. eg fxSubmit can orchistrate the output of a button element.
 	 **/
-	public function getHTMLType()
+	public function _getHTMLType()
 	{
 		return get_class($this);
 	}
@@ -145,9 +148,9 @@ echo sed_dump("Validating {$this->_ds_name} :: get({$this->_atts['name']}) gives
 }
 
 class fxInput    extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'text'; } }
-class fxButton   extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'button'; $this->_atts['value'] = fxHTMLStatement::simplify($name); } }
-class fxSubmit   extends fxButton { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'submit'; } public function getHTMLType() { return 'fxButton'; } }
-class fxReset    extends fxButton { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'reset'; }  public function getHTMLType() { return 'fxButton'; } }
+class fxButton   extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'button'; $this->_atts['value'] = fxHTMLStatement::_simplify($name); } }
+class fxSubmit   extends fxButton { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'submit'; } public function _getHTMLType() { return 'fxButton'; } }
+class fxReset    extends fxButton { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'reset'; }  public function _getHTMLType() { return 'fxButton'; } }
 class fxTextArea extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['maxlength'] = 2000; } }
 //class fxUpload   extends fxFormElement {}
 
@@ -216,9 +219,9 @@ class fxCheckboxset extends fxFormElementSet
 	{
 		$r = array();
 		foreach( $this->_members as $k => $v ) {
-			$simple_v = $simple_k = fxHTMLStatement::simplify($v);
+			$simple_v = $simple_k = fxHTMLStatement::_simplify($v);
 			if( is_string( $k ) )
-				$simple_k = fxHTMLStatement::simplify($k);
+				$simple_k = fxHTMLStatement::_simplify($k);
 			$r[] = fxInput($v)
 				->type('checkbox')
 				->name($this->_atts['name'])
@@ -247,7 +250,7 @@ class fxRadioset extends fxFormElementSet
 	{
 		$r = array();
 		foreach( $this->_members as $k => $v ) {
-			$simple_v = $simple_k = fxHTMLStatement::simplify($v);
+			$simple_v = $simple_k = fxHTMLStatement::_simplify($v);
 			if( is_string( $k ) )
 				$simple_k = $k;
 			$r[] = fxInput($v)
@@ -361,7 +364,7 @@ class fxForm extends fxFormElementSet
 		$fields_ok      = true;
 		$form_ok        = true;
 		$src            = strtoupper($this->_method);
-		$this->_form_id = $this->fingerprint();
+		$this->_form_id = $this->_fingerprint();
 
 		//
 		//	Has process been called following a form submission? Submission => method matches form
@@ -393,7 +396,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 			//
 			foreach( $this->_elements as $e ) {
 				if( $e instanceof fxFormElement )
-					$fields_ok = $fields_ok & $e->isValid();
+					$fields_ok = $fields_ok & $e->_isValid();
 			}
 
 			if( $fields_ok ) {
@@ -424,7 +427,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 		$o = array();
 		$renderer = $this->_renderer;
 		$renderer = new $renderer();
-		$atts = $this->getAttrList();
+		$atts = $this->_getAttrList();
 		$o[] = "<form action=\"{$this->_action}\" method=\"{$this->_method}\"$atts>";
 		if( !$this->_form_id || !$this->_form_token )
 			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );
@@ -452,15 +455,15 @@ class fxBasicRenderer
 {
 	static public function render( fxFormElement $e, $values = array() )
 	{
-		$name  = htmlspecialchars($e->getName());
+		$name  = htmlspecialchars($e->_getName());
 		$lname = htmlspecialchars($e->name);
-		$meta  = $e->getMeta();
+		$meta  = $e->_getMeta();
 		$cls   = htmlspecialchars($e->class);
 		$subval= $meta['value'];
 		$elval = htmlspecialchars($e->value);
 		$id    = htmlspecialchars($e->id);
 		$chckd = (@$meta['checked']) ? 'checked' : '';
-		$attr  = $e->getAttrList( 'class,value' );
+		$attr  = $e->_getAttrList( 'class,value' );
 		$o = array();
 
 		if( $meta['required'] ) {
@@ -471,7 +474,7 @@ class fxBasicRenderer
 			$cls .= ' optional';
 		$cls = trim( $cls );
 
-		$type = htmlspecialchars( strtr( strtolower($e->getHTMLType()), array('fx'=>'') ) );
+		$type = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fx'=>'') ) );
 
 		$o[] = "<label for=\"$id\">$name</label><$type$attr";
 		$o[] = "class=\"$cls\"";
