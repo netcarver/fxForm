@@ -52,8 +52,17 @@ class fxHTMLStatement
 			foreach( $this->_atts as $k => $v ) {
 				if( !in_array($k, $excludes) ) {
 					$k = htmlspecialchars( $k );
-					$v = htmlspecialchars( $v );
-					$o .= " {$k}=\"{$v}\"";
+
+					// NULL values lead to output like <XYZ ... readonly ...>
+					if( NULL === $v ) {
+						$o .= " $k";
+					}
+
+					// Otherwise we get <XYZ ... class="abc" ... >
+					else {
+						$v = htmlspecialchars( $v );
+						$o .= " $k=\"$v\"";
+					}
 				}
 			}
 		}
