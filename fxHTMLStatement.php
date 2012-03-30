@@ -20,13 +20,13 @@ abstract class fxHTMLStatement
 	/**
 	 * TODO: The displayed text or title or name of the statement. Subclasses of this will define what the statement actually is
 	 **/
-	protected $_ds_name;
+	protected $_set_name;
 
 
 	public function __construct($name)
 	{
 		fxAssert::isNonEmptyString($name, 'name', "HTML statement must be 'named'.");
-		$this->_ds_name = $name;
+		$this->_set_name = $name;
 		$this->_atts    = array();
 	}
 
@@ -45,7 +45,7 @@ abstract class fxHTMLStatement
 	public function __get( $name )
 	{
 		if( ('_name' === $name) || ('name' === $name && !array_key_exists('name',$this->_atts) ) )
-			return $this->_ds_name;
+			return $this->_set_name;
 
 		$r = @$this->_atts[$name];
 		if( null === $r ) $r = '';
@@ -61,7 +61,7 @@ abstract class fxHTMLStatement
 
 	public function _getName()
 	{
-		return $this->_ds_name;
+		return $this->_set_name;
 	}
 
 
