@@ -24,9 +24,23 @@ abstract class fxNamedSet
 
 	public function __construct($name)
 	{
-		fxAssert::isNonEmptyString($name, 'name', "HTML statement must be 'named'.");
+		fxAssert::isNonEmptyString($name, 'name', "Each fxNamedSet must be 'named'.");
 		$this->_atts = $this->_meta = array();
 		$this->_meta['name'] = $name;
+	}
+
+
+	/**
+	 * Determines if the given string is a reference to the meta data. If it is, it converts it to
+	 * a key for accessing the _meta array and returns true. If not, it leaves it alone and returns false.
+	 **/
+	public static function _isMeta( &$s )
+	{
+		if( mb_substr($s,0,1) === '_' && mb_strlen($s) > 1 ) {
+			$s = mb_substr( $s, 1 );
+			return true;
+		}
+		return false;
 	}
 
 
@@ -39,8 +53,8 @@ abstract class fxNamedSet
 	 **/
 	public function __call( $name, $args )
 	{
-		if( mb_substr($name,0,1) === '_' && mb_strlen($name) > 1 ) {
-			$this->_meta[mb_substr($name,1)] = $args[0];
+		if( self::_isMeta($name) ) {
+			$this->_meta[ $name ] = $args[0];
 		}
 		else
 			$this->_atts[$name] = $args[0];
@@ -50,11 +64,11 @@ abstract class fxNamedSet
 
 	public function __get( $name )
 	{
-		if( ('_name' === $name) || ('name' === $name && !array_key_exists('name',$this->_atts) ) )
-			return $this->_set_name;
-
-		$r = @$this->_atts[$name];
-		if( null === $r ) $r = '';
+		if( self::_isMeta( $name ) )
+			$r = @$this->_meta[$name];
+		else
+			$r = @$this->_atts[$name];
+		//if( null === $r ) $r = '';
 		return $r;
 	}
 
