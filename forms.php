@@ -7,18 +7,18 @@ require_once( 'fxFormElements.php' );
 require_once( 'fxForm.php' );
 
 
-class fxFormInput    extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'text'; } }
-class fxFormButton   extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['type'] = 'button'; $this->_atts['value'] = fxNamedSet::_simplify($name); } }
-class fxFormTextArea extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_atts['maxlength'] = 2000; } }
+class fxFormInput    extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_data['type'] = 'text'; } }
+class fxFormButton   extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_data['type'] = 'button'; $this->_data['value'] = fxNamedSet::_simplify($name); } }
+class fxFormTextArea extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_data['maxlength'] = 2000; } }
 //class fxFormUpload   extends fxFormElement {}
 
 /**
  * Additional utility classes that allow simpler form definitions...
  **/
-class fxFormSubmit   extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_atts['type'] = 'submit'; }   public function _getHTMLType() { return 'fxFormButton'; } }
-class fxFormReset    extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_atts['type'] = 'reset'; }    public function _getHTMLType() { return 'fxFormButton'; } }
-class fxFormPassword extends fxFormInput  { public function __construct($label) { parent::__construct($label); $this->_atts['type'] = 'password'; } public function _getHTMLType() { return 'fxFormInput'; } }
-class fxFormHidden   extends fxFormInput  { public function __construct($name,$value) { parent::__construct($name); $this->_atts['type'] = 'hidden'; $this->_atts['value'] = $value; }   public function _getHTMLType() { return 'fxFormInput'; } }
+class fxFormSubmit   extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_data['type'] = 'submit'; }   public function _getHTMLType() { return 'fxFormButton'; } }
+class fxFormReset    extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_data['type'] = 'reset'; }    public function _getHTMLType() { return 'fxFormButton'; } }
+class fxFormPassword extends fxFormInput  { public function __construct($label) { parent::__construct($label); $this->_data['type'] = 'password'; } public function _getHTMLType() { return 'fxFormInput'; } }
+class fxFormHidden   extends fxFormInput  { public function __construct($name,$value) { parent::__construct($name); $this->_data['type'] = 'hidden'; $this->_data['value'] = $value; }   public function _getHTMLType() { return 'fxFormInput'; } }
 
 class fxFormFieldset extends fxFormElementSet
 {
@@ -40,7 +40,7 @@ class fxFormCheckboxset extends fxFormElementSet
 		parent::__construct($name);
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		$this->_members = $members;
-		$this->_atts['name'] = fxHTMLStatement::_simplify($name);
+		$this->_data['name'] = fxHTMLStatement::_simplify($name);
 	}
 
 	public function _getExpandedElements()
@@ -52,8 +52,8 @@ class fxFormCheckboxset extends fxFormElementSet
 				$simple_k = fxHTMLStatement::_simplify($k);
 			$r[] = Input($v)
 				->type('checkbox')
-				->name($this->_atts['name'])
-				->id($this->_atts['name'] . '-' . $simple_v )
+				->name($this->_data['name'])
+				->id($this->_data['name'] . '-' . $simple_v )
 				->value($simple_k)
 				;
 		}
@@ -71,7 +71,7 @@ class fxFormRadioset extends fxFormElementSet
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		if( count($members) < 2 ) throw new exception( 'There must be 2 or more members for a RadioSet to be populated.' );
 		$this->_members = $members;
-		$this->_atts['name'] = fxNamedSet::_simplify($name);
+		$this->_data['name'] = fxNamedSet::_simplify($name);
 	}
 
 	public function _getExpandedElements()
@@ -84,8 +84,8 @@ class fxFormRadioset extends fxFormElementSet
 			$el = new fxFormInput($v);
 			$r[] = $el
 				->type('radio')
-				->name($this->_atts['name'])
-				->id($this->_atts['name'] . '-' . $simple_v )
+				->name($this->_data['name'])
+				->id($this->_data['name'] . '-' . $simple_v )
 				->value($simple_k)
 				;
 		}

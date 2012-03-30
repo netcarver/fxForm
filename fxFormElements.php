@@ -12,7 +12,7 @@ abstract class fxFormElement extends fxNamedSet
 	public function __construct($name)
 	{
 		parent::__construct($name);
-		$this->_atts['name'] = $this->_atts['id'] = fxNamedSet::_simplify( $name );
+		$this->_data['name'] = $this->_data['id'] = fxNamedSet::_simplify( $name );
 	}
 
 	public function match($pattern)
@@ -34,15 +34,15 @@ abstract class fxFormElement extends fxNamedSet
 		//
 		//	Store the submitted value in the meta info
 		//
-		$this->_meta['value'] = fRequest::encode($this->_atts['name']);
+		$this->_meta['value'] = fRequest::encode($this->_data['name']);
 $subval = var_export( $this->_meta['value'], true );
-echo sed_dump("Validating {$this->_getName()} :: get({$this->_atts['name']}) gives [$subval]");
+echo sed_dump("Validating {$this->_getName()} :: get({$this->_data['name']}) gives [$subval]");
 
 		//
 		//	Store the checkedness of the element based on the submitted value
 		//
-		if( in_array($this->_atts['type'], self::$radio_types ) ) {
-			$this->_meta['checked'] = ($this->_atts['value'] === $this->_meta['value']);
+		if( in_array($this->_data['type'], self::$radio_types ) ) {
+			$this->_meta['checked'] = ($this->_data['value'] === $this->_meta['value']);
 		}
 
 		//

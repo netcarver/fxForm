@@ -14,7 +14,7 @@ abstract class fxNamedSet
 	/**
 	 * Holds the data for this set
 	 **/
-	protected $_atts;
+	protected $_data;
 
 	/**
 	 * Holds the meta data for this set
@@ -25,7 +25,7 @@ abstract class fxNamedSet
 	public function __construct($name)
 	{
 		fxAssert::isNonEmptyString($name, 'name', "Each fxNamedSet must be 'named'.");
-		$this->_atts = $this->_meta = array();
+		$this->_data = $this->_meta = array();
 		$this->_meta['name'] = $name;
 	}
 
@@ -57,7 +57,7 @@ abstract class fxNamedSet
 			$this->_meta[ $name ] = $args[0];
 		}
 		else
-			$this->_atts[$name] = $args[0];
+			$this->_data[$name] = $args[0];
 		return $this;
 	}
 
@@ -67,7 +67,7 @@ abstract class fxNamedSet
 		if( self::_isMeta( $name ) )
 			$r = @$this->_meta[$name];
 		else
-			$r = @$this->_atts[$name];
+			$r = @$this->_data[$name];
 		//if( null === $r ) $r = '';
 		return $r;
 	}
@@ -75,7 +75,7 @@ abstract class fxNamedSet
 
 	public function _getAtts()
 	{
-		return $this->_atts;
+		return $this->_data;
 	}
 
 
@@ -100,9 +100,9 @@ abstract class fxNamedSet
 	public function _getAttrList( $excludes='' )
 	{
 		$o = '';
-		if( !empty( $this->_atts ) ) {
+		if( !empty( $this->_data ) ) {
 			$excludes = explode( ',', $excludes );
-			foreach( $this->_atts as $k => $v ) {
+			foreach( $this->_data as $k => $v ) {
 				if( !in_array($k, $excludes) ) {
 					$k = htmlspecialchars( $k );
 
