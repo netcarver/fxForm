@@ -18,7 +18,7 @@ abstract class fxFormElement extends fxNamedSet
 	public function match($pattern)
 	{
 		fxAssert::isNonEmptyString($pattern, 'pattern');
-		fxAssert::isNotInArrayKeys('match', $this->_meta, 'Cannot redefine match $pattern for ['.$this->_set_name.'].');
+		fxAssert::isNotInArrayKeys('match', $this->_meta, 'Cannot redefine match $pattern for ['.$this->_getName().'].');
 		$this->_meta['match'] = $pattern;
 		return $this;
 	}
@@ -36,7 +36,7 @@ abstract class fxFormElement extends fxNamedSet
 		//
 		$this->_meta['value'] = fRequest::encode($this->_atts['name']);
 $subval = var_export( $this->_meta['value'], true );
-echo sed_dump("Validating {$this->_set_name} :: get({$this->_atts['name']}) gives [$subval]");
+echo sed_dump("Validating {$this->_getName()} :: get({$this->_atts['name']}) gives [$subval]");
 
 		//
 		//	Store the checkedness of the element based on the submitted value

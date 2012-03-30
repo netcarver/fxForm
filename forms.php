@@ -24,7 +24,7 @@ class fxFormFieldset extends fxFormElementSet
 {
 	public function _getExpandedElements()
 	{
-		$r[] = "<fieldset>\n<legend>{$this->_set_name}</legend>\n";
+		$r[] = "<fieldset>\n<legend>{$this->_getName()}</legend>\n";
 		$r = array_merge( $r, parent::_getExpandedElements() );
 		$r[] = "</fieldset>\n";
 		return $r;
@@ -106,7 +106,7 @@ class fxSelect extends fxFormElementSet
 
 	public function _getExpandedElements()
 	{
-		$r[] = "<select {$this->_set_name}>\n";
+		$r[] = "<select {$this->_getName()}>\n";
 		$r = array_merge( $r, parent::_getExpandedElements() );
 		$r[] = "</select>\n";
 		return $r;
