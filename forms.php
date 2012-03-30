@@ -216,7 +216,6 @@ class fxCheckboxset extends fxFormElementSet
 	{
 		$r = array();
 		foreach( $this->_members as $k => $v ) {
-//echo sed_dump("k[$k] => v[$v]");
 			$simple_v = $simple_k = fxHTMLStatement::simplify($v);
 			if( is_string( $k ) )
 				$simple_k = fxHTMLStatement::simplify($k);
@@ -247,11 +246,10 @@ class fxRadioset extends fxFormElementSet
 	public function _getExpandedElements()
 	{
 		$r = array();
-//echo sed_dump($this->_members);
 		foreach( $this->_members as $k => $v ) {
 			$simple_v = $simple_k = fxHTMLStatement::simplify($v);
 			if( is_string( $k ) )
-				$simple_k = $k;		// TODO figure out why $k isn't testing as a string!
+				$simple_k = $k;
 			$r[] = fxInput($v)
 				->type('radio')
 				->name($this->_atts['name'])
