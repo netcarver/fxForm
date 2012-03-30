@@ -14,7 +14,7 @@ class fxCSRFToken
 	 **/
 	static public function get( $form_name )
 	{
-		$tok = fCryptography::randomString(32);
+		$tok = sha1( fCryptography::randomString(32) );
 		wire()->session->set( $form_name . '.CSRFToken', $tok );
 		return $tok;
 	}
