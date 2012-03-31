@@ -52,12 +52,15 @@ class fxFormCheckboxset extends fxFormElementSet
 			$simple_v = $simple_k = fxHTMLStatement::_simplify($v);
 			if( is_string( $k ) )
 				$simple_k = fxHTMLStatement::_simplify($k);
-			$r[] = Input($v)
+			$el = fxFormInput($v);
+			$el
 				->type('checkbox')
 				->name($this->_data['name'])
-				->id($this->_data['name'] . '-' . $simple_v )
+				->id( $this->_owner . '-' . $this->_data['name'] . '-' . $simple_v )
 				->value($simple_k)
+				->_owner = $this->_owner;
 				;
+			$r[] = $el;
 		}
 		return $r;
 	}
