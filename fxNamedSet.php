@@ -38,6 +38,7 @@ abstract class fxNamedSet
 	 **/
 	public static function _isMeta( &$s )
 	{
+		fxAssert::isNonEmptyString($s,'$s');
 		if( mb_substr($s,0,1) === '_' && mb_strlen($s) > 1 ) {
 			$s = mb_substr( $s, 1 );
 			return true;
