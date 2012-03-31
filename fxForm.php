@@ -15,7 +15,7 @@ class fxForm extends fxFormElementSet
 {
 	CONST	HTML4     = 'html4';	// TODO : These are all to do with the rendering, not with form structure so this is the wrong place for them
 	CONST	HTML5     = 'html5';
-	CONST	BASIC     = 'basic';
+	CONST	BASIC     = 'BasicHTML';
 	CONST	BOOTSTRAP = 'bootstrap';
 
 	/**

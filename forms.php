@@ -114,7 +114,7 @@ class fxSelect extends fxFormElementSet
 }
 
 
-class fxBasicFormRenderer
+class fxBasicHTMLFormRenderer
 {
 	static public function render( fxFormElement $e, $values = array() )
 	{
