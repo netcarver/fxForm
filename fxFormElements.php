@@ -29,8 +29,6 @@ abstract class fxFormElement extends fxNamedSet
 		return $this;
 	}
 
-	public function optional() 				{ $this->_meta['required'] = false;    return $this; }
-	public function note($note)				{ $this->_meta['note'] = $note;        return $this; }
 	public function setOwner( $owner_name ) { $this->_meta['owner'] = $owner_name; return $this; }
 	public function _getMeta()				{ return $this->_meta; }
 
