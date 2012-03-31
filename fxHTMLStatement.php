@@ -85,6 +85,17 @@ abstract class fxNamedSet
 
 
 	/**
+	 * Allows access to all but named, excluded, items from _data or _meta.
+	 * Can be used by renderers to pull subsets of _data for creating an HTML element's attributes.
+	 **/
+	public function _getInfoExcept( $exclude_list = '', $use_meta = false )
+	{
+		$excludes = explode( ',', $excludes );
+		return array_diff( ($use_meta) ? $this->_meta : $this->_data , array_flip($excludes) );
+	}
+
+
+	/**
 	 * Provides a unique value that can be used to identify an HTML entity.
 	 **/
 	protected function _fingerprint()
@@ -93,33 +104,6 @@ abstract class fxNamedSet
 	}
 
 
-	/**
-	 * Get the list of attributes in a format suitable for including in the generated HTML. TODO : this looks like it's rendering HTML to me! Belongs in the renderer.
-	 **/
-	public function _getAttrList( $excludes='' )
-	{
-		$o = '';
-		if( !empty( $this->_data ) ) {
-			$excludes = explode( ',', $excludes );
-			foreach( $this->_data as $k => $v ) {
-				if( !in_array($k, $excludes) ) {
-					$k = htmlspecialchars( $k );
-
-					// NULL values lead to output like <XYZ ... readonly ...>
-					if( NULL === $v ) {
-						$o .= " $k";
-					}
-
-					// Otherwise we get <XYZ ... class="abc" ... >
-					else {
-						$v = htmlspecialchars( $v );
-						$o .= " $k=\"$v\"";
-					}
-				}
-			}
-		}
-		return $o;
-	}
 }
 
 

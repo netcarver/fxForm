@@ -116,15 +116,44 @@ class fxSelect extends fxFormElementSet
 
 class fxBasicHTMLFormRenderer
 {
+
+	/**
+	 * Takes an array of attributes ( name => values ) and creates an HTML formatted string from it.
+	 **/
+	static public function renderAtts( $array, $exclude = '' )
+	{
+		fxAssert::isArray( $array, '$atts' );
+		$o = '';
+		if( !empty( $array ) ) {
+			foreach( $array as $k=>$v ) {
+				$k = htmlspecialchars( $k );
+
+				// NULL values lead to output like <XYZ ... readonly ...>
+				if( NULL === $v ) {
+					$o .= " $k";
+				}
+
+				// Otherwise we get <XYZ ... class="abc" ... >
+				else {
+					$v = htmlspecialchars( $v );
+					$o .= " $k=\"$v\"";
+				}
+			}
+		}
+		return $o;
+	}
+
+
 	static public function render( fxFormElement $e, $values = array() )
 	{
+		$array  = $e->_getInfoExcept( 'class,value' );
+		$attr   = self::renderAtts( $array );
 		$label  = htmlspecialchars($e->_name);
 		$class  = htmlspecialchars($e->class);
 		$chckd  = (@$e->_checked) ? 'checked' : '';
 		$subval = $e->_value;
 		$elval  = htmlspecialchars($e->value);
 		$id     = htmlspecialchars($e->id);
-		$attr   = $e->_getAttrList( 'class,value' );
 		$plce   = (string)$e->_note;
 		if( '' !== $plce )
 			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
