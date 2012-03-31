@@ -40,7 +40,7 @@ class fxFormCheckboxset extends fxFormElementSet
 		parent::__construct($name);
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		$this->_members = $members;
-		$this->_data['name'] = fxHTMLStatement::_simplify($name);
+		$this->name = fxHTMLStatement::_simplify($name);
 	}
 
 	public function _getExpandedElements()
@@ -114,9 +114,9 @@ class fxSelect extends fxFormElementSet
 }
 
 
-class fxBasicHTMLFormRenderer
-{
 
+abstract class fxHTMLRenderer
+{
 	/**
 	 * Takes an array of attributes ( name => values ) and creates an HTML formatted string from it.
 	 **/
@@ -143,7 +143,16 @@ class fxBasicHTMLFormRenderer
 		return $o;
 	}
 
+	static public function renderString( $string )
+	{
+		return $string;
+	}
+}
 
+
+
+class fxBasicHTMLFormRenderer extends fxHTMLRenderer
+{
 	static public function render( fxFormElement $e, $values = array() )
 	{
 		$array  = $e->_getInfoExcept( 'class,value' );
@@ -184,6 +193,14 @@ class fxBasicHTMLFormRenderer
 	}
 }
 
+
+class fxBootstrapFormRenderer extends fxHTMLRenderer
+{
+	static public function render( fxFormElement $e, $values = array() )
+	{
+		return "<h2>BOOTSTRAPPING!</h2>";
+	}
+}
 
 /**
  * Convenience creator functions. These allow chaining from point of creation and make for a more fluent interface...

@@ -16,7 +16,7 @@ class fxForm extends fxFormElementSet
 	CONST	HTML4     = 'html4';	// TODO : These are all to do with the rendering, not with form structure so this is the wrong place for them
 	CONST	HTML5     = 'html5';
 	CONST	BASIC     = 'BasicHTML';
-	CONST	BOOTSTRAP = 'bootstrap';
+	CONST	BOOTSTRAP = 'Bootstrap';
 
 
 	public function __construct($name, $action, $method = "post")
@@ -30,6 +30,8 @@ class fxForm extends fxFormElementSet
 		$this->_method = $method;
 
 		$this->_action = $action;
+
+		$this->id = self::_simplify("form-$name");
 	}
 
 
@@ -153,8 +155,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 		$o = array();
 		$renderer = $this->_renderer;
 
-		$renderer = new $renderer();
-		$atts = $renderer->renderAtts( $this->_getInfoExcept());
+		$atts = $renderer::renderAtts( $this->_getInfoExcept() );
 		$o[] = "<form action=\"{$this->_action}\" method=\"{$this->_method}\"$atts>";
 		if( !$this->_form_id || !$this->_form_token )
 			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );
@@ -163,7 +164,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 		$o[] = "<input type=\"hidden\" name=\"_form_token\" value=\"{$this->_form_token}\" />";
 		foreach( $this->_elements as $e ) {
 			if( is_string($e) ) {
-				$o[] = $e;
+				$o[] = $renderer::renderString($e);
 			}
 			else {
 				$o[] = $renderer::render( $e );

@@ -17,8 +17,8 @@ abstract class fxFormElement extends fxNamedSet
 	public function __construct($name , $note = null)
 	{
 		parent::__construct($name);
-		$this->_meta['note'] = $note;
-		$this->_data['name'] = $this->_data['id'] = fxForm::_simplify( $name );
+		$this->_note = $note;
+		$this->name = $this->id = fxForm::_simplify( $name );
 	}
 
 	public function match($pattern)
@@ -33,7 +33,7 @@ abstract class fxFormElement extends fxNamedSet
 	public function _isValid()
 	{
 		//
-		//	Store the submitted value in the meta info
+		//	Encode & store the submitted value in the meta info
 		//
 		$this->_meta['value'] = fRequest::encode($this->_data['name']);
 $subval = var_export( $this->_meta['value'], true );
@@ -99,6 +99,10 @@ abstract class fxFormElementSet extends fxNamedSet
 		}
 		else
 			$this->_elements[] = $element;
+
+		if( $element instanceof fxNamedSet )
+			$element->_owner = $this->id;
+
 		return $this;
 	}
 
