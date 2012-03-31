@@ -82,12 +82,14 @@ class fxFormRadioset extends fxFormElementSet
 			if( is_string( $k ) )
 				$simple_k = $k;
 			$el = new fxFormInput($v);
-			$r[] = $el
+			$el
 				->type('radio')
-				->name($this->_data['name'])
-				->id($this->_data['name'] . '-' . $simple_v )
+				->name($this->name)
+				->id( $this->_owner . '-' . $this->name . '-' . $simple_v )
 				->value($simple_k)
+				->_owner = $this->_owner
 				;
+			$r[] = $el;
 		}
 		return $r;
 	}
