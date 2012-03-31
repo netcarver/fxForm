@@ -18,16 +18,21 @@ abstract class fxHTMLRenderer implements fxRenderer
 		$o = '';
 		if( !empty( $array ) ) {
 			foreach( $array as $k=>$v ) {
+				$k = htmlspecialchars( $k );
+
 				// NULL values lead to output like <XYZ ... readonly ...>
-				if( NULL === $v )
+				if( NULL === $v ) {
 					$o .= " $k";
+				}
 
 				// Otherwise we get <XYZ ... class="abc" ... >
-				else
+				else {
+					$v = htmlspecialchars( $v );
 					$o .= " $k=\"$v\"";
+				}
 			}
 		}
-		return htmlspecialchars($o);
+		return $o;
 	}
 
 	static public function renderString( $string )
