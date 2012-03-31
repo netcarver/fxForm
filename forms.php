@@ -5,6 +5,8 @@ require_once( 'fxCSRFToken.php' );
 require_once( 'fxNamedSet.php' );
 require_once( 'fxFormElements.php' );
 require_once( 'fxForm.php' );
+require_once( 'fxRenderer.php' );
+require_once( 'fxBasicHTMLFormRenderer.php' );
 
 
 class fxFormInput    extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['type'] = 'text'; } }
@@ -115,94 +117,6 @@ class fxSelect extends fxFormElementSet
 	}
 }
 
-
-
-abstract class fxHTMLRenderer
-{
-	/**
-	 * Takes an array of attributes ( name => values ) and creates an HTML formatted string from it.
-	 **/
-	static public function renderAtts( $array, $exclude = '' )
-	{
-		fxAssert::isArray( $array, '$atts' );
-		$o = '';
-		if( !empty( $array ) ) {
-			foreach( $array as $k=>$v ) {
-				$k = htmlspecialchars( $k );
-
-				// NULL values lead to output like <XYZ ... readonly ...>
-				if( NULL === $v ) {
-					$o .= " $k";
-				}
-
-				// Otherwise we get <XYZ ... class="abc" ... >
-				else {
-					$v = htmlspecialchars( $v );
-					$o .= " $k=\"$v\"";
-				}
-			}
-		}
-		return $o;
-	}
-
-	static public function renderString( $string )
-	{
-		return $string;
-	}
-}
-
-
-
-class fxBasicHTMLFormRenderer extends fxHTMLRenderer
-{
-	static public function render( fxFormElement $e, $values = array() )
-	{
-		$array  = $e->_getInfoExcept( 'class,value' );
-		$attr   = self::renderAtts( $array );
-		$label  = htmlspecialchars($e->_name);
-		$class  = htmlspecialchars($e->class);
-		$chckd  = (@$e->_checked) ? 'checked' : '';
-		$subval = $e->_value;
-		$elval  = htmlspecialchars($e->value);
-		$id     = htmlspecialchars($e->id);
-		$plce   = (string)$e->_note;
-		if( '' !== $plce )
-			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
-		$o = array();
-
-		if( $e->required ) {
-			$class  .= ' required';
-		}
-		$class   = trim( $class );
-		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
-
-		if( !$e->_nolabel )
-			$o[] = "<label for=\"$id\">$label</label>";
-		$o[] = "<$type$attr$plce";
-		$o[] = "class=\"$class\"";
-		$o[] = $chckd;
-
-		if( 'textarea' == $type )
-			$o[] = ">$subval</textarea>";
-		elseif( 'button' == $type || 'submit' == $e->type || 'reset' == $e->type )
-			$o[] = "value=\"$elval\" />$label</button>";
-		elseif( in_array( $e->type, fxFormElement::$radio_types) || 'hidden' === $e->type )
-			$o[] = "value=\"$elval\" />";
-		else
-			$o[] = "value=\"$subval\" />";
-
-		return join( " ", $o );
-	}
-}
-
-
-class fxBootstrapFormRenderer extends fxHTMLRenderer
-{
-	static public function render( fxFormElement $e, $values = array() )
-	{
-		return "<h2>BOOTSTRAPPING!</h2>";
-	}
-}
 
 /**
  * Convenience creator functions. These allow chaining from point of creation and make for a more fluent interface...

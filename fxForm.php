@@ -188,7 +188,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 		return $this->_render($x);
 	}
 
-
+	// TODO move rendering into renderer classes
 	protected function _render( $pre = true )
 	{
 //echo "<pre>", htmlspecialchars( var_export( $this, true ) ), "</pre>";
