@@ -92,7 +92,7 @@ abstract class fxFormElementSet extends fxNamedSet
 
 
 	/**
-	 * Allows for the addition of elements to a form...
+	 * Allows the addition of elements to a form...
 	 **/
 	public function add( $element )
 	{
@@ -106,9 +106,9 @@ abstract class fxFormElementSet extends fxNamedSet
 	}
 
 	/**
-	 * Allows for the conditional addition of elements to a form
+	 * Allows the conditional addition of elements to a form
 	 **/
-	public function _addIf( $condition, $element )
+	public function addIf( $condition, $element )
 	{
 		if( $condition ) $this->add( $element );
 		return $this;

@@ -77,6 +77,11 @@ abstract class fxNamedSet
 		return $this->_data;
 	}
 
+	public function _getMeta()
+	{
+		return $this->_meta;
+	}
+
 
 	public function _getName()
 	{
