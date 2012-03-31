@@ -5,10 +5,10 @@
  *
  * $f = fxForm('Contact', '')
  * 			->add( '<h3>Contact Form</h3>' )
- * 			->add( fxInput('Name') )
- * 			->add( fxInput('Email') )
- * 			->add( fxTextarea('Message') )
- * 			->add( fxButton('Send') )
+ * 			->add( Input('Name') )
+ * 			->add( Input('Email') )
+ * 			->add( Textarea('Message') )
+ * 			->add( Button('Send') )
  * 			;
  **/
 class fxForm extends fxFormElementSet
@@ -83,6 +83,19 @@ class fxForm extends fxFormElementSet
 	}
 
 
+	/**
+	 * Define which renderer is to be tasked with generating the form output for display.
+	 * Whilst XML-like statements with attributes are the obvious outputs, renderers can be supplied that do
+	 * not necessarily comply to this and may output new formats.
+	 *
+	 * A renderer needs to know how to convert the following form elements into valid output.
+	 *
+	 * * Input        * Password      * URL           * Email
+	 * * Textarea     * Select        * Fieldset      * Radios
+	 * * Checkboxes   * Submit        * Reset         * Button
+	 * * Hidden
+	 *
+	 **/
 	public function setRenderer( $name, $target = self::HTML5 )
 	{
 		fxAssert::isNonEmptyString($name,   'name',   "Renderer name must be a non-empty string.");
@@ -174,6 +187,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 
 		return $this->_render($x);
 	}
+
 
 	protected function _render( $pre = true )
 	{
