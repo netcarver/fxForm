@@ -94,14 +94,20 @@ abstract class fxFormElementSet extends fxNamedSet
 	public function add( $element )
 	{
 		fxAssert::isNotEmpty( $element, 'element' );
+
+		if( $element instanceof fxNamedSet ) {
+			$element->_owner = $this->id;
+			/* TODO : defer id/name calcs to render() time? */
+			/* if( $this->id ) { */
+			/* 	$element->name = $element->id = $this->id . '-' . $element->id; */
+			/* } */
+		}
+
 		if( $element instanceof fxFormElementSet ) {
 			$this->_elements = array_merge( $this->_elements, $element->_getExpandedElements() );
 		}
 		else
 			$this->_elements[] = $element;
-
-		if( $element instanceof fxNamedSet )
-			$element->_owner = $this->id;
 
 		return $this;
 	}
