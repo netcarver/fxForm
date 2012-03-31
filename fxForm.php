@@ -19,6 +19,16 @@ class fxForm extends fxFormElementSet
 	CONST	BOOTSTRAP = 'Bootstrap';
 
 
+	/**
+	 * Constructor for a form.
+	 *
+	 * Creates a named form with the given parameters.
+	 * Also sets the id of the form to "form-$name" (simplifying the contents of the $name in the process).
+	 * If this isn't what you want just overwrite the id by setting your own straight after the form is constructed and before you
+	 * call add() to put elements into your form.
+	 * This id of the form will be used as a prefix to the id of everything you then add to the form so there should be no collisions
+	 * between form-generated ids and ids you use elsewhere in your pages.
+	 **/
 	public function __construct($name, $action, $method = "post")
 	{
 		fxAssert::isNonEmptyString($name, 'name', "Form must be named.");
@@ -35,9 +45,12 @@ class fxForm extends fxFormElementSet
 	}
 
 
+	/**
+	 * Dumps the contents of the form in a way that is viewable in your browser.
+	 **/
 	public function dump()
 	{
-		echo "<h3>{$this->_name}</h3><pre>",htmlspecialchars( var_export( $this, true ) ),"</pre>";
+		echo "<h3>", htmlspecialchars($this->_name),"</h3><pre>",htmlspecialchars( var_export( $this, true ) ),"</pre>";
 		return $this;
 	}
 
@@ -86,6 +99,20 @@ class fxForm extends fxFormElementSet
 	}
 
 
+	/**
+	 * Processes a form and produces output dependent upon the context in which process() is called.
+	 *
+	 * If the form is not being submitted, then it will be rendered in its initial state using the ->value() you set on each
+	 * element and showing placeholders if set (how these are shown depends on the renderer too.)
+	 *
+	 * If the form is being submitted, then it will validate the inputs using any supplied rules and finally validate the form
+	 * as a whole unit. You can supply validation rules or even callbacks for any element or the whole form.
+	 *
+	 * If the validation fails, the form will be re-rendered with the previous input values and with the errors shown.
+	 *
+	 * If the validation passes, then the success method will be called. It can take whatever actions are needed to handle the form
+	 * and it can redirect if needed or simply return some output that will then be rendered in place of the form.
+	 **/
 	public function process($x)
 	{
 		$submitted      = false;

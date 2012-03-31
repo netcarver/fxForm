@@ -111,7 +111,8 @@ abstract class fxFormElementSet extends fxNamedSet
 	 **/
 	public function addIf( $condition, $element )
 	{
-		if( $condition ) $this->add( $element );
+		if( $condition )
+			$this->add( $element );
 		return $this;
 	}
 }
