@@ -71,6 +71,15 @@ class fxForm extends fxFormElementSet
 
 
 	/**
+	 * Can be used to convert strings such as textual labels into simpler strings suitable for use as an HTML statement's id.
+	 **/
+	static public function _simplify($name)
+	{
+		return wire()->sanitizer->pageName($name, true);
+	}
+
+
+	/**
 	 * Sets the form's onSuccess callback function.
 	 **/
 	public function onSuccess( $fn )

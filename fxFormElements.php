@@ -18,7 +18,7 @@ abstract class fxFormElement extends fxNamedSet
 	{
 		parent::__construct($name);
 		$this->_meta['note'] = $note;
-		$this->_data['name'] = $this->_data['id'] = fxNamedSet::_simplify( $name );
+		$this->_data['name'] = $this->_data['id'] = fxForm::_simplify( $name );
 	}
 
 	public function match($pattern)
