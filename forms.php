@@ -8,7 +8,7 @@ require_once( 'fxForm.php' );
 
 
 class fxFormInput    extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['type'] = 'text'; } }
-class fxFormButton   extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['type'] = 'button'; $this->_data['value'] = fxNamedSet::_simplify($name); } }
+class fxFormButton   extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['type'] = 'button'; $this->_data['value'] = fxNamedSet::_simplify($name); $this->_meta['nolabel'] = true; } }
 class fxFormTextArea extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['maxlength'] = 2000; } }
 //class fxFormUpload   extends fxFormElement {}
 
@@ -18,7 +18,7 @@ class fxFormTextArea extends fxFormElement { public function __construct($label,
 class fxFormSubmit   extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_data['type'] = 'submit'; }   public function _getHTMLType() { return 'fxFormButton'; } }
 class fxFormReset    extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_data['type'] = 'reset'; }    public function _getHTMLType() { return 'fxFormButton'; } }
 class fxFormPassword extends fxFormInput  { public function __construct($label, $note) { parent::__construct($label, $note); $this->_data['type'] = 'password'; } public function _getHTMLType() { return 'fxFormInput'; } }
-class fxFormHidden   extends fxFormInput  { public function __construct($name,$value) { parent::__construct($name); $this->_data['type'] = 'hidden'; $this->_data['value'] = $value; }   public function _getHTMLType() { return 'fxFormInput'; } }
+class fxFormHidden   extends fxFormInput  { public function __construct($name,$value) { parent::__construct($name); $this->_data['type'] = 'hidden'; $this->_data['value'] = $value; $this->_meta['nolabel'] = true; }   public function _getHTMLType() { return 'fxFormInput'; } }
 
 class fxFormFieldset extends fxFormElementSet
 {
@@ -118,39 +118,35 @@ class fxBasicFormRenderer
 {
 	static public function render( fxFormElement $e, $values = array() )
 	{
-		$name  = htmlspecialchars($e->_getName());
-		$lname = htmlspecialchars($e->name);
-		$meta  = $e->_getMeta();
-		$cls   = htmlspecialchars($e->class);
-		$subval= $meta['value'];
-		$elval = htmlspecialchars($e->value);
-		$id    = htmlspecialchars($e->id);
-		$chckd = (@$meta['checked']) ? 'checked' : '';
-		$attr  = $e->_getAttrList( 'class,value' );
-		$plce  = (string)$e->_note;
+		$label  = htmlspecialchars($e->_getName());
+		$class  = htmlspecialchars($e->class);
+		$chckd  = (@$e->_checked) ? 'checked' : '';
+		$subval = $e->_value;
+		$elval  = htmlspecialchars($e->value);
+		$id     = htmlspecialchars($e->id);
+		$attr   = $e->_getAttrList( 'class,value' );
+		$plce   = (string)$e->_note;
 		if( '' !== $plce )
 			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
 		$o = array();
 
-		if( $meta['required'] ) {
-			$cls  .= ' required';
-			$attr .= ' required'; // HTML5, client-side validation!
+		if( $e->required ) {
+			$class  .= ' required';
 		}
-		else
-			$cls .= ' optional';
-		$cls = trim( $cls );
+		$class   = trim( $class );
+		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
-		$type = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
-
-		$o[] = "<label for=\"$id\">$name</label><$type$attr$plce";
-		$o[] = "class=\"$cls\"";
+		if( !$e->_nolabel )
+			$o[] = "<label for=\"$id\">$label</label>";
+		$o[] = "<$type$attr$plce";
+		$o[] = "class=\"$class\"";
 		$o[] = $chckd;
 
 		if( 'textarea' == $type )
 			$o[] = ">$subval</textarea>";
-		elseif( 'button' == $type || 'submit' == $type || 'reset' == $type )
-			$o[] = "value=\"$elval\" />$name</button>";
-		elseif( in_array( $e->type, fxFormElement::$radio_types) )
+		elseif( 'button' == $type || 'submit' == $e->type || 'reset' == $e->type )
+			$o[] = "value=\"$elval\" />$label</button>";
+		elseif( in_array( $e->type, fxFormElement::$radio_types) || 'hidden' === $e->type )
 			$o[] = "value=\"$elval\" />";
 		else
 			$o[] = "value=\"$subval\" />";
