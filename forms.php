@@ -24,7 +24,7 @@ class fxFormFieldset extends fxFormElementSet
 {
 	public function _getExpandedElements()
 	{
-		$r[] = "<fieldset>\n<legend>{$this->_getName()}</legend>\n";
+		$r[] = "<fieldset>\n<legend>{$this->_name}</legend>\n";
 		$r = array_merge( $r, parent::_getExpandedElements() );
 		$r[] = "</fieldset>\n";
 		return $r;
@@ -106,7 +106,7 @@ class fxSelect extends fxFormElementSet
 
 	public function _getExpandedElements()
 	{
-		$r[] = "<select {$this->_getName()}>\n";
+		$r[] = "<select {$this->_name}>\n";
 		$r = array_merge( $r, parent::_getExpandedElements() );
 		$r[] = "</select>\n";
 		return $r;
@@ -118,7 +118,7 @@ class fxBasicFormRenderer
 {
 	static public function render( fxFormElement $e, $values = array() )
 	{
-		$label  = htmlspecialchars($e->_getName());
+		$label  = htmlspecialchars($e->_name);
 		$class  = htmlspecialchars($e->class);
 		$chckd  = (@$e->_checked) ? 'checked' : '';
 		$subval = $e->_value;

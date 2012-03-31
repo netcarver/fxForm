@@ -65,7 +65,7 @@ class fxForm extends fxFormElementSet
 
 	public function dump()
 	{
-		echo "<h3>{$this->_getName()}</h3><pre>",htmlspecialchars( var_export( $this, true ) ),"</pre>";
+		echo "<h3>{$this->_name}</h3><pre>",htmlspecialchars( var_export( $this, true ) ),"</pre>";
 		return $this;
 	}
 
