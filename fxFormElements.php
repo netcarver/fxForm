@@ -89,7 +89,7 @@ abstract class fxFormElementSet extends fxNamedSet
 
 
 	/**
-	 * Allows the addition of elements to a form...
+	 * Allows the addition of an element to a form
 	 **/
 	public function add( $element )
 	{

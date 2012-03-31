@@ -33,6 +33,8 @@ abstract class fxNamedSet
 	/**
 	 * Determines if the given string is a reference to the meta data. If it is, it converts it to
 	 * a key for accessing the _meta array and returns true. If not, it leaves it alone and returns false.
+	 *
+	 * Meta data is always accessed using a single underscore as the first character.
 	 **/
 	public static function _isMeta( &$s )
 	{
@@ -48,8 +50,8 @@ abstract class fxNamedSet
 	 * Used as a generic setter to allow fluent calls to set data or meta-data for the set.
 	 *
 	 * NB, unmatched calls using names starting with a leading underscore set the meta-data.
-	 * eg. $set->_renderer('xyz');	causes 'renderer' => 'xyz' to be added to the $_meta array whilst
-	 *     $set->required();  	    causes 'required' => null  to be added to the $_data array.
+	 * eg. $s->_renderer('xyz');    causes 'renderer' => 'xyz' to be added to the $_meta array but
+	 *     $s->required('xyz');     causes 'required' => 'xyz' to be added to the $_data array.
 	 **/
 	public function __call( $name, $args )
 	{
@@ -62,6 +64,9 @@ abstract class fxNamedSet
 	}
 
 
+	/**
+	 * Allows direct read of _meta or _data items...
+	 **/
 	public function __get( $name )
 	{
 		if( self::_isMeta( $name ) )
@@ -72,6 +77,9 @@ abstract class fxNamedSet
 	}
 
 
+	/**
+	 * Allows direct setting of _meta or _data items...
+	 **/
 	public function __set( $name , $arg )
 	{
 		if( self::_isMeta($name) ) {
@@ -112,7 +120,6 @@ abstract class fxNamedSet
 	{
 		return md5( serialize($this) );
 	}
-
 
 }
 
