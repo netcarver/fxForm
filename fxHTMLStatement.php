@@ -68,7 +68,6 @@ abstract class fxNamedSet
 			$r = @$this->_meta[$name];
 		else
 			$r = @$this->_data[$name];
-		//if( null === $r ) $r = '';
 		return $r;
 	}
 
