@@ -18,36 +18,6 @@ class fxForm extends fxFormElementSet
 	CONST	BASIC     = 'BasicHTML';
 	CONST	BOOTSTRAP = 'bootstrap';
 
-	/**
-	 * Stores which renderer will be used to output the form.
-	 **/
-	protected $_renderer   = null;
-
-	/**
-	 * Stores what version of HTML to target. Will be passed to renderer.
-	 **/
-	protected $_target     = null;
-
-	/**
-	 * Function to call on successful form submission...
-	 **/
-	protected $_onSuccess  = null;
-
-	/**
-	 * The form's HTML action parameter...
-	 **/
-	protected $_action     = null;
-
-	/**
-	 * The form's HTML method parameter...
-	 **/
-	protected $_method     = null;
-
-	/**
-	 * The form's validation method (if any)...
-	 **/
-	protected $_validator  = null;
-
 
 	public function __construct($name, $action, $method = "post")
 	{
@@ -184,7 +154,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 		$renderer = $this->_renderer;
 
 		$renderer = new $renderer();
-		$atts = $this->_getAttrList();
+		$atts = $renderer->renderAtts( $this->_getInfoExcept());
 		$o[] = "<form action=\"{$this->_action}\" method=\"{$this->_method}\"$atts>";
 		if( !$this->_form_id || !$this->_form_token )
 			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );

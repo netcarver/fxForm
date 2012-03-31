@@ -25,7 +25,7 @@ abstract class fxFormElement extends fxNamedSet
 	{
 		fxAssert::isNonEmptyString($pattern, 'pattern');
 		fxAssert::isNotInArrayKeys('match', $this->_meta, 'Cannot redefine match $pattern for ['.$this->_name.'].');
-		$this->_meta['match'] = $pattern;
+		$this->_validator = $pattern;
 		return $this;
 	}
 
@@ -74,7 +74,7 @@ abstract class fxFormElementSet extends fxNamedSet
 	public function __construct( $name, $note = null )
 	{
 		parent::__construct($name);
-		$this->_meta['note'] = $note;
+		$this->_note = $note;
 		$this->_elements = array();
 	}
 

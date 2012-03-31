@@ -72,6 +72,16 @@ abstract class fxNamedSet
 	}
 
 
+	public function __set( $name , $arg )
+	{
+		if( self::_isMeta($name) ) {
+			$this->_meta[ $name ] = $arg;
+		}
+		else
+			$this->_data[$name] = $arg;
+		return $arg;
+	}
+
 	public function _getAtts()
 	{
 		return $this->_data;
