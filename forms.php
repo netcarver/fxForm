@@ -7,9 +7,9 @@ require_once( 'fxFormElements.php' );
 require_once( 'fxForm.php' );
 
 
-class fxFormInput    extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_data['type'] = 'text'; } }
-class fxFormButton   extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_data['type'] = 'button'; $this->_data['value'] = fxNamedSet::_simplify($name); } }
-class fxFormTextArea extends fxFormElement { public function __construct($name) { parent::__construct($name); $this->_data['maxlength'] = 2000; } }
+class fxFormInput    extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['type'] = 'text'; } }
+class fxFormButton   extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['type'] = 'button'; $this->_data['value'] = fxNamedSet::_simplify($name); } }
+class fxFormTextArea extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['maxlength'] = 2000; } }
 //class fxFormUpload   extends fxFormElement {}
 
 /**
@@ -17,7 +17,7 @@ class fxFormTextArea extends fxFormElement { public function __construct($name) 
  **/
 class fxFormSubmit   extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_data['type'] = 'submit'; }   public function _getHTMLType() { return 'fxFormButton'; } }
 class fxFormReset    extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_data['type'] = 'reset'; }    public function _getHTMLType() { return 'fxFormButton'; } }
-class fxFormPassword extends fxFormInput  { public function __construct($label) { parent::__construct($label); $this->_data['type'] = 'password'; } public function _getHTMLType() { return 'fxFormInput'; } }
+class fxFormPassword extends fxFormInput  { public function __construct($label, $note) { parent::__construct($label, $note); $this->_data['type'] = 'password'; } public function _getHTMLType() { return 'fxFormInput'; } }
 class fxFormHidden   extends fxFormInput  { public function __construct($name,$value) { parent::__construct($name); $this->_data['type'] = 'hidden'; $this->_data['value'] = $value; }   public function _getHTMLType() { return 'fxFormInput'; } }
 
 class fxFormFieldset extends fxFormElementSet
@@ -127,6 +127,9 @@ class fxBasicFormRenderer
 		$id    = htmlspecialchars($e->id);
 		$chckd = (@$meta['checked']) ? 'checked' : '';
 		$attr  = $e->_getAttrList( 'class,value' );
+		$plce  = (string)$e->_note;
+		if( '' !== $plce )
+			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
 		$o = array();
 
 		if( $meta['required'] ) {
@@ -139,7 +142,7 @@ class fxBasicFormRenderer
 
 		$type = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
-		$o[] = "<label for=\"$id\">$name</label><$type$attr";
+		$o[] = "<label for=\"$id\">$name</label><$type$attr$plce";
 		$o[] = "class=\"$cls\"";
 		$o[] = $chckd;
 
@@ -161,10 +164,10 @@ class fxBasicFormRenderer
  * Convenience creator functions. These allow chaining from point of creation and make for a more fluent interface...
  **/
 function Form( $form_name, $action, $method="post" )	 { return new fxForm( $form_name, $action, $method ); }
-function Input( $label )	     { return new fxFormInput    ( $label ); }
+function Input( $label, $note=null )	     { return new fxFormInput    ( $label, $note ); }
 function Password( $label )      { return new fxFormPassword ($label); }
 function Hidden( $name, $value ) { return new fxFormHidden   ($name, $value); }
-function TextArea( $label )      { return new fxFormTextArea ( $label ); }
+function TextArea( $label, $note )      { return new fxFormTextArea ( $label, $note ); }
 function Button( $text )         { return new fxFormButton   ( $text ); }
 function Submit( $text ) 	     { return new fxFormSubmit   ( $text ); }
 //function Reset ( $text ) 	 { return new fxFormReset   ( $text ); }

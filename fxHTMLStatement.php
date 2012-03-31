@@ -94,7 +94,7 @@ abstract class fxNamedSet
 
 
 	/**
-	 * Get the list of attributes in a format suitable for including in the generated HTML.
+	 * Get the list of attributes in a format suitable for including in the generated HTML. TODO : this looks like it's rendering HTML to me! Belongs in the renderer.
 	 **/
 	public function _getAttrList( $excludes='' )
 	{

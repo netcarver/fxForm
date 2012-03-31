@@ -14,9 +14,10 @@ abstract class fxFormElement extends fxNamedSet
 	static public $radio_types = array('radio','checkbox');
 
 
-	public function __construct($name)
+	public function __construct($name , $note = null)
 	{
 		parent::__construct($name);
+		$this->_meta['note'] = $note;
 		$this->_data['name'] = $this->_data['id'] = fxNamedSet::_simplify( $name );
 	}
 
@@ -47,7 +48,7 @@ echo sed_dump("Validating {$this->_getName()} :: get({$this->_data['name']}) giv
 		//	Store the checkedness of the element based on the submitted value
 		//
 		if( in_array($this->_data['type'], self::$radio_types ) ) {
-			$this->_meta['checked'] = ($this->_data['value'] === $this->_meta['value']);
+			$this->_meta['checked'] = ($this->_data['value'] === $this->_meta['value']);	// Why is this happening at this level?
 		}
 
 		//
@@ -75,9 +76,10 @@ abstract class fxFormElementSet extends fxNamedSet
 {
 	protected $_elements;
 
-	public function __construct( $name )
+	public function __construct( $name, $note = null )
 	{
 		parent::__construct($name);
+		$this->_meta['note'] = $note;
 		$this->_elements = array();
 	}
 
