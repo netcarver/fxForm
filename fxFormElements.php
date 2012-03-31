@@ -29,7 +29,6 @@ abstract class fxFormElement extends fxNamedSet
 		return $this;
 	}
 
-//	public function setOwner( $owner_name ) { $this->_meta['owner'] = $owner_name; return $this; }
 
 	public function _isValid()
 	{

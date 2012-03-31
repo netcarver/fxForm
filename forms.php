@@ -2,7 +2,7 @@
 
 require_once( 'fxAssert.php' );
 require_once( 'fxCSRFToken.php' );
-require_once( 'fxHTMLStatement.php' );
+require_once( 'fxNamedSet.php' );
 require_once( 'fxFormElements.php' );
 require_once( 'fxForm.php' );
 
