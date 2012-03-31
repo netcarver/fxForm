@@ -48,9 +48,9 @@ class fxForm extends fxFormElementSet
 	/**
 	 * Dumps the contents of the form in a way that is viewable in your browser.
 	 **/
-	public function dump()
+	public function dump( $wrap='h3')
 	{
-		echo "<h3>", htmlspecialchars($this->_name),"</h3><pre>",htmlspecialchars( var_export( $this, true ) ),"</pre>";
+		echo "<$wrap>", htmlspecialchars($this->_name),"</$wrap><pre>",htmlspecialchars( var_export( $this, true ) ),"</pre>";
 		return $this;
 	}
 
