@@ -61,6 +61,12 @@ $subval = var_export( $this->_meta['value'], true );
 	{
 		return get_class($this);
 	}
+
+
+	/**
+	 * Each element will be asked to use the given renderer to get itself output.
+	 **/
+	abstract public function renderUsing( $r, fxForm &$f, $parent_id );
 }
 
 
@@ -76,6 +82,11 @@ abstract class fxFormElementSet extends fxNamedSet
 		parent::__construct($name);
 		$this->_note = $note;
 		$this->_elements = array();
+	}
+
+	public function getElements()
+	{
+		return $this->_elements;
 	}
 
 	protected function _getExpandedElements()
@@ -95,22 +106,30 @@ abstract class fxFormElementSet extends fxNamedSet
 	{
 		fxAssert::isNotEmpty( $element, 'element' );
 
-		if( $element instanceof fxNamedSet ) {
-			$element->_owner = $this->id;
-			/* TODO : defer id/name calcs to render() time? */
-			/* if( $this->id ) { */
-			/* 	$element->name = $element->id = $this->id . '-' . $element->id; */
-			/* } */
-		}
+		/* if( $element instanceof fxNamedSet ) { */
+		/* 	$element->_owner = $this->id; */
+		/* 	/1* TODO : defer id/name calcs to render() time? << might have to. *1/ */
+		/* 	/1* if( $this->id ) { *1/ */
+		/* 	/1* 	$element->name = $element->id = $this->id . '-' . $element->id; *1/ */
+		/* 	/1* } *1/ */
+		/* } */
 
 		if( $element instanceof fxFormElementSet ) {
 			$this->_elements = array_merge( $this->_elements, $element->_getExpandedElements() );
 		}
-		else
+		elseif( $element instanceof fxFormElement ) {
 			$this->_elements[] = $element;
+		}
+		elseif( is_string( $element ) ) {
+			$this->_elements[] = new fxFormString( $element );
+		}
+		else {
+			throw new exception( "Added element must be a string, fxFormElement or fxFormElementSet." );
+		}
 
 		return $this;
 	}
+
 
 	/**
 	 * Allows the conditional addition of elements to a form
@@ -121,6 +140,12 @@ abstract class fxFormElementSet extends fxNamedSet
 			$this->add( $element );
 		return $this;
 	}
+
+	/**
+	 * Each element will be asked to use the given renderer to get itself output.
+	 **/
+	abstract public function renderUsing( $r, fxForm &$f, $parent_id );
+
 }
 
 

@@ -4,7 +4,7 @@ interface fxRenderer
 {
 	static public function renderString( $s );
 	static public function renderAtts( $array, $exclude = '' );
-	static public function render( fxFormElement $e );
+	static public function render( fxFormElement &$e, $parent_id );
 }
 
 abstract class fxHTMLRenderer implements fxRenderer
@@ -37,7 +37,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 
 	static public function renderString( $string )
 	{
-		return htmlspecialchars( $string );
+		return ( $string );
 	}
 }
 
