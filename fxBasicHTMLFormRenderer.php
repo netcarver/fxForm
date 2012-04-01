@@ -18,9 +18,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$class = self::getClasses($e);
 		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
-		$o[] = "<$type$attr$plce";
-		$o[] = $class;
-		/* $o[] = $chckd; */
+		$o[] = "<$type$attr$plce$class";
 
 		if( 'button' == $type || 'submit' == $e->type || 'reset' == $e->type )
 			$o[] = "value=\"$elval\" />$label</button>";

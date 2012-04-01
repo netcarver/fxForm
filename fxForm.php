@@ -198,6 +198,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 		return $this->renderUsing( $this->_renderer, $this, $this->id );
 	}
 
+
 	/**
 	 * Each element will be asked to use the given renderer to get itself output.
 	 **/
