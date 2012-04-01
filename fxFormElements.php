@@ -7,7 +7,7 @@
  * Note, this extends fxNamedSet but that *doesn't* mean it *is* a set of elements; it means that
  * an element *has* an associated set of data and meta-data. In this case, that data holds an
  * element's attributes and the meta data holds other information such as the name associated with
- * the element.
+ * the element, its submitted value and its datatype.
  **/
 abstract class fxFormElement extends fxNamedSet
 {
@@ -72,6 +72,7 @@ abstract class fxFormElementSet extends fxFormElement
 {
 	protected $_elements;
 
+
 	public function __construct( $name, $note = null )
 	{
 		parent::__construct($name);
@@ -79,10 +80,12 @@ abstract class fxFormElementSet extends fxFormElement
 		$this->_elements = array();
 	}
 
+
 	public function getElements()
 	{
 		return $this->_elements;
 	}
+
 
 	protected function _getExpandedElements()
 	{
@@ -135,11 +138,6 @@ abstract class fxFormElementSet extends fxFormElement
 			$this->add( $element );
 		return $this;
 	}
-
-	/**
-	 * Each element will be asked to use the given renderer to get itself output.
-	 **/
-//	abstract public function renderUsing( $r, fxForm &$f, $parent_id );
 
 }
 

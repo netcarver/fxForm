@@ -152,7 +152,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 		}
 		else {
 			// Do the id and token match what is expected?
-			$id_ok    = ($this->_form_id === fRequest::get('_form_id') );
+			$id_ok = ($this->_form_id === fRequest::get('_form_id') );
 			if( !$id_ok )
 				return '<p>An unexpected error occured. Form id mismatch.</p>';
 
