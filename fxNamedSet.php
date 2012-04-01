@@ -91,7 +91,21 @@ abstract class fxNamedSet
 		return $arg;
 	}
 
-	public function _getAtts()
+
+	public function _inData($key)
+	{
+		return array_key_exists( $key, $this->_data );
+	}
+
+
+	public function _inMeta($key)
+	{
+		return array_key_exists( $key, $this->_meta );
+	}
+
+
+
+	public function _getData()
 	{
 		return $this->_data;
 	}
