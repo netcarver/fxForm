@@ -243,28 +243,7 @@ class fxFormRadioset extends fxFormElementSet
 		return array( $this );
 	}
 
-/* 	public function _getExpandedElements() */
-/* 	{ */
-/* 		$r = array(); */
-/* 		foreach( $this->_members as $k => $v ) { */
-/* 			$simple_v = $simple_k = fxForm::_simplify($v); */
-/* 			if( is_string( $k ) ) */
-/* 				$simple_k = $k; */
-/* 			$el = new fxFormInput($v); */
-/* 			$el */
-/* 				->type('radio') */
-/* 				->name($this->name) */
-/* 				->id( $this->_owner . '-' . $this->name . '-' . $simple_v ) */
-/* 				->value($simple_k) */
-/* 				->_owner = $this->_owner */
-/* 				; */
-/* 			$r[] = $el; */
-/* 		} */
-/* 		return $r; */
-/* 	} */
-
-
-	public function _populate( $parent_id )
+	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
 		foreach( $this->_members as $k => $v ) {
 			$simple_v = $simple_k = fxForm::_simplify($v);
@@ -281,11 +260,6 @@ class fxFormRadioset extends fxFormElementSet
 				$el->checked();
 			$this->_elements[] = $el;
 		}
-	}
-
-	public function renderUsing( $r, fxForm &$f, $parent_id )
-	{
-		$this->_populate( $parent_id );
 		return $r::renderRadioset( $this, $f, $parent_id );
 	}
 }

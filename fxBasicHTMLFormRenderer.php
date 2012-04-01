@@ -4,7 +4,6 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 {
 	static public function render( fxFormElement &$e, $parent_id )
 	{
-	//	$array  = ;
 		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value' ) );
 		$label  = htmlspecialchars($e->_name);
 		$class  = htmlspecialchars($e->class);
@@ -57,17 +56,13 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$o[] = "<form action=\"{$f->_action}\" method=\"{$f->_method}\"$atts>";
 		$o[] = "<input type=\"hidden\" name=\"_form_id\" value=\"{$f->_form_id}\" />";
 		$o[] = "<input type=\"hidden\" name=\"_form_token\" value=\"{$f->_form_token}\" />";
-//$o[] = "<ol>";
 		foreach( $f->getElements() as $child ) {
-//throw new exception( "Blah" );
-//$o[] = "<li>Rendering a child element</li>";
 			if( is_string($child) )
 				$o[] = $child;
 			else {
 				$o[] = $child->renderUsing( __CLASS__, $f, $f->id );
 			}
 		}
-//$o[] = "</ol>";
 		$o[] = "</form>";
 		$o = implode( "\n", $o );
 		return $o;
@@ -77,7 +72,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	static public function renderRadioset( fxFormRadioset &$e, fxForm &$f, $parent_id )
 	{
-$f->dump();
+//$f->dump();
 		$o = array();
 		foreach( $e->getElements() as $radio ) {
 			$o[] = $radio->renderUsing( __CLASS__, $f, $parent_id );
