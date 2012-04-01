@@ -99,31 +99,6 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		return "<button $attr$class>$label</button>";
 	}
 
-
-	static public function getClasses(fxFormElement &$e)
-	{
-		$classes = array();
-		if( $e->class )
-			$classes[] = htmlspecialchars($e->class);
-		if( $e->_inData('required') )
-			$classes[] = 'required';
-		if( empty( $classes ) )
-			return '';
-
-		return ' class="'.implode(' ',$classes).'"';
-	}
-
-
-	static public function addLabel( $thing, fxFormElement &$e, $for_id )
-	{
-		if( $e->_nolabel )
-			return $thing;
-
-		$label = '<label for="'.htmlspecialchars($e->id).'">'.htmlspecialchars($e->_name).'</label>';
-
-		return ($e->_label_right) ? $thing. $label : $label . $thing;
-	}
-
 	/* static public function getID(fxFormElement &$e, $parent_id) */
 	/* { */
 	/* 	if( $e->_inData('id') ) */

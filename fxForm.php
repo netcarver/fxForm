@@ -189,7 +189,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 		return $this->_render();
 	}
 
-	// TODO move rendering into renderer classes
+
 	protected function _render( /*$pre = true*/ )
 	{
 		if( !$this->_form_id || !$this->_form_token )
