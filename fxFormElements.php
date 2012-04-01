@@ -49,11 +49,36 @@ abstract class fxFormElement extends fxNamedSet
 
 
 	/**
-	 * Override this in derived classes.
+	 * Override this in derived classes if needed.
 	 **/
 	public function _isValid()
 	{
-		return false;
+		$validator = $this->_validator;
+		$required  = $this->_inData('required');
+//throw new exception( "Validating" );
+		if( !$required )
+			return true;
+
+		if( !$validator )
+			return true;
+
+		$valid = true;
+		if( '' == $this->_value ) {
+			$valid = false;
+		}
+		elseif( is_callable( $validator ) ) {
+			$valid = $validator( $this );
+		//	throw new exception( "Called validator $validator" );
+		}
+		elseif( is_string( $validator ) ) {
+			$valid = preg_match( "~$validator~", $this->_value );
+		//	throw new exception( "Tried matching validation regex $validator." );
+		}
+
+		if( !$valid ) {
+			$this->_invalid = true;
+		}
+		return $valid;
 	}
 
 
