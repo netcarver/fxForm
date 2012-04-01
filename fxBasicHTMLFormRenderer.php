@@ -6,25 +6,20 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	{
 		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value' ) );
 		$label  = htmlspecialchars($e->_name);
-		$class  = htmlspecialchars($e->class);
 		$subval = $e->_value;
 		$elval  = htmlspecialchars($e->value);
 		$id     = htmlspecialchars($e->id);
 		$plce   = (string)$e->_note;
 		if( '' !== $plce )
 			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
+
 		$o = array();
 
-		if( $e->required ) {
-			$class  .= ' required';
-		}
-		$class = trim( $class );
+		$class = self::getClasses($e);
 		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
-		if( !$e->_nolabel && !$e->_label_right )
-			$o[] = "<label for=\"$id\">$label</label>";
 		$o[] = "<$type$attr$plce";
-		$o[] = "class=\"$class\"";
+		$o[] = $class;
 		$o[] = $chckd;
 
 		if( 'textarea' == $type )
@@ -36,19 +31,19 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		else
 			$o[] = "value=\"$subval\" />";
 
-		if( !$e->_nolabel && $e->_label_right )
-			$o[] = "<label for=\"$id\">$label</label>";
-
-		return join( " ", $o );
+		$o = join( " ", $o );
+		return self::addLabel( $o, $e );
 	}
 
 
-	static public function renderLabelFor( fxFormElement &$e, $for_id )
+	static public function addLabel( $thing, fxFormElement &$e, $for_id )
 	{
 		if( $e->_nolabel )
-			return '';
+			return $thing;
 
-		return '<label for="'.htmlspecialchars($for_id).'">'.htmlspecialchars($e->_name).'</label>';
+		$label = '<label for="'.htmlspecialchars($e->id).'">'.htmlspecialchars($e->_name).'</label>';
+
+		return ($e->_label_right) ? $thing. $label : $label . $thing;
 	}
 
 
@@ -87,14 +82,42 @@ $f->dump();
 
 	static public function renderTextarea( fxFormElement &$e, $parent_id )
 	{
-		return "<textarea>$parent_id</textarea>";
+		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
+		$class = self::getClasses($e);
+		return self::addLabel( "<textarea $attr$class>{$e->_value}</textarea>", $e );
 	}
 
+
+	static public function getClasses(fxFormElement &$e)
+	{
+		$classes = array();
+		if( $e->class )
+			$classes[] = htmlspecialchars($e->class);
+		if( $e->_inData('required') )
+			$classes[] = 'required';
+		if( empty( $classes ) )
+			return '';
+
+		return ' class="'.implode(' ',$classes).'"';
+	}
+
+	/* static public function getID(fxFormElement &$e, $parent_id) */
+	/* { */
+	/* 	if( $e->_inData('id') ) */
+	/* 		return htmlspecialchars($e->id); */
+
+	/* 	$id = ( $parent_id ) ? $parent_id : '' ; */
+	/* 	$id = fxForm::_simplify( $id . '_' . $e->_name ); */
+	/* 	return $id; */
+	/* } */
 
 
 	static public function renderButton( fxFormButton &$e, $parent_id )
 	{
-		return "<button>$parent_id</button>";
+		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
+		$label = htmlspecialchars($e->_name);
+		$class = self::getClasses($e);
+		return "<button $attr$class>$label</button>";
 	}
 
 }

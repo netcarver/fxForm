@@ -263,7 +263,7 @@ class fxFormRadioset extends fxFormElementSet
 				$el->checked();
 			$this->_elements[] = $el;
 		}
-		return $r::renderRadioset( $this, $f, $parent_id );
+		return $r::renderElementSet( $this, $f, $parent_id );
 	}
 }
 
@@ -312,5 +312,6 @@ function Button		( $text )         						{ return new fxFormButton( $text ); }
 function Submit		( $text ) 	     						{ return new fxFormSubmit( $text ); }
 //function Reset 		( $text ) 	 							{ return new fxFormReset( $text ); }
 function Fieldset	( $legend )     						{ return new fxFormFieldset( $legend ); }
+function Select  	( $select_name, $options_array )		{ return new fxFormSelect( $select_name, $options_array ); }
 
 #eof

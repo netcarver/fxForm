@@ -186,7 +186,6 @@ echo sed_dump( $GLOBALS[$array], $array );
 			}
 
 		}
-//$this->dump();
 		return $this->_render();
 	}
 

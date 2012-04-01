@@ -112,14 +112,6 @@ abstract class fxFormElementSet extends fxFormElement
 	{
 		fxAssert::isNotEmpty( $element, 'element' );
 
-		/* if( $element instanceof fxNamedSet ) { */
-		/* 	$element->_owner = $this->id; */
-		/* 	/1* TODO : defer id/name calcs to render() time? << might have to. *1/ */
-		/* 	/1* if( $this->id ) { *1/ */
-		/* 	/1* 	$element->name = $element->id = $this->id . '-' . $element->id; *1/ */
-		/* 	/1* } *1/ */
-		/* } */
-
 		if( $element instanceof fxFormElementSet ) {
 			$this->_elements = array_merge( $this->_elements, $element->_getExpandedElements() );
 		}
