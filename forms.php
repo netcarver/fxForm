@@ -276,8 +276,9 @@ class fxFormRadioset extends fxFormElementSet
 				->name($this->name)
 				->id( $parent_id . '-' . $this->name . '-' . $simple_v )
 				->value($simple_k)
-		//		->_owner = $this->_owner
 				;
+			if( $simple_k === $this->_value )
+				$el->checked();
 			$this->_elements[] = $el;
 		}
 	}

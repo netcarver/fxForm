@@ -163,7 +163,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 			//	Iterate over elements, populating their values & evaluating them
 			//
 			foreach( $this->_elements as $e ) {
-				if( $e instanceof fxFormElement )
+				if( !is_string($e) )
 					$fields_ok = $fields_ok & $e->_isValid();
 			}
 
@@ -184,7 +184,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 			}
 
 		}
-$this->dump();
+//$this->dump();
 		return $this->_render();
 	}
 

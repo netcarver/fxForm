@@ -21,6 +21,7 @@ abstract class fxFormElement extends fxNamedSet
 		$this->name = $this->id = fxForm::_simplify( $name );
 	}
 
+
 	public function match($pattern)
 	{
 		fxAssert::isNonEmptyString($pattern, 'pattern');
@@ -35,16 +36,10 @@ abstract class fxFormElement extends fxNamedSet
 		//
 		//	Encode & store the submitted value in the meta info
 		//
-		$this->_meta['value'] = fRequest::encode($this->_data['name']);
-$subval = var_export( $this->_meta['value'], true );
+		$this->_value = fRequest::encode($this->_data['name']);
+//$subval = var_export( $this->_meta['value'], true );
 //echo sed_dump("Validating {$this->_name} :: get({$this->_data['name']}) gives [$subval]");
 
-		//
-		//	Store the checkedness of the element based on the submitted value
-		//
-		if( in_array($this->_data['type'], self::$radio_types ) ) {
-			$this->_meta['checked'] = ($this->_data['value'] === $this->_meta['value']);	// Why is this happening at this level?
-		}
 
 		//
 		//	Perform any needed validation...
@@ -73,7 +68,7 @@ $subval = var_export( $this->_meta['value'], true );
 /**
  * Radiosets, checkboxes and Selects are implemented by having multiple elements.
  **/
-abstract class fxFormElementSet extends fxNamedSet
+abstract class fxFormElementSet extends fxFormElement
 {
 	protected $_elements;
 
@@ -144,7 +139,7 @@ abstract class fxFormElementSet extends fxNamedSet
 	/**
 	 * Each element will be asked to use the given renderer to get itself output.
 	 **/
-	abstract public function renderUsing( $r, fxForm &$f, $parent_id );
+//	abstract public function renderUsing( $r, fxForm &$f, $parent_id );
 
 }
 

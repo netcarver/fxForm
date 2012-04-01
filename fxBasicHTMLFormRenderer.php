@@ -8,7 +8,6 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value' ) );
 		$label  = htmlspecialchars($e->_name);
 		$class  = htmlspecialchars($e->class);
-		$chckd  = (@$e->_checked) ? 'checked' : '';
 		$subval = $e->_value;
 		$elval  = htmlspecialchars($e->value);
 		$id     = htmlspecialchars($e->id);
@@ -78,6 +77,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	static public function renderRadioset( fxFormRadioset &$e, fxForm &$f, $parent_id )
 	{
+$f->dump();
 		$o = array();
 		foreach( $e->getElements() as $radio ) {
 			$o[] = $radio->renderUsing( __CLASS__, $f, $parent_id );
