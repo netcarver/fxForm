@@ -74,28 +74,15 @@ $f->dump();
 
 
 
-	static public function renderCheckboxset( fxFormCheckboxset &$e, fxForm &$f, $parent_id )
+	static public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
-		foreach( $e->getElements() as $radio ) {
-			$o[] = $radio->renderUsing( __CLASS__, $f, $parent_id );
+		foreach( $e->getElements() as $el ) {
+			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
 		}
 		$o = implode( "\n", $o );
 		return $o;
 	}
-
-
-
-	static public function renderRadioset( fxFormRadioset &$e, fxForm &$f, $parent_id )
-	{
-		$o = array();
-		foreach( $e->getElements() as $radio ) {
-			$o[] = $radio->renderUsing( __CLASS__, $f, $parent_id );
-		}
-		$o = implode( "\n", $o );
-		return $o;
-	}
-
 
 
 	static public function renderTextarea( fxFormElement &$e, $parent_id )

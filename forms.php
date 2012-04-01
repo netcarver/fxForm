@@ -187,7 +187,6 @@ class fxFormFieldset extends fxFormElementSet
 
 class fxFormCheckboxset extends fxFormElementSet
 {
-	protected $_members = null;
 	public function __construct($name, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
@@ -196,6 +195,7 @@ class fxFormCheckboxset extends fxFormElementSet
 		$this->_members = $members;
 		$this->name = fxForm::_simplify($name).'[]';
 	}
+
 
 	public function _getExpandedElements()
 	{
@@ -222,7 +222,7 @@ class fxFormCheckboxset extends fxFormElementSet
 
 			$this->_elements[] = $el;
 		}
-		return $r::renderCheckboxset($this, $f, $parent_id );
+		return $r::renderElementSet($this, $f, $parent_id );
 	}
 }
 
@@ -231,8 +231,6 @@ class fxFormCheckboxset extends fxFormElementSet
 
 class fxFormRadioset extends fxFormElementSet
 {
-	protected $_members = null;
-
 	public function __construct($name, $members)
 	{
 		parent::__construct($name);
