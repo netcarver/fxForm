@@ -181,7 +181,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 						return $fn($this);
 					}
 					else
-						return sed_dump("Huzzah!");
+						return sed_dump("<h2>Huzzah!</h2>");
 				}
 			}
 
