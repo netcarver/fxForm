@@ -20,11 +20,9 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$o[] = "<$type$attr$plce";
 		$o[] = $class;
-		$o[] = $chckd;
+		/* $o[] = $chckd; */
 
-		if( 'textarea' == $type )
-			$o[] = ">$subval</textarea>";
-		elseif( 'button' == $type || 'submit' == $e->type || 'reset' == $e->type )
+		if( 'button' == $type || 'submit' == $e->type || 'reset' == $e->type )
 			$o[] = "value=\"$elval\" />$label</button>";
 		elseif( in_array( $e->type, fxFormElement::$radio_types) || 'hidden' === $e->type )
 			$o[] = "value=\"$elval\" />";
@@ -33,17 +31,6 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$o = join( " ", $o );
 		return self::addLabel( $o, $e );
-	}
-
-
-	static public function addLabel( $thing, fxFormElement &$e, $for_id )
-	{
-		if( $e->_nolabel )
-			return $thing;
-
-		$label = '<label for="'.htmlspecialchars($e->id).'">'.htmlspecialchars($e->_name).'</label>';
-
-		return ($e->_label_right) ? $thing. $label : $label . $thing;
 	}
 
 
@@ -63,10 +50,10 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		}
 		$o[] = "</form>";
 		$o = implode( "\n", $o );
-$f->dump();
+//$f->dump();
+echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		return $o;
 	}
-
 
 
 	static public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
@@ -106,6 +93,15 @@ $f->dump();
 	}
 
 
+	static public function renderButton( fxFormButton &$e, $parent_id )
+	{
+		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
+		$class = self::getClasses($e);
+		$label = htmlspecialchars($e->_name);
+		return "<button $attr$class>$label</button>";
+	}
+
+
 	static public function getClasses(fxFormElement &$e)
 	{
 		$classes = array();
@@ -119,6 +115,17 @@ $f->dump();
 		return ' class="'.implode(' ',$classes).'"';
 	}
 
+
+	static public function addLabel( $thing, fxFormElement &$e, $for_id )
+	{
+		if( $e->_nolabel )
+			return $thing;
+
+		$label = '<label for="'.htmlspecialchars($e->id).'">'.htmlspecialchars($e->_name).'</label>';
+
+		return ($e->_label_right) ? $thing. $label : $label . $thing;
+	}
+
 	/* static public function getID(fxFormElement &$e, $parent_id) */
 	/* { */
 	/* 	if( $e->_inData('id') ) */
@@ -128,16 +135,6 @@ $f->dump();
 	/* 	$id = fxForm::_simplify( $id . '_' . $e->_name ); */
 	/* 	return $id; */
 	/* } */
-
-
-	static public function renderButton( fxFormButton &$e, $parent_id )
-	{
-		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
-		$label = htmlspecialchars($e->_name);
-		$class = self::getClasses($e);
-		return "<button $attr$class>$label</button>";
-	}
-
 }
 
 
