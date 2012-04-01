@@ -65,6 +65,19 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		}
 		$o[] = "</form>";
 		$o = implode( "\n", $o );
+$f->dump();
+		return $o;
+	}
+
+
+
+	static public function renderCheckboxset( fxFormCheckboxset &$e, fxForm &$f, $parent_id )
+	{
+		$o = array();
+		foreach( $e->getElements() as $radio ) {
+			$o[] = $radio->renderUsing( __CLASS__, $f, $parent_id );
+		}
+		$o = implode( "\n", $o );
 		return $o;
 	}
 
@@ -72,7 +85,6 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	static public function renderRadioset( fxFormRadioset &$e, fxForm &$f, $parent_id )
 	{
-//$f->dump();
 		$o = array();
 		foreach( $e->getElements() as $radio ) {
 			$o[] = $radio->renderUsing( __CLASS__, $f, $parent_id );

@@ -61,7 +61,9 @@ class fxForm extends fxFormElementSet
 	 **/
 	static public function _simplify($name)
 	{
-		return wire()->sanitizer->pageName($name, true);
+		$o = wire()->sanitizer->pageName($name, true);
+		$o = fURL::makeFriendly( $name );
+		return strtr( $o, array('[]'=>'','-'=>'_') );
 	}
 
 

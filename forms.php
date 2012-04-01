@@ -193,32 +193,34 @@ class fxFormCheckboxset extends fxFormElementSet
 		parent::__construct($name);
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		$this->_members = $members;
-		$this->name = fxHTMLStatement::_simplify($name);
+		$this->name = fxForm::_simplify($name).'[]';
 	}
 
-	/* public function _getExpandedElements() */
-	/* { */
-	/* 	$r = array(); */
-	/* 	foreach( $this->_members as $k => $v ) { */
-	/* 		$simple_v = $simple_k = fxHTMLStatement::_simplify($v); */
-	/* 		if( is_string( $k ) ) */
-	/* 			$simple_k = fxHTMLStatement::_simplify($k); */
-	/* 		$el = fxFormInput($v); */
-	/* 		$el */
-	/* 			->type('checkbox') */
-	/* 			->name($this->_data['name']) */
-	/* 			->id( $this->_owner . '-' . $this->_data['name'] . '-' . $simple_v ) */
-	/* 			->value($simple_k) */
-	/* 			->_owner = $this->_owner; */
-	/* 			; */
-	/* 		$r[] = $el; */
-	/* 	} */
-	/* 	return $r; */
-	/* } */
+	public function _getExpandedElements()
+	{
+		return array( $this );
+	}
+
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::render($this, $parent_id );
+		foreach( $this->_members as $k => $v ) {
+			$simple_v = $simple_k = fxForm::_simplify($v);
+			if( is_string( $k ) )
+				$simple_k = fxForm::_simplify($k);
+			$el = new fxFormInput($v);
+			$el
+				->type('checkbox')
+				->name($this->_data['name'])
+				->id( fxForm::_simplify($parent_id . '-' . $this->_data['name'] . '-' . $simple_v ))
+				->value($simple_k)
+				;
+			if( in_array($simple_k, $this->_value ) )
+				$el->checked();
+
+			$this->_elements[] = $el;
+		}
+		return $r::renderCheckboxset($this, $f, $parent_id );
 	}
 }
 
@@ -235,7 +237,7 @@ class fxFormRadioset extends fxFormElementSet
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		if( count($members) < 2 ) throw new exception( 'There must be 2 or more members for a RadioSet to be populated.' );
 		$this->_members = $members;
-		$this->_data['name'] = fxForm::_simplify($name);
+		$this->name = fxForm::_simplify($name);
 	}
 
 	public function _getExpandedElements()
