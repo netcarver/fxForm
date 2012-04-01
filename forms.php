@@ -104,7 +104,7 @@ class fxFormSubmit extends fxFormButton
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::render($this, $parent_id );
+		return $r::renderButton($this, $parent_id );
 	}
 }
 

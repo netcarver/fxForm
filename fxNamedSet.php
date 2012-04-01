@@ -121,10 +121,10 @@ abstract class fxNamedSet
 	 * Allows access to all but named, excluded, items from _data or _meta.
 	 * Can be used by renderers to pull subsets of _data for creating an HTML element's attributes.
 	 **/
-	public function _getInfoExcept( $exclude_list = '', $use_meta = false )
+	public function _getInfoExcept( $excludes = '', $use_meta = false )
 	{
-		$excludes = explode( ',', $excludes );
-		return array_diff( ($use_meta) ? $this->_meta : $this->_data , array_flip($excludes) );
+		$excludes = array_flip(explode( ',', $excludes ));
+		return array_diff_key( (($use_meta) ? $this->_meta : $this->_data) , $excludes );
 	}
 
 
