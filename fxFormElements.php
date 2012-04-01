@@ -16,9 +16,16 @@ abstract class fxFormElement extends fxNamedSet
 
 	public function __construct($name , $note = null)
 	{
+		$label_right = ('>' === substr($name,0,1));
+		if( $label_right ) {
+			$name = substr($name,1);
+		}
+
 		parent::__construct($name);
 		$this->_note = $note;
 		$this->name = $this->id = fxForm::_simplify( $name );
+		$this->_label_right = $label_right;
+
 	}
 
 

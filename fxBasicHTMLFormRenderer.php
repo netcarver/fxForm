@@ -18,10 +18,10 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		if( $e->required ) {
 			$class  .= ' required';
 		}
-		$class   = trim( $class );
+		$class = trim( $class );
 		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
-		if( !$e->_nolabel )
+		if( !$e->_nolabel && !$e->_label_right )
 			$o[] = "<label for=\"$id\">$label</label>";
 		$o[] = "<$type$attr$plce";
 		$o[] = "class=\"$class\"";
@@ -35,6 +35,9 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 			$o[] = "value=\"$elval\" />";
 		else
 			$o[] = "value=\"$subval\" />";
+
+		if( !$e->_nolabel && $e->_label_right )
+			$o[] = "<label for=\"$id\">$label</label>";
 
 		return join( " ", $o );
 	}
