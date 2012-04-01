@@ -166,7 +166,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 			//
 			foreach( $this->_elements as $e ) {
 				if( !is_string($e) )
-					$fields_ok = $fields_ok & $e->_isValid();
+					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid();
 			}
 
 			if( $fields_ok ) {

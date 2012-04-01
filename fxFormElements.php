@@ -31,23 +31,24 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+	/**
+	 * Encode & store the submitted value (if any) in the meta info
+	 **/
+	public function _getSubmittedValue()
+	{
+		$this->_value = fRequest::encode($this->name);
+		return $this;
+	}
+
+
+	/**
+	 * Override this in derived classes.
+	 **/
 	public function _isValid()
 	{
-		//
-		//	Encode & store the submitted value in the meta info
-		//
-		$this->_value = fRequest::encode($this->_data['name']);
-//$subval = var_export( $this->_meta['value'], true );
-//echo sed_dump("Validating {$this->_name} :: get({$this->_data['name']}) gives [$subval]");
-
-
-		//
-		//	Perform any needed validation...
-		//
-
-
 		return false;
 	}
+
 
 	/**
 	 * Allow Form Elements to determine what HTML tag to use in the markup. eg fxSubmit can orchistrate the output of a button element.
