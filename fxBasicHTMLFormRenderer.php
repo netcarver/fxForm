@@ -80,6 +80,24 @@ $f->dump();
 	}
 
 
+	static public function renderSelect( fxFormElementSet &$e, fxForm &$f, $parent_id )
+	{
+		$o = array();
+		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value' ) );
+		$id     = htmlspecialchars($e->id);
+		$label  = htmlspecialchars($e->_name);
+
+		$o[] = "<select $attr>";
+		foreach( $e->getElements() as $el ) {
+			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
+		}
+		$o[] = '</select>';
+
+		$o = implode( "\n", $o );
+		return self::addLabel( $o, $e );
+	}
+
+
 	static public function renderTextarea( fxFormElement &$e, $parent_id )
 	{
 		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));

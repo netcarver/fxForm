@@ -270,29 +270,35 @@ class fxFormRadioset extends fxFormElementSet
 
 
 
-/* class fxSelect extends fxFormElementSet */
-/* { */
-/* 	protected $_members = null; */
-/* 	public function __construct($name, $members) */
-/* 	{ */
-/* 		parent::__construct($name); */
-/* 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members'); */
-/* 		$this->_members = $members; */
-/* 	} */
+class fxFormSelect extends fxFormElementSet
+{
+	public function __construct($name, $members)
+	{
+		parent::__construct($name);
+		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
+		$this->_members = $members;
+	}
 
-/* 	public function _getExpandedElements() */
-/* 	{ */
-/* 		$r[] = "<select {$this->_name}>\n"; */
-/* 		$r = array_merge( $r, parent::_getExpandedElements() ); */
-/* 		$r[] = "</select>\n"; */
-/* 		return $r; */
-/* 	} */
 
-/* 	public function renderUsing( $r, fxForm &$f, $parent_id ) */
-/* 	{ */
-/* 		return $r::render($this, $parent_id ); */
-/* 	} */
-/* } */
+	public function _getExpandedElements()
+	{
+		return array( $this );
+	}
+
+
+	/* public function _getExpandedElements() */
+	/* { */
+	/* 	$r[] = "<select {$this->_name}>\n"; */
+	/* 	$r = array_merge( $r, parent::_getExpandedElements() ); */
+	/* 	$r[] = "</select>\n"; */
+	/* 	return $r; */
+	/* } */
+
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
+		return $r::renderSelect($this, $f, $parent_id );
+	}
+}
 
 
 
