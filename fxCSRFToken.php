@@ -19,6 +19,7 @@ class fxCSRFToken
 		return $tok;
 	}
 
+
 	/**
 	 * Called to check that the value of the token supplied in a form matches
 	 * that stored in the session for this form.
