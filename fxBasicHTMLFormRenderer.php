@@ -64,18 +64,45 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		return $o;
 	}
 
+	static public function renderOptions( $options, fxFormElementSet &$e, fxForm &$f, $parent = '' )
+	{
+		$html5 = $f->_target === 'html5';
+		$html5 = false;
+		$o = array();
+		if( !empty( $options ) ) {
+			foreach( $options as $k => $v ) {
+				if( is_array( $v ) ) {
+					$o[] = '<optgroup label="'.htmlspecialchars($k).'">';
+					$o[] = self::renderOptions($v, $e, $f, fxForm::_simplify($k) );
+					if( !$html5 ) $o[] = "</optgroup>";
+				}
+				else {
+					$selected = in_array( fxForm::_simplify($k), $e->_value) ? ' selected' : '' ;
+					$o[] = "<option$selected value=\"".fxForm::_simplify($k)."\">".htmlspecialchars($v)."</option>";
+				}
+			}
+		}
+		return implode("\n",$o);
+	}
 
 	static public function renderSelect( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
 		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value' ) );
-		$id     = htmlspecialchars($e->id);
-		$label  = htmlspecialchars($e->_name);
+		//$id     = htmlspecialchars( $e->id );
+		$label  = htmlspecialchars( $e->_name );
 
-		$o[] = "<select $attr>";
-		foreach( $e->getElements() as $el ) {
-			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
-		}
+		$o[] = "<select$attr>";
+		/* foreach( $e->_members as $k => $v ) { */
+		/* 	if( is_array( $v ) ) { */
+		/* 		$o[] = ($f->_target == 'html5') ? '<optgroup label="'.htmlspecialchars($k).'">' : '<optgroup>'; */
+		/* 	} */
+		/* 	else { */
+		/* 		$selected = in_array( $k, $e->_value) ? ' selected' : '' ; */
+		/* 		$o[] = "<option$selected value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>"; */
+		/* 	} */
+		/* } */
+		$o[] = self::renderOptions( $e->_members, $e, $f );
 		$o[] = '</select>';
 
 		$o = implode( "\n", $o );

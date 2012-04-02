@@ -277,6 +277,7 @@ class fxFormSelect extends fxFormElementSet
 		parent::__construct($name);
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
 		$this->_members = $members;
+		$this->name = fxForm::_simplify($name).'[]';
 	}
 
 
@@ -301,6 +302,15 @@ class fxFormSelect extends fxFormElementSet
 }
 
 
+class fxFormMSelect extends fxFormSelect
+{
+	public function __construct($name, $members)
+	{
+		parent::__construct($name, $members);
+		$this->multiple();
+	}
+}
+
 
 
 /**
@@ -319,5 +329,6 @@ function Submit		( $text ) 	     						{ return new fxFormSubmit( $text ); }
 //function Reset 		( $text ) 	 							{ return new fxFormReset( $text ); }
 function Fieldset	( $legend )     						{ return new fxFormFieldset( $legend ); }
 function Select  	( $select_name, $options_array )		{ return new fxFormSelect( $select_name, $options_array ); }
+function MSelect 	( $select_name, $options_array )		{ return new fxFormMSelect( $select_name, $options_array ); }
 
 #eof
