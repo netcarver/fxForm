@@ -99,7 +99,7 @@ abstract class fxFormElement extends fxNamedSet
 
 
 /**
- * Radiosets, checkboxes and Selects are implemented by having multiple elements.
+ * Radiosets, Fieldsets, Checkboxes and Selects are implemented by having multiple elements.
  **/
 abstract class fxFormElementSet extends fxFormElement
 {

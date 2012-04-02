@@ -68,16 +68,17 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		$html5 = $f->_target === 'html5';
 		$html5 = false;
 		$o = array();
+		if( '' != $parent ) $parent .= '-';
 		if( !empty( $options ) ) {
 			foreach( $options as $k => $v ) {
 				if( is_array( $v ) ) {
 					$o[] = '<optgroup label="'.htmlspecialchars($k).'">';
-					$o[] = self::renderOptions($v, $e, $f, fxForm::_simplify($k) );
+					$o[] = self::renderOptions($v, $e, $f, $parent.fxForm::_simplify($k) );
 					if( !$html5 ) $o[] = "</optgroup>";
 				}
 				else {
-					$selected = in_array( fxForm::_simplify($k), $e->_value) ? ' selected' : '' ;
-					$o[] = "<option$selected value=\"".fxForm::_simplify($k)."\">".htmlspecialchars($v)."</option>";
+					$selected = in_array( $parent.fxForm::_simplify($k), $e->_value) ? ' selected' : '' ;
+					$o[] = "<option$selected value=\"".$parent.fxForm::_simplify($k)."\">".htmlspecialchars($v)."</option>";
 				}
 			}
 		}
