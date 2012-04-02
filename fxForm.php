@@ -157,7 +157,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 				return '<p>An unexpected error occured. Form id mismatch.</p>';
 
 			$this->_form_token = fRequest::get('_form_token');
-			$token_ok = CSRFToken::check( $this->_form_id, $this->_form_token );
+			$token_ok = fxCSRFToken::check( $this->_form_id, $this->_form_token );
 			if( !$token_ok )
 				return '<p>An unexpected error occured. Token mismatch.</p>';
 
