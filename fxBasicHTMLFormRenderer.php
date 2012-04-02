@@ -114,7 +114,7 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	{
 		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
 		$class = self::getClasses($e);
-		return self::addLabel( "<textarea $attr$class>{$e->_value}</textarea>", $e );
+		return self::addLabel( "<textarea$attr$class>{$e->_value}</textarea>", $e );
 	}
 
 
@@ -123,7 +123,7 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
 		$class = self::getClasses($e);
 		$label = htmlspecialchars($e->_name);
-		return "<button $attr$class>$label</button>";
+		return "<button$attr$class>$label</button>";
 	}
 
 	/* static public function getID(fxFormElement &$e, $parent_id) */
