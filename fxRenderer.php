@@ -38,12 +38,12 @@ abstract class fxHTMLRenderer implements fxRenderer
 
 	static public function addLabel( $thing, fxFormElement &$e, $for_id )
 	{
-		if( $e->_nolabel )
+		if( $e->_inMeta('nolabel') )
 			return $thing;
 
 		$label = '<label for="'.htmlspecialchars($e->id).'">'.htmlspecialchars($e->_name).'</label>';
 
-		return ($e->_label_right) ? $thing. $label : $label . $thing;
+		return ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
 	}
 
 
