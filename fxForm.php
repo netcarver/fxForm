@@ -19,6 +19,7 @@ class fxForm extends fxFormElementSet
 	CONST	BOOTSTRAP = 'Bootstrap';
 
 
+
 	/**
 	 * Constructor for a form.
 	 *
@@ -60,7 +61,9 @@ class fxForm extends fxFormElementSet
 	 **/
 	static public function _simplify($name)
 	{
-		return wire()->sanitizer->pageName($name, true);
+		$o = wire()->sanitizer->pageName($name, true);
+		$o = fURL::makeFriendly( $name );
+		return strtr( $o, array('[]'=>'','-'=>'_') );
 	}
 
 
@@ -126,7 +129,7 @@ class fxForm extends fxFormElementSet
 	 * If the validation passes, then the success method will be called. It can take whatever actions are needed to handle the form
 	 * and it can redirect if needed or simply return some output that will then be rendered in place of the form.
 	 **/
-	public function process($x)
+	public function process()
 	{
 		$submitted      = false;
 		$fields_ok      = true;
@@ -146,16 +149,15 @@ echo sed_dump( $GLOBALS[$array], $array );
 		if( !$submitted ) {
 			// Genetate form id and anti-CSRF token and store them for rendering in the form...
 			$this->_form_token = fxCSRFToken::get( $this->_form_id );
-//echo sed_dump( "ID[$this->_form_id], Token[$this->_form_token]" );
 		}
 		else {
 			// Do the id and token match what is expected?
-			$id_ok    = ($this->_form_id === fRequest::get('_form_id') );
+			$id_ok = ($this->_form_id === fRequest::get('_form_id') );
 			if( !$id_ok )
 				return '<p>An unexpected error occured. Form id mismatch.</p>';
 
 			$this->_form_token = fRequest::get('_form_token');
-			$token_ok = CSRFToken::check( $this->_form_id, $this->_form_token );
+			$token_ok = fxCSRFToken::check( $this->_form_id, $this->_form_token );
 			if( !$token_ok )
 				return '<p>An unexpected error occured. Token mismatch.</p>';
 
@@ -163,8 +165,8 @@ echo sed_dump( $GLOBALS[$array], $array );
 			//	Iterate over elements, populating their values & evaluating them
 			//
 			foreach( $this->_elements as $e ) {
-				if( $e instanceof fxFormElement )
-					$fields_ok = $fields_ok & $e->_isValid();
+				if( !is_string($e) )
+					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid();
 			}
 
 			if( $fields_ok ) {
@@ -179,44 +181,32 @@ echo sed_dump( $GLOBALS[$array], $array );
 						return $fn($this);
 					}
 					else
-						return sed_dump("Huzzah!");
+						return sed_dump("<h2>Huzzah!</h2>");
 				}
 			}
 
 		}
-
-		return $this->_render($x);
+		return $this->_render();
 	}
 
-	// TODO move rendering into renderer classes
-	protected function _render( $pre = true )
+
+	protected function _render( /*$pre = true*/ )
 	{
-//echo "<pre>", htmlspecialchars( var_export( $this, true ) ), "</pre>";
-
-		$o = array();
-		$renderer = $this->_renderer;
-
-		$atts = $renderer::renderAtts( $this->_getInfoExcept() );
-		$o[] = "<form action=\"{$this->_action}\" method=\"{$this->_method}\"$atts>";
 		if( !$this->_form_id || !$this->_form_token )
 			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );
 
-		$o[] = "<input type=\"hidden\" name=\"_form_id\" value=\"{$this->_form_id}\" />";
-		$o[] = "<input type=\"hidden\" name=\"_form_token\" value=\"{$this->_form_token}\" />";
-		foreach( $this->_elements as $e ) {
-			if( is_string($e) ) {
-				$o[] = $renderer::renderString($e);
-			}
-			else {
-				$o[] = $renderer::render( $e );
-			}
-		}
-		$o[] = "</form>";
-		unset( $renderer );
-		$o = implode( "\n", $o );
-		if( $pre ) $o = htmlspecialchars($o);
-		return $o;
+		return $this->renderUsing( $this->_renderer, $this, $this->id );
 	}
+
+
+	/**
+	 * Each element will be asked to use the given renderer to get itself output.
+	 **/
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
+		return $r::renderForm( $this );
+	}
+
 }
 
 

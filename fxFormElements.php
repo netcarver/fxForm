@@ -7,7 +7,7 @@
  * Note, this extends fxNamedSet but that *doesn't* mean it *is* a set of elements; it means that
  * an element *has* an associated set of data and meta-data. In this case, that data holds an
  * element's attributes and the meta data holds other information such as the name associated with
- * the element.
+ * the element, its submitted value and its datatype.
  **/
 abstract class fxFormElement extends fxNamedSet
 {
@@ -16,10 +16,18 @@ abstract class fxFormElement extends fxNamedSet
 
 	public function __construct($name , $note = null)
 	{
+		$label_right = ('>' === substr($name,0,1));
+		if( $label_right ) {
+			$name = substr($name,1);
+		}
+
 		parent::__construct($name);
 		$this->_note = $note;
 		$this->name = $this->id = fxForm::_simplify( $name );
+		$this->_label_right = $label_right;
+
 	}
+
 
 	public function match($pattern)
 	{
@@ -30,29 +38,49 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+	/**
+	 * Encode & store the submitted value (if any) in the meta info
+	 **/
+	public function _getSubmittedValue()
+	{
+		$this->_value = fRequest::encode($this->name);
+		return $this;
+	}
+
+
+	/**
+	 * Override this in derived classes if needed.
+	 **/
 	public function _isValid()
 	{
-		//
-		//	Encode & store the submitted value in the meta info
-		//
-		$this->_meta['value'] = fRequest::encode($this->_data['name']);
-$subval = var_export( $this->_meta['value'], true );
-//echo sed_dump("Validating {$this->_name} :: get({$this->_data['name']}) gives [$subval]");
+		$validator = $this->_validator;
+		$required  = $this->_inData('required');
+//throw new exception( "Validating" );
+		if( !$required )
+			return true;
 
-		//
-		//	Store the checkedness of the element based on the submitted value
-		//
-		if( in_array($this->_data['type'], self::$radio_types ) ) {
-			$this->_meta['checked'] = ($this->_data['value'] === $this->_meta['value']);	// Why is this happening at this level?
+		if( !$validator )
+			return true;
+
+		$valid = true;
+		if( '' == $this->_value ) {
+			$valid = false;
+		}
+		elseif( is_callable( $validator ) ) {
+			$valid = $validator( $this );
+		//	throw new exception( "Called validator $validator" );
+		}
+		elseif( is_string( $validator ) ) {
+			$valid = preg_match( "~$validator~", $this->_value );
+		//	throw new exception( "Tried matching validation regex $validator." );
 		}
 
-		//
-		//	Perform any needed validation...
-		//
-
-
-		return false;
+		if( !$valid ) {
+			$this->_invalid = true;
+		}
+		return $valid;
 	}
+
 
 	/**
 	 * Allow Form Elements to determine what HTML tag to use in the markup. eg fxSubmit can orchistrate the output of a button element.
@@ -61,15 +89,22 @@ $subval = var_export( $this->_meta['value'], true );
 	{
 		return get_class($this);
 	}
+
+
+	/**
+	 * Each element will be asked to use the given renderer to get itself output.
+	 **/
+	abstract public function renderUsing( $r, fxForm &$f, $parent_id );
 }
 
 
 /**
  * Radiosets, checkboxes and Selects are implemented by having multiple elements.
  **/
-abstract class fxFormElementSet extends fxNamedSet
+abstract class fxFormElementSet extends fxFormElement
 {
 	protected $_elements;
+
 
 	public function __construct( $name, $note = null )
 	{
@@ -77,6 +112,13 @@ abstract class fxFormElementSet extends fxNamedSet
 		$this->_note = $note;
 		$this->_elements = array();
 	}
+
+
+	public function getElements()
+	{
+		return $this->_elements;
+	}
+
 
 	protected function _getExpandedElements()
 	{
@@ -95,22 +137,22 @@ abstract class fxFormElementSet extends fxNamedSet
 	{
 		fxAssert::isNotEmpty( $element, 'element' );
 
-		if( $element instanceof fxNamedSet ) {
-			$element->_owner = $this->id;
-			/* TODO : defer id/name calcs to render() time? */
-			/* if( $this->id ) { */
-			/* 	$element->name = $element->id = $this->id . '-' . $element->id; */
-			/* } */
-		}
-
 		if( $element instanceof fxFormElementSet ) {
 			$this->_elements = array_merge( $this->_elements, $element->_getExpandedElements() );
 		}
-		else
+		elseif( $element instanceof fxFormElement ) {
 			$this->_elements[] = $element;
+		}
+		elseif( is_string( $element ) ) {
+			$this->_elements[] = new fxFormString( $element );
+		}
+		else {
+			throw new exception( "Added element must be a string, fxFormElement or fxFormElementSet." );
+		}
 
 		return $this;
 	}
+
 
 	/**
 	 * Allows the conditional addition of elements to a form
@@ -121,6 +163,7 @@ abstract class fxFormElementSet extends fxNamedSet
 			$this->add( $element );
 		return $this;
 	}
+
 }
 
 

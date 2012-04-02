@@ -8,19 +8,163 @@ require_once( 'fxForm.php' );
 require_once( 'fxRenderer.php' );
 require_once( 'fxBasicHTMLFormRenderer.php' );
 
+/**
+ * @class fxFormString	Allows for static text to be added to forms. This is not an input widget.
+ **/
+class fxFormString extends fxFormElement
+{
+	public function __construct($text)
+	{
+		parent::__construct(__CLASS__);
+		$this->value = $text;
+	}
 
-class fxFormInput    extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['type'] = 'text'; } }
-class fxFormButton   extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['type'] = 'button'; $this->_data['value'] = fxForm::_simplify($name); $this->_meta['nolabel'] = true; } }
-class fxFormTextArea extends fxFormElement { public function __construct($label, $note=null) { parent::__construct($label, $note); $this->_data['maxlength'] = 2000; } }
-//class fxFormUpload   extends fxFormElement {}
+	public function _isValid()
+	{
+		return $true;
+	}
+
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
+		return $r::renderString($this->value);
+	}
+}
+
+
+
+
+class fxFormInput extends fxFormElement
+{
+	public function __construct($label, $note=null)
+	{
+		parent::__construct($label, $note);
+		$this->type = 'text';
+		$this->_html = 'input';
+	}
+
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
+		return $r::render($this, $parent_id);
+	}
+}
+
+
+
+
+class fxFormButton extends fxFormElement
+{
+	public function __construct($label, $note=null)
+	{
+		parent::__construct($label, $note);
+		$this->type = 'button';
+		$this->value = fxForm::_simplify($name);
+		$this->_nolabel = true;
+		$this->_html = 'button';
+	}
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
+		return $r::renderButton($this, $parent_id );
+	}
+}
+
+
+
+
+class fxFormTextArea extends fxFormElement
+{
+	public function __construct($label, $note=null)
+	{
+		parent::__construct($label, $note);
+		$this->maxlength = 2000;
+	}
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
+		return $r::renderTextArea($this, $parent_id );
+	}
+}
+
+
+
 
 /**
  * Additional utility classes that allow simpler form definitions...
  **/
-class fxFormSubmit   extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_data['type'] = 'submit'; }   public function _getHTMLType() { return 'fxFormButton'; } }
-class fxFormReset    extends fxFormButton { public function __construct($text)  { parent::__construct($text);  $this->_data['type'] = 'reset'; }    public function _getHTMLType() { return 'fxFormButton'; } }
-class fxFormPassword extends fxFormInput  { public function __construct($label, $note) { parent::__construct($label, $note); $this->_data['type'] = 'password'; } public function _getHTMLType() { return 'fxFormInput'; } }
-class fxFormHidden   extends fxFormInput  { public function __construct($name,$value) { parent::__construct($name); $this->_data['type'] = 'hidden'; $this->_data['value'] = $value; $this->_meta['nolabel'] = true; }   public function _getHTMLType() { return 'fxFormInput'; } }
+class fxFormSubmit extends fxFormButton
+{
+	public function __construct($text)
+	{
+		parent::__construct($text);
+		$this->type = 'submit';
+	}
+
+	public function _getHTMLType()
+	{
+		return 'fxFormButton';
+	}
+
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
+		return $r::renderButton($this, $parent_id );
+	}
+}
+
+
+
+
+class fxFormReset extends fxFormButton
+{
+	public function __construct($text)
+	{
+		parent::__construct($text);
+		$this->type = 'reset';
+	}
+
+	public function _getHTMLType()
+	{
+		return 'fxFormButton';
+	}
+}
+
+
+
+
+class fxFormPassword extends fxFormInput
+{
+	public function __construct($label, $note)
+	{
+		parent::__construct($label, $note);
+		$this->type = 'password';
+		$this->_html = 'input';
+	}
+
+	public function _getHTMLType()
+	{
+		return 'fxFormInput';
+	}
+}
+
+
+
+
+class fxFormHidden extends fxFormInput
+{
+	public function __construct($name,$value)
+	{
+		parent::__construct($name);
+		$this->type = 'hidden';
+		$this->value = $value;
+		$this->_nolabel = true;
+		$this->_html = 'input';
+	}
+
+	public function _getHTMLType()
+	{
+		return 'fxFormInput';
+	}
+}
+
+
+
 
 class fxFormFieldset extends fxFormElementSet
 {
@@ -31,57 +175,78 @@ class fxFormFieldset extends fxFormElementSet
 		$r[] = "</fieldset>\n";
 		return $r;
 	}
+
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
+		return $r::render($this, $parent_id );
+	}
 }
+
+
 
 
 class fxFormCheckboxset extends fxFormElementSet
 {
-	protected $_members = null;
 	public function __construct($name, $members)
 	{
-		parent::__construct($name);
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
+
+		parent::__construct($name);
 		$this->_members = $members;
-		$this->name = fxHTMLStatement::_simplify($name);
+		$this->name = fxForm::_simplify($name).'[]';
 	}
+
 
 	public function _getExpandedElements()
 	{
-		$r = array();
+		return array( $this );
+	}
+
+
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
 		foreach( $this->_members as $k => $v ) {
-			$simple_v = $simple_k = fxHTMLStatement::_simplify($v);
+			$simple_v = $simple_k = fxForm::_simplify($v);
 			if( is_string( $k ) )
-				$simple_k = fxHTMLStatement::_simplify($k);
-			$el = fxFormInput($v);
+				$simple_k = fxForm::_simplify($k);
+			$el = new fxFormInput($v);
 			$el
 				->type('checkbox')
 				->name($this->_data['name'])
-				->id( $this->_owner . '-' . $this->_data['name'] . '-' . $simple_v )
+				->id( fxForm::_simplify($parent_id . '-' . $this->_data['name'] . '-' . $simple_v ))
 				->value($simple_k)
-				->_owner = $this->_owner;
+				->_label_right( $this->_label_right )
 				;
-			$r[] = $el;
+			if( in_array($simple_k, $this->_value ) )
+				$el->checked();
+
+			$this->_elements[] = $el;
 		}
-		return $r;
+		return $r::renderElementSet($this, $f, $parent_id );
 	}
 }
 
 
+
+
 class fxFormRadioset extends fxFormElementSet
 {
-	protected $_members = null;
 	public function __construct($name, $members)
 	{
 		parent::__construct($name);
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		if( count($members) < 2 ) throw new exception( 'There must be 2 or more members for a RadioSet to be populated.' );
 		$this->_members = $members;
-		$this->_data['name'] = fxForm::_simplify($name);
+		$this->name = fxForm::_simplify($name);
 	}
 
 	public function _getExpandedElements()
 	{
-		$r = array();
+		return array( $this );
+	}
+
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
 		foreach( $this->_members as $k => $v ) {
 			$simple_v = $simple_k = fxForm::_simplify($v);
 			if( is_string( $k ) )
@@ -90,50 +255,80 @@ class fxFormRadioset extends fxFormElementSet
 			$el
 				->type('radio')
 				->name($this->name)
-				->id( $this->_owner . '-' . $this->name . '-' . $simple_v )
+				->id( $parent_id . '-' . $this->name . '-' . $simple_v )
 				->value($simple_k)
-				->_owner = $this->_owner
+				->_label_right( $this->_label_right )
 				;
-			$r[] = $el;
+			if( $simple_k === $this->_value )
+				$el->checked();
+			$this->_elements[] = $el;
 		}
-		return $r;
+		return $r::renderElementSet( $this, $f, $parent_id );
 	}
 }
 
 
-class fxSelect extends fxFormElementSet
+
+
+class fxFormSelect extends fxFormElementSet
 {
-	protected $_members = null;
 	public function __construct($name, $members)
 	{
 		parent::__construct($name);
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
 		$this->_members = $members;
+		$this->name = fxForm::_simplify($name).'[]';
 	}
+
 
 	public function _getExpandedElements()
 	{
-		$r[] = "<select {$this->_name}>\n";
-		$r = array_merge( $r, parent::_getExpandedElements() );
-		$r[] = "</select>\n";
-		return $r;
+		return array( $this );
+	}
+
+
+	/* public function _getExpandedElements() */
+	/* { */
+	/* 	$r[] = "<select {$this->_name}>\n"; */
+	/* 	$r = array_merge( $r, parent::_getExpandedElements() ); */
+	/* 	$r[] = "</select>\n"; */
+	/* 	return $r; */
+	/* } */
+
+	public function renderUsing( $r, fxForm &$f, $parent_id )
+	{
+		return $r::renderSelect($this, $f, $parent_id );
 	}
 }
+
+
+class fxFormMSelect extends fxFormSelect
+{
+	public function __construct($name, $members)
+	{
+		parent::__construct($name, $members);
+		$this->multiple();
+	}
+}
+
 
 
 /**
  * Convenience creator functions. These allow chaining from point of creation and make for a more fluent interface...
  **/
-function Form( $form_name, $action, $method="post" )	 { return new fxForm( $form_name, $action, $method ); }
-function Input( $label, $note=null )	     { return new fxFormInput    ( $label, $note ); }
-function Password( $label )      { return new fxFormPassword ($label); }
-function Hidden( $name, $value ) { return new fxFormHidden   ($name, $value); }
-function TextArea( $label, $note )      { return new fxFormTextArea ( $label, $note ); }
-function Button( $text )         { return new fxFormButton   ( $text ); }
-function Submit( $text ) 	     { return new fxFormSubmit   ( $text ); }
-//function Reset ( $text ) 	 { return new fxFormReset   ( $text ); }
-function Fieldset( $legend )     { return new fxFormFieldset ( $legend ); }
-function Radios( $group_name, $members_array ) { return new fxFormRadioset($group_name, $members_array); }
-function Checkboxes( $group_name, $members_array ) { return new fxFormCheckboxset($group_name, $members_array); }
+function Form		( $form_name, $action, $method="post" )	{ return new fxForm( $form_name, $action, $method ); }
+function Checkboxes	( $group_name, $members_array ) 		{ return new fxFormCheckboxset( $group_name, $members_array ); }
+function Radios		( $group_name, $members_array ) 		{ return new fxFormRadioset( $group_name, $members_array ); }
+function Text		( $text )            					{ return new fxFormString( $text ); }
+function Input		( $label, $note=null )	     			{ return new fxFormInput( $label, $note ); }
+function Password	( $label )      						{ return new fxFormPassword( $label ); }
+function Hidden		( $name, $value ) 						{ return new fxFormHidden( $name, $value ); }
+function TextArea	( $label, $note )      					{ return new fxFormTextArea( $label, $note ); }
+function Button		( $text )         						{ return new fxFormButton( $text ); }
+function Submit		( $text ) 	     						{ return new fxFormSubmit( $text ); }
+//function Reset 		( $text ) 	 							{ return new fxFormReset( $text ); }
+function Fieldset	( $legend )     						{ return new fxFormFieldset( $legend ); }
+function Select  	( $select_name, $options_array )		{ return new fxFormSelect( $select_name, $options_array ); }
+function MSelect 	( $select_name, $options_array )		{ return new fxFormMSelect( $select_name, $options_array ); }
 
 #eof
