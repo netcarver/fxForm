@@ -189,7 +189,7 @@ class fxForm extends fxFormElementSet
 		//
 		if( strtoupper( $_SERVER['REQUEST_METHOD'] ) === $src ) {
 			$array = "_$src";
-echo sed_dump( $GLOBALS[$array], $array );
+//echo sed_dump( $GLOBALS[$array], $array );
 			$submitted = !empty($GLOBALS[$array]);
 		}
 

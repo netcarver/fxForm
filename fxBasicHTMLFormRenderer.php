@@ -67,7 +67,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		}
 		$o[] = "</form>";
 		$o = implode( "\n", $o );
-echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
+//echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		return $o;
 	}
 
