@@ -77,7 +77,7 @@ abstract class fxFormElement extends fxNamedSet
 		 * Ok, if we get here then this is a required value. That implies, that it can't be empty so return false if it is...
 		 **/
 		if( '' == $submitted )
-			return $this->_setValidity(false, 'requires a value.' ,$errors);
+			return $this->_setValidity(false, '* requires a value.' ,$errors);
 
 		/**
 		 * Required & not empty. If there's no validator then that's all that's needed to pass validation...

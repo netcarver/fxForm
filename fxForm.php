@@ -142,7 +142,7 @@ class fxForm extends fxFormElementSet
 	 * * Hidden
 	 *
 	 **/
-	public function setRenderer( $name, $prefix = '', $suffix = '', $label_class = '', $target = 'html5' )
+	public function setRenderer( $name, $prefix = '', $suffix = '<br>', $label_class = '', $target = 'html5' )
 	{
 		fxAssert::isNonEmptyString($name,   'name',   "Renderer name must be a non-empty string.");
 		fxAssert::isNonEmptyString($target, 'target', "Target for renderer must be a non-empty string.");
