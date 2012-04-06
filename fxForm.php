@@ -184,15 +184,20 @@ echo sed_dump( $GLOBALS[$array], $array );
 			//	Iterate over elements, populating their values & evaluating them
 			//
 			foreach( $this->_elements as $e ) {
-				if( !is_string($e) )
+				if( !is_string($e) ) {
 					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid();
+					/* if( !$fields_ok ) */
+					/* 	throw new exception( "Field validation failed whilst validating [{$e->name}]" ); */
+				}
 			}
 
 			if( $fields_ok ) {
 				//
 				//	Run the form validator (if any)
 				//
-
+				$validator = $this->_validator;
+				if( is_callable( $validator ) )
+					$form_ok = $validator( $this );
 
 				if( $form_ok ) {
 					if( is_callable($this->_onSuccess) ) {
