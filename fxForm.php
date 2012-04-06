@@ -223,22 +223,26 @@ echo sed_dump( $GLOBALS[$array], $array );
 					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid( $this->errors, $this );
 				}
 			}
-
+//echo "<pre>", htmlspecialchars( var_export( $this->_elements , true )), "\n\n</pre>\n";
 			if( $fields_ok ) {
 				//
 				//	Run the form validator (if any)
 				//
 				$validator = $this->_validator;
-				if( is_callable( $validator ) )
-					$form_ok = $validator( $this );
-
+				if( is_callable( $validator ) ) {
+					$v = $validator( $this );
+					$form_ok = (true === $v);
+				}
 				if( $form_ok ) {
 					if( is_callable($this->_onSuccess) ) {
 						$fn = $this->_onSuccess;
 						return $fn($this);
 					}
 					else
-						return sed_dump("<h2>Huzzah!</h2>");
+						throw new exception( "Form submission successful but no onSuccess callback defined." );
+				}
+				else {
+					return $v;
 				}
 			}
 
