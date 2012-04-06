@@ -218,9 +218,12 @@ class fxFormCheckboxset extends fxFormElementSet
 				->value($simple_k)
 				->_label_right( $this->_label_right )
 				;
+			if( $this->_inData('required') )
+				$el->required();
+			/* if( $this->_inMeta('valid') ) */
+			/* 	$el->_valid = true; */
 			if( in_array($simple_k, $this->_value ) )
 				$el->checked();
-
 			$this->_elements[] = $el;
 		}
 		return $r::renderElementSet($this, $f, $parent_id );
