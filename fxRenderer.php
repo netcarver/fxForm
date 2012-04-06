@@ -10,7 +10,9 @@ interface fxRenderer
 abstract class fxHTMLRenderer implements fxRenderer
 {
 	static public $submitting = false;
-	static public $renderingElementSet = false;
+	static public $rendering_element_set = false;
+	static public $element_prefix = '';
+	static public $element_suffix = '';
 
 	/**
 	 * Takes an array of attributes ( name => values ) and creates an HTML formatted string from it.
@@ -41,7 +43,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 
 	static public function addErrorMessage( fxFormElement &$e, fxForm &$f )
 	{
-		if( self::$renderingElementSet ) // Don't put the owning element's errors on each child that is used to render it.
+		if( self::$rendering_element_set ) // Don't put the owning element's errors on each child that is used to render it.
 			return;
 
 		if( 'hidden' === $e->type )	// Never display errors for hidden elements.
@@ -80,10 +82,14 @@ abstract class fxHTMLRenderer implements fxRenderer
 		$classes = array();
 		if( $e->class )
 			$classes[] = htmlspecialchars($e->class);
-		if( $e->_inData('required') )
-			$classes[] = 'required';
-		if( self::$submitting && !$e->_inMeta('valid') )
-			$classes[] = 'error';
+
+		if( !self::$rendering_element_set ) {
+			if( !self::$submitting && $e->_inData('required') )
+				$classes[] = 'required';
+			if( self::$submitting && !$e->_inMeta('valid') )
+				$classes[] = 'error';
+		}
+
 		if( empty( $classes ) )
 			return '';
 

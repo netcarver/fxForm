@@ -37,7 +37,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	static public function renderForm( fxForm &$f )
 	{
-		self::$renderingElementSet = false;
+		self::$rendering_element_set = false;
 		$o = array();
 		$atts = self::renderAtts( $f->_getInfoExcept() );
 		$o[] = "<form action=\"{$f->_action}\" method=\"{$f->_method}\"$atts>";
@@ -75,14 +75,14 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	static public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
-		self::$renderingElementSet = true;
 		$class = self::getClasses($e);
+		self::$rendering_element_set = true;
 		$o[] = "<div$class>";
 		foreach( $e->getElements() as $el ) {
 //echo "<pre>",htmlspecialchars( var_export( $el, true ) ), "</pre>\n";
 			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
 		}
-		self::$renderingElementSet = false;
+		self::$rendering_element_set = false;
 		$o[] = '</div>';
 		$errmsg = self::addErrorMessage( $e, $f );
 		if( '' !== $errmsg ) $o[] = $errmsg;
