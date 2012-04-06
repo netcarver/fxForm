@@ -9,6 +9,8 @@ interface fxRenderer
 
 abstract class fxHTMLRenderer implements fxRenderer
 {
+	static public $submitting = false;
+
 	/**
 	 * Takes an array of attributes ( name => values ) and creates an HTML formatted string from it.
 	 **/
@@ -54,7 +56,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 			$classes[] = htmlspecialchars($e->class);
 		if( $e->_inData('required') )
 			$classes[] = 'required';
-		if( $e->_inMeta('invalid') )
+		if( self::$submitting && !$e->_inMeta('valid') )
 			$classes[] = 'error';
 		if( empty( $classes ) )
 			return '';
