@@ -173,7 +173,7 @@ class fxFormFieldset extends fxFormElementSet
 {
 	public function _getExpandedElements()
 	{
-		$r[] = "<fieldset>\n<legend>{$this->_name}</legend>\n";
+		$r[] = "\n<fieldset>\n<legend>{$this->_name}</legend>";
 		$r = array_merge( $r, parent::_getExpandedElements() );
 		$r[] = "</fieldset>\n";
 		return $r;
