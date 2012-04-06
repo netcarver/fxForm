@@ -113,7 +113,7 @@ class fxForm extends fxFormElementSet
 	 * * Hidden
 	 *
 	 **/
-	public function setRenderer( $name, $target = self::HTML5 )
+	public function setRenderer( $name, $target = self::HTML5 ) // TODO add a wraptag attribute that will be rendered around every element.
 	{
 		fxAssert::isNonEmptyString($name,   'name',   "Renderer name must be a non-empty string.");
 		fxAssert::isNonEmptyString($target, 'target', "Target for renderer must be a non-empty string.");
@@ -185,9 +185,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 			//
 			foreach( $this->_elements as $e ) {
 				if( !is_string($e) ) {
-					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid();
-					/* if( !$fields_ok ) */
-					/* 	throw new exception( "Field validation failed whilst validating [{$e->name}]" ); */
+					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid( $this->errors, $this );
 				}
 			}
 

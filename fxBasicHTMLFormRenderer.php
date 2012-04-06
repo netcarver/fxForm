@@ -2,7 +2,7 @@
 
 class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 {
-	static public function render( fxFormElement &$e, $parent_id )
+	static public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
 		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value' ) );
 		$label  = htmlspecialchars($e->_name);
@@ -100,7 +100,7 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	}
 
 
-	static public function renderTextarea( fxFormElement &$e, $parent_id )
+	static public function renderTextarea( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
 		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
 		$class = self::getClasses($e);

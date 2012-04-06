@@ -45,7 +45,7 @@ class fxFormInput extends fxFormElement
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::render($this, $parent_id);
+		return $r::render($this, $f, $parent_id);
 	}
 }
 
@@ -79,9 +79,10 @@ class fxFormTextArea extends fxFormElement
 		parent::__construct($label, $note);
 		$this->maxlength = 2000;
 	}
+
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::renderTextArea($this, $parent_id );
+		return $r::renderTextArea($this, $f, $parent_id );
 	}
 }
 
@@ -180,7 +181,7 @@ class fxFormFieldset extends fxFormElementSet
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::render($this, $parent_id );
+		return $r::render($this, $f, $parent_id );
 	}
 }
 
