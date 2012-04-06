@@ -21,7 +21,7 @@ class fxFormString extends fxFormElement
 
 	public function _isValid()
 	{
-		return $true;
+		return true;
 	}
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
