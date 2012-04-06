@@ -66,7 +66,6 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	static public function renderOptions( $options, fxFormElementSet &$e, fxForm &$f, $parent = '' )
 	{
 		$html5 = $f->_target === 'html5';
-		$html5 = false;
 		$o = array();
 		if( '' != $parent ) $parent .= '-';
 		if( !empty( $options ) ) {

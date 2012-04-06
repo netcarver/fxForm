@@ -282,20 +282,10 @@ class fxFormSelect extends fxFormElementSet
 		$this->name = fxForm::_simplify($name).'[]';
 	}
 
-
 	public function _getExpandedElements()
 	{
 		return array( $this );
 	}
-
-
-	/* public function _getExpandedElements() */
-	/* { */
-	/* 	$r[] = "<select {$this->_name}>\n"; */
-	/* 	$r = array_merge( $r, parent::_getExpandedElements() ); */
-	/* 	$r[] = "</select>\n"; */
-	/* 	return $r; */
-	/* } */
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{

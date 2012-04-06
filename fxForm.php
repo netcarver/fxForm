@@ -228,7 +228,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 	 **/
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::renderForm( $this );
+		return $r::renderForm( $f );
 	}
 
 }
