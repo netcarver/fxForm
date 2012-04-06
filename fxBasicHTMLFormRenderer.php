@@ -140,16 +140,6 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		$label = htmlspecialchars($e->_name);
 		return "<button$attr$class>$label</button>";
 	}
-
-	/* static public function getID(fxFormElement &$e, $parent_id) */
-	/* { */
-	/* 	if( $e->_inData('id') ) */
-	/* 		return htmlspecialchars($e->id); */
-
-	/* 	$id = ( $parent_id ) ? $parent_id : '' ; */
-	/* 	$id = fxForm::_simplify( $id . '_' . $e->_name ); */
-	/* 	return $id; */
-	/* } */
 }
 
 
