@@ -86,6 +86,20 @@ class fxForm extends fxFormElementSet
 	}
 
 
+
+	public function getValueOf($name)
+	{
+		if( !empty($this->_elements ) ) {
+			foreach( $this->_elements as $e ) {
+				if( self::_simplify($name) == $e->name )
+					return $e->_value;
+			}
+		}
+		return NULL;
+	}
+
+
+
 	/**
 	 * Define which renderer is to be tasked with generating the form output for display.
 	 * Whilst XML-like statements with attributes are the obvious outputs, renderers can be supplied that do
