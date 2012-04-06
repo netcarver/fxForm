@@ -54,7 +54,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 					$o[] = $msg;
 			}
 			else {
-				$o[] = '<div class="error"><p>There was a problem with your form. Please correct any errors and try again.</p></div>';
+				$o[] = '<div class="form-errors"><p>There was a problem with your form. Please correct any errors and try again.</p></div>';
 			}
 		}
 
