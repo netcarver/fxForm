@@ -93,15 +93,6 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		$label  = htmlspecialchars( $e->_name );
 
 		$o[] = "<select$attr>";
-		/* foreach( $e->_members as $k => $v ) { */
-		/* 	if( is_array( $v ) ) { */
-		/* 		$o[] = ($f->_target == 'html5') ? '<optgroup label="'.htmlspecialchars($k).'">' : '<optgroup>'; */
-		/* 	} */
-		/* 	else { */
-		/* 		$selected = in_array( $k, $e->_value) ? ' selected' : '' ; */
-		/* 		$o[] = "<option$selected value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>"; */
-		/* 	} */
-		/* } */
 		$o[] = self::renderOptions( $e->_members, $e, $f );
 		$o[] = '</select>';
 
