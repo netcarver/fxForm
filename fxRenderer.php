@@ -41,7 +41,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 
 	static public function addErrorMessage( fxFormElement &$e, fxForm &$f )
 	{
-		if( self::$renderingElementSet )
+		if( self::$renderingElementSet ) // Don't put the owning element's errors on each child that is used to render it.
 			return;
 
 		if( 'hidden' === $e->type )	// Never display errors for hidden elements.
