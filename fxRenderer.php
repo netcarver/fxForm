@@ -10,6 +10,7 @@ interface fxRenderer
 abstract class fxHTMLRenderer implements fxRenderer
 {
 	static public $submitting = false;
+	static public $renderingElementSet = false;
 
 	/**
 	 * Takes an array of attributes ( name => values ) and creates an HTML formatted string from it.

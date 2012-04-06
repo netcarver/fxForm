@@ -27,6 +27,9 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		else
 			$o[] = "value=\"$subval\" />";
 
+		$errmsg = self::addErrorMessage( $e, $f );
+		if( '' !== $errmsg ) $o[] = $errmsg;
+
 		$o = join( " ", $o );
 		return self::addLabel( $o, $e );
 	}
@@ -34,11 +37,27 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	static public function renderForm( fxForm &$f )
 	{
+		self::$renderingElementSet = false;
 		$o = array();
 		$atts = self::renderAtts( $f->_getInfoExcept() );
 		$o[] = "<form action=\"{$f->_action}\" method=\"{$f->_method}\"$atts>";
 		$o[] = "<input type=\"hidden\" name=\"_form_id\" value=\"{$f->_form_id}\" />";
 		$o[] = "<input type=\"hidden\" name=\"_form_token\" value=\"{$f->_form_token}\" />";
+
+
+		if( $f->hasErrors() ) {
+			// Use a form errors formatting callback to override basic message.
+			$formErrorsCB = $f->_formatFormErrors;
+			if( is_callable( $formErrorsCB ) ) {
+				$msg = $formErrorsCB( $f );
+				if( is_string($msg) && '' !== $msg )
+					$o[] = $msg;
+			}
+			else {
+				$o[] = '<div class="error"><p>There was a problem with your form. Please correct any errors and try again.</p></div>';
+			}
+		}
+
 		foreach( $f->getElements() as $child ) {
 			if( is_string($child) )
 				$o[] = $child;
@@ -56,9 +75,15 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	static public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
+		self::$renderingElementSet = true;
 		foreach( $e->getElements() as $el ) {
+//echo "<pre>",htmlspecialchars( var_export( $el, true ) ), "</pre>\n";
 			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
 		}
+		self::$renderingElementSet = false;
+		$errmsg = self::addErrorMessage( $e, $f );
+		if( '' !== $errmsg ) $o[] = $errmsg;
+
 		$o = implode( "\n", $o );
 		return $o;
 	}
@@ -104,7 +129,7 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	{
 		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
 		$class = self::getClasses($e);
-		return self::addLabel( "<textarea$attr$class>{$e->_value}</textarea>", $e );
+		return self::addLabel( "<textarea$attr$class>{$e->_value}</textarea>".self::addErrorMessage( $e, $f ), $e );
 	}
 
 
