@@ -19,6 +19,8 @@ class fxForm extends fxFormElementSet
 	CONST	BOOTSTRAP = 'Bootstrap';
 
 
+	protected	$errors;
+
 
 	/**
 	 * Constructor for a form.
@@ -43,8 +45,41 @@ class fxForm extends fxFormElementSet
 		$this->_action = $action;
 
 		$this->id = self::_simplify("form-$name");
+
+		$this->errors = array();
 	}
 
+
+	public function formatFormErrors( $cb )
+	{
+		fxAssert::isCallable($cb);
+		$this->_formatFormErrors = $cb;
+		return $this;
+	}
+
+	public function formatElementErrors( $cb )
+	{
+		fxAssert::isCallable($cb);
+		$this->_formatElementErrors = $cb;
+		return $this;
+	}
+
+
+	public function hasErrors()
+	{
+		return !empty($this->errors);
+	}
+
+
+	public function getErrorFor($name)
+	{
+		return @$this->errors[$name];
+	}
+
+	public function getErrors()
+	{
+		return $this->errors;
+	}
 
 	/**
 	 * Dumps the contents of the form in a way that is viewable in your browser.
