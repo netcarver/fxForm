@@ -20,7 +20,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$o[] = "<$type$attr$plce$class";
 
-		if( 'button' == $type || 'submit' == $e->type || 'reset' == $e->type )
+		if( 'submit' == $e->type || 'reset' == $e->type )
 			$o[] = "value=\"$elval\" />$label</button>";
 		elseif( in_array( $e->type, fxFormElement::$radio_types) || 'hidden' === $e->type )
 			$o[] = "value=\"$elval\" />";
@@ -76,11 +76,14 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	{
 		$o = array();
 		self::$renderingElementSet = true;
+		$class = self::getClasses($e);
+		$o[] = "<div$class>";
 		foreach( $e->getElements() as $el ) {
 //echo "<pre>",htmlspecialchars( var_export( $el, true ) ), "</pre>\n";
 			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
 		}
 		self::$renderingElementSet = false;
+		$o[] = '</div>';
 		$errmsg = self::addErrorMessage( $e, $f );
 		if( '' !== $errmsg ) $o[] = $errmsg;
 
