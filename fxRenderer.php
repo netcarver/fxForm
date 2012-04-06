@@ -4,11 +4,17 @@ interface fxRenderer
 {
 	static public function renderString( $s );
 	static public function renderAtts( $atts );
-	static public function render( fxFormElement &$e, $parent_id );
+	static public function render( fxFormElement &$e, fxForm &$f, $parent_id );
 }
 
 abstract class fxHTMLRenderer implements fxRenderer
 {
+	static public $submitting = false;
+	static public $rendering_element_set = false;
+	static public $element_prefix = '';
+	static public $element_suffix = '';
+	static public $label_class    = '';
+
 	/**
 	 * Takes an array of attributes ( name => values ) and creates an HTML formatted string from it.
 	 **/
@@ -36,14 +42,43 @@ abstract class fxHTMLRenderer implements fxRenderer
 	}
 
 
+	static public function addErrorMessage( fxFormElement &$e, fxForm &$f )
+	{
+		if( self::$rendering_element_set ) // Don't put the owning element's errors on each child that is used to render it.
+			return;
+
+		if( 'hidden' === $e->type )	// Never display errors for hidden elements.
+			return;
+
+		$o = '';
+		if( self::$submitting && !$e->_inMeta('valid') ) {
+//echo "<pre>",htmlspecialchars( var_export($e->_getMeta() , true) ),"</pre>";
+			// Element is in error so format a per-element error message and add it...
+			if( is_callable( $f->_formatElementErrors ) ) {
+				$cb = $f->_formatElementErrors;
+				$msg = $cb( $e, $f );
+				if( is_string($msg) )
+					if( '' !== $msg ) $o = $msg;	// Callback can return an empty string to surpress per-element error messages.
+			}
+			else {
+				$o = '<span class="error-msg">'.$f->getErrorFor($e->name).'</span>';
+			}
+		}
+		return $o;
+	}
+
 	static public function addLabel( $thing, fxFormElement &$e, $for_id )
 	{
 		if( $e->_inMeta('nolabel') )
 			return $thing;
 
-		$label = '<label for="'.htmlspecialchars($e->id).'">'.htmlspecialchars($e->_name).'</label>';
+		$lclass = ( '' !== self::$label_class ) ? ' class="'.self::$label_class.'"' : '';
+		$label  = '<label for="'.htmlspecialchars($e->id).'"'.$lclass.'>'.htmlspecialchars($e->_name).'</label>';
 
-		return ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
+		$o = ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
+		if( !self::$rendering_element_set )
+			$o = self::$element_prefix . $o . self::$element_suffix;
+		return $o;
 	}
 
 
@@ -52,10 +87,14 @@ abstract class fxHTMLRenderer implements fxRenderer
 		$classes = array();
 		if( $e->class )
 			$classes[] = htmlspecialchars($e->class);
-		if( $e->_inData('required') )
-			$classes[] = 'required';
-		if( $e->_inMeta('invalid') )
-			$classes[] = 'error';
+
+		if( !self::$rendering_element_set ) {
+			if( !self::$submitting && $e->_inData('required') )
+				$classes[] = 'required';
+			if( self::$submitting && !$e->_inMeta('valid') )
+				$classes[] = 'error';
+		}
+
 		if( empty( $classes ) )
 			return '';
 

@@ -2,7 +2,7 @@
 
 class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 {
-	static public function render( fxFormElement &$e, $parent_id )
+	static public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
 		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value' ) );
 		$label  = htmlspecialchars($e->_name);
@@ -20,12 +20,15 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$o[] = "<$type$attr$plce$class";
 
-		if( 'button' == $type || 'submit' == $e->type || 'reset' == $e->type )
+		if( 'submit' == $e->type || 'reset' == $e->type )
 			$o[] = "value=\"$elval\" />$label</button>";
 		elseif( in_array( $e->type, fxFormElement::$radio_types) || 'hidden' === $e->type )
 			$o[] = "value=\"$elval\" />";
 		else
 			$o[] = "value=\"$subval\" />";
+
+		$errmsg = self::addErrorMessage( $e, $f );
+		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = join( " ", $o );
 		return self::addLabel( $o, $e );
@@ -34,11 +37,27 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	static public function renderForm( fxForm &$f )
 	{
+		self::$rendering_element_set = false;
 		$o = array();
 		$atts = self::renderAtts( $f->_getInfoExcept() );
 		$o[] = "<form action=\"{$f->_action}\" method=\"{$f->_method}\"$atts>";
 		$o[] = "<input type=\"hidden\" name=\"_form_id\" value=\"{$f->_form_id}\" />";
 		$o[] = "<input type=\"hidden\" name=\"_form_token\" value=\"{$f->_form_token}\" />";
+
+
+		if( $f->hasErrors() ) {
+			// Use a form errors formatting callback to override basic message.
+			$formErrorsCB = $f->_formatFormErrors;
+			if( is_callable( $formErrorsCB ) ) {
+				$msg = $formErrorsCB( $f );
+				if( is_string($msg) && '' !== $msg )
+					$o[] = $msg;
+			}
+			else {
+				$o[] = '<div class="form-errors"><p>There was a problem with your form. Please correct any errors and try again.</p></div>';
+			}
+		}
+
 		foreach( $f->getElements() as $child ) {
 			if( is_string($child) )
 				$o[] = $child;
@@ -48,7 +67,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		}
 		$o[] = "</form>";
 		$o = implode( "\n", $o );
-echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
+//echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		return $o;
 	}
 
@@ -56,9 +75,18 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	static public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
+		$class = self::getClasses($e);
+		self::$rendering_element_set = true;
+		$o[] = "<div$class>";
 		foreach( $e->getElements() as $el ) {
+//echo "<pre>",htmlspecialchars( var_export( $el, true ) ), "</pre>\n";
 			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
 		}
+		self::$rendering_element_set = false;
+		$o[] = '</div>';
+		$errmsg = self::addErrorMessage( $e, $f );
+		if( '' !== $errmsg ) $o[] = $errmsg;
+
 		$o = implode( "\n", $o );
 		return $o;
 	}
@@ -66,18 +94,18 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	static public function renderOptions( $options, fxFormElementSet &$e, fxForm &$f, $parent = '' )
 	{
 		$html5 = $f->_target === 'html5';
-		$html5 = false;
 		$o = array();
+		if( '' != $parent ) $parent .= '-';
 		if( !empty( $options ) ) {
 			foreach( $options as $k => $v ) {
 				if( is_array( $v ) ) {
 					$o[] = '<optgroup label="'.htmlspecialchars($k).'">';
-					$o[] = self::renderOptions($v, $e, $f, fxForm::_simplify($k) );
+					$o[] = self::renderOptions($v, $e, $f, $parent.fxForm::_simplify($k) );
 					if( !$html5 ) $o[] = "</optgroup>";
 				}
 				else {
-					$selected = in_array( fxForm::_simplify($k), $e->_value) ? ' selected' : '' ;
-					$o[] = "<option$selected value=\"".fxForm::_simplify($k)."\">".htmlspecialchars($v)."</option>";
+					$selected = in_array( $parent.fxForm::_simplify($k), $e->_value) ? ' selected' : '' ;
+					$o[] = "<option$selected value=\"".$parent.fxForm::_simplify($k)."\">".htmlspecialchars($v)."</option>";
 				}
 			}
 		}
@@ -92,15 +120,6 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		$label  = htmlspecialchars( $e->_name );
 
 		$o[] = "<select$attr>";
-		/* foreach( $e->_members as $k => $v ) { */
-		/* 	if( is_array( $v ) ) { */
-		/* 		$o[] = ($f->_target == 'html5') ? '<optgroup label="'.htmlspecialchars($k).'">' : '<optgroup>'; */
-		/* 	} */
-		/* 	else { */
-		/* 		$selected = in_array( $k, $e->_value) ? ' selected' : '' ; */
-		/* 		$o[] = "<option$selected value=\"".htmlspecialchars($k)."\">".htmlspecialchars($v)."</option>"; */
-		/* 	} */
-		/* } */
 		$o[] = self::renderOptions( $e->_members, $e, $f );
 		$o[] = '</select>';
 
@@ -109,11 +128,11 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 	}
 
 
-	static public function renderTextarea( fxFormElement &$e, $parent_id )
+	static public function renderTextarea( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
 		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
 		$class = self::getClasses($e);
-		return self::addLabel( "<textarea$attr$class>{$e->_value}</textarea>", $e );
+		return self::addLabel( "<textarea$attr$class>{$e->_value}</textarea>".self::addErrorMessage( $e, $f ), $e );
 	}
 
 
@@ -124,16 +143,6 @@ echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 		$label = htmlspecialchars($e->_name);
 		return "<button$attr$class>$label</button>";
 	}
-
-	/* static public function getID(fxFormElement &$e, $parent_id) */
-	/* { */
-	/* 	if( $e->_inData('id') ) */
-	/* 		return htmlspecialchars($e->id); */
-
-	/* 	$id = ( $parent_id ) ? $parent_id : '' ; */
-	/* 	$id = fxForm::_simplify( $id . '_' . $e->_name ); */
-	/* 	return $id; */
-	/* } */
 }
 
 

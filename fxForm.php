@@ -13,11 +13,7 @@
  **/
 class fxForm extends fxFormElementSet
 {
-	CONST	HTML4     = 'html4';	// TODO : These are all to do with the rendering, not with form structure so this is the wrong place for them
-	CONST	HTML5     = 'html5';
-	CONST	BASIC     = 'BasicHTML';
-	CONST	BOOTSTRAP = 'Bootstrap';
-
+	protected	$errors;
 
 
 	/**
@@ -43,8 +39,41 @@ class fxForm extends fxFormElementSet
 		$this->_action = $action;
 
 		$this->id = self::_simplify("form-$name");
+
+		$this->errors = array();
 	}
 
+
+	public function formatFormErrors( $cb )
+	{
+		fxAssert::isCallable($cb);
+		$this->_formatFormErrors = $cb;
+		return $this;
+	}
+
+	public function formatElementErrors( $cb )
+	{
+		fxAssert::isCallable($cb);
+		$this->_formatElementErrors = $cb;
+		return $this;
+	}
+
+
+	public function hasErrors()
+	{
+		return !empty($this->errors);
+	}
+
+
+	public function getErrorFor($name)
+	{
+		return @$this->errors[$name];
+	}
+
+	public function getErrors()
+	{
+		return $this->errors;
+	}
 
 	/**
 	 * Dumps the contents of the form in a way that is viewable in your browser.
@@ -86,6 +115,20 @@ class fxForm extends fxFormElementSet
 	}
 
 
+
+	public function getValueOf($name)
+	{
+		if( !empty($this->_elements ) ) {
+			foreach( $this->_elements as $e ) {
+				if( self::_simplify($name) == $e->name )
+					return $e->_value;
+			}
+		}
+		return NULL;
+	}
+
+
+
 	/**
 	 * Define which renderer is to be tasked with generating the form output for display.
 	 * Whilst XML-like statements with attributes are the obvious outputs, renderers can be supplied that do
@@ -99,7 +142,7 @@ class fxForm extends fxFormElementSet
 	 * * Hidden
 	 *
 	 **/
-	public function setRenderer( $name, $target = self::HTML5 )
+	public function setRenderer( $name, $prefix = '', $suffix = '<br>', $label_class = '', $target = 'html5' )
 	{
 		fxAssert::isNonEmptyString($name,   'name',   "Renderer name must be a non-empty string.");
 		fxAssert::isNonEmptyString($target, 'target', "Target for renderer must be a non-empty string.");
@@ -110,7 +153,11 @@ class fxForm extends fxFormElementSet
 			throw new exception( "Renderer $className cannot be found." );
 
 		$this->_renderer = $className;
-		$this->_target   = $target;
+		$this->_target   = strtolower($target);
+
+		$className::$element_prefix = $prefix;
+		$className::$element_suffix = $suffix;
+		$className::$label_class    = $label_class;
 		return $this;
 	}
 
@@ -142,7 +189,7 @@ class fxForm extends fxFormElementSet
 		//
 		if( strtoupper( $_SERVER['REQUEST_METHOD'] ) === $src ) {
 			$array = "_$src";
-echo sed_dump( $GLOBALS[$array], $array );
+//echo sed_dump( $GLOBALS[$array], $array );
 			$submitted = !empty($GLOBALS[$array]);
 		}
 
@@ -151,6 +198,11 @@ echo sed_dump( $GLOBALS[$array], $array );
 			$this->_form_token = fxCSRFToken::get( $this->_form_id );
 		}
 		else {
+			// Signal to the renderer that a submission is underway. This allows it to conditionally add
+			// classes when rendering
+			$r = $this->_renderer;
+			$r::$submitting = true;
+
 			// Do the id and token match what is expected?
 			$id_ok = ($this->_form_id === fRequest::get('_form_id') );
 			if( !$id_ok )
@@ -165,23 +217,30 @@ echo sed_dump( $GLOBALS[$array], $array );
 			//	Iterate over elements, populating their values & evaluating them
 			//
 			foreach( $this->_elements as $e ) {
-				if( !is_string($e) )
-					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid();
+				if( !is_string($e) ) {
+					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid( $this->errors, $this );
+				}
 			}
-
+//echo "<pre>", htmlspecialchars( var_export( $this->_elements , true )), "\n\n</pre>\n";
 			if( $fields_ok ) {
 				//
 				//	Run the form validator (if any)
 				//
-
-
+				$validator = $this->_validator;
+				if( is_callable( $validator ) ) {
+					$v = $validator( $this );
+					$form_ok = (true === $v);
+				}
 				if( $form_ok ) {
 					if( is_callable($this->_onSuccess) ) {
 						$fn = $this->_onSuccess;
 						return $fn($this);
 					}
 					else
-						return sed_dump("<h2>Huzzah!</h2>");
+						throw new exception( "Form submission successful but no onSuccess callback defined." );
+				}
+				else {
+					return $v;
 				}
 			}
 
@@ -204,7 +263,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 	 **/
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::renderForm( $this );
+		return $r::renderForm( $f );
 	}
 
 }

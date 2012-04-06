@@ -19,9 +19,10 @@ class fxFormString extends fxFormElement
 		$this->value = $text;
 	}
 
-	public function _isValid()
+	public function _isValid( &$errors, fxForm &$f )
 	{
-		return $true;
+		$this->_valid = true;
+		return true;
 	}
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
@@ -44,7 +45,7 @@ class fxFormInput extends fxFormElement
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::render($this, $parent_id);
+		return $r::render($this, $f, $parent_id);
 	}
 }
 
@@ -61,6 +62,7 @@ class fxFormButton extends fxFormElement
 		$this->_nolabel = true;
 		$this->_html = 'button';
 	}
+
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
 		return $r::renderButton($this, $parent_id );
@@ -77,9 +79,10 @@ class fxFormTextArea extends fxFormElement
 		parent::__construct($label, $note);
 		$this->maxlength = 2000;
 	}
+
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::renderTextArea($this, $parent_id );
+		return $r::renderTextArea($this, $f, $parent_id );
 	}
 }
 
@@ -170,7 +173,7 @@ class fxFormFieldset extends fxFormElementSet
 {
 	public function _getExpandedElements()
 	{
-		$r[] = "<fieldset>\n<legend>{$this->_name}</legend>\n";
+		$r[] = "\n<fieldset>\n<legend>{$this->_name}</legend>";
 		$r = array_merge( $r, parent::_getExpandedElements() );
 		$r[] = "</fieldset>\n";
 		return $r;
@@ -178,7 +181,7 @@ class fxFormFieldset extends fxFormElementSet
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		return $r::render($this, $parent_id );
+		return $r::render($this, $f, $parent_id );
 	}
 }
 
@@ -196,12 +199,10 @@ class fxFormCheckboxset extends fxFormElementSet
 		$this->name = fxForm::_simplify($name).'[]';
 	}
 
-
 	public function _getExpandedElements()
 	{
 		return array( $this );
 	}
-
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
@@ -217,9 +218,10 @@ class fxFormCheckboxset extends fxFormElementSet
 				->value($simple_k)
 				->_label_right( $this->_label_right )
 				;
+			if( $this->_inData('required') )
+				$el->required();
 			if( in_array($simple_k, $this->_value ) )
 				$el->checked();
-
 			$this->_elements[] = $el;
 		}
 		return $r::renderElementSet($this, $f, $parent_id );
@@ -259,6 +261,8 @@ class fxFormRadioset extends fxFormElementSet
 				->value($simple_k)
 				->_label_right( $this->_label_right )
 				;
+			if( $this->_inData('required') )
+				$el->required();
 			if( $simple_k === $this->_value )
 				$el->checked();
 			$this->_elements[] = $el;
@@ -280,20 +284,10 @@ class fxFormSelect extends fxFormElementSet
 		$this->name = fxForm::_simplify($name).'[]';
 	}
 
-
 	public function _getExpandedElements()
 	{
 		return array( $this );
 	}
-
-
-	/* public function _getExpandedElements() */
-	/* { */
-	/* 	$r[] = "<select {$this->_name}>\n"; */
-	/* 	$r = array_merge( $r, parent::_getExpandedElements() ); */
-	/* 	$r[] = "</select>\n"; */
-	/* 	return $r; */
-	/* } */
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{

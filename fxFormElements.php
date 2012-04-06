@@ -47,38 +47,64 @@ abstract class fxFormElement extends fxNamedSet
 		return $this;
 	}
 
+	protected function _setValidity($v, $msg = '', &$errors = null  )
+	{
+		if( $v )
+			$this->_meta['valid'] = $v;
+		else {
+			unset($this->_meta['valid']);
+			fxAssert::isNonEmptyString($msg, '$msg');
+			fxAssert::isArray($errors);
+
+			$errors[ $this->name ] = $msg;
+		}
+		return $v;
+	}
 
 	/**
 	 * Override this in derived classes if needed.
 	 **/
-	public function _isValid()
+	public function _isValid( &$errors, fxForm &$f )
 	{
 		$validator = $this->_validator;
 		$required  = $this->_inData('required');
-//throw new exception( "Validating" );
+		$submitted = $this->_value;
+
 		if( !$required )
-			return true;
+			return $this->_setValidity(true);
 
+		/**
+		 * Ok, if we get here then this is a required value. That implies, that it can't be empty so return false if it is...
+		 **/
+		if( '' == $submitted )
+			return $this->_setValidity(false, '* requires a value.' ,$errors);
+
+		/**
+		 * Required & not empty. If there's no validator then that's all that's needed to pass validation...
+		 **/
 		if( !$validator )
-			return true;
+			return $this->_setValidity(true);
 
-		$valid = true;
-		if( '' == $this->_value ) {
-			$valid = false;
-		}
-		elseif( is_callable( $validator ) ) {
-			$valid = $validator( $this );
-		//	throw new exception( "Called validator $validator" );
+		$valid = false;
+		$msg   = null;
+		if( is_callable( $validator ) ) {
+			$r = $validator( $this, $f );
+			if( $r === true || (is_string($r) && !empty($r)) ) {
+				$valid = ( $r === true );
+				if( !$valid )
+					$msg = $r;
+			}
+			else {
+				throw new exception( "Validator function for {$this->name} must return (bool)true or a non-empty string." );
+			}
 		}
 		elseif( is_string( $validator ) ) {
-			$valid = preg_match( "~$validator~", $this->_value );
-		//	throw new exception( "Tried matching validation regex $validator." );
+		//	$valid = preg_match( "~$validator~", $this->_value );
 		}
+		else
+			$msg = 'Invalid value.';
 
-		if( !$valid ) {
-			$this->_invalid = true;
-		}
-		return $valid;
+		return $this->_setValidity($valid, $msg, $errors);
 	}
 
 
@@ -99,7 +125,7 @@ abstract class fxFormElement extends fxNamedSet
 
 
 /**
- * Radiosets, checkboxes and Selects are implemented by having multiple elements.
+ * Radiosets, Fieldsets, Checkboxes and Selects are implemented by having multiple elements.
  **/
 abstract class fxFormElementSet extends fxFormElement
 {
@@ -112,6 +138,8 @@ abstract class fxFormElementSet extends fxFormElement
 		$this->_note = $note;
 		$this->_elements = array();
 	}
+
+
 
 
 	public function getElements()
