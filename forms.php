@@ -19,8 +19,9 @@ class fxFormString extends fxFormElement
 		$this->value = $text;
 	}
 
-	public function _isValid()
+	public function _isValid( &$errors, fxForm &$f )
 	{
+		$this->_valid = true;
 		return true;
 	}
 
@@ -61,6 +62,7 @@ class fxFormButton extends fxFormElement
 		$this->_nolabel = true;
 		$this->_html = 'button';
 	}
+
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
 		return $r::renderButton($this, $parent_id );
@@ -196,12 +198,10 @@ class fxFormCheckboxset extends fxFormElementSet
 		$this->name = fxForm::_simplify($name).'[]';
 	}
 
-
 	public function _getExpandedElements()
 	{
 		return array( $this );
 	}
-
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
