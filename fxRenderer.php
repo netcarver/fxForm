@@ -13,6 +13,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 	static public $rendering_element_set = false;
 	static public $element_prefix = '';
 	static public $element_suffix = '';
+	static public $label_class    = '';
 
 	/**
 	 * Takes an array of attributes ( name => values ) and creates an HTML formatted string from it.
@@ -71,9 +72,13 @@ abstract class fxHTMLRenderer implements fxRenderer
 		if( $e->_inMeta('nolabel') )
 			return $thing;
 
-		$label = '<label for="'.htmlspecialchars($e->id).'">'.htmlspecialchars($e->_name).'</label>';
+		$lclass = ( '' !== self::$label_class ) ? ' class="'.self::$label_class.'"' : '';
+		$label  = '<label for="'.htmlspecialchars($e->id).'"'.$lclass.'>'.htmlspecialchars($e->_name).'</label>';
 
-		return ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
+		$o = ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
+		if( !self::$rendering_element_set )
+			$o = self::$element_prefix . $o . self::$element_suffix;
+		return $o;
 	}
 
 

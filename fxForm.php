@@ -13,12 +13,6 @@
  **/
 class fxForm extends fxFormElementSet
 {
-	CONST	HTML4     = 'html4';	// TODO : These are all to do with the rendering, not with form structure so this is the wrong place for them
-	CONST	HTML5     = 'html5';
-	CONST	BASIC     = 'BasicHTML';
-	CONST	BOOTSTRAP = 'Bootstrap';
-
-
 	protected	$errors;
 
 
@@ -148,7 +142,7 @@ class fxForm extends fxFormElementSet
 	 * * Hidden
 	 *
 	 **/
-	public function setRenderer( $name, $target = self::HTML5 ) // TODO add a wraptag attribute that will be rendered around every element.
+	public function setRenderer( $name, $prefix = '', $suffix = '', $label_class = '', $target = 'html5' )
 	{
 		fxAssert::isNonEmptyString($name,   'name',   "Renderer name must be a non-empty string.");
 		fxAssert::isNonEmptyString($target, 'target', "Target for renderer must be a non-empty string.");
@@ -159,7 +153,11 @@ class fxForm extends fxFormElementSet
 			throw new exception( "Renderer $className cannot be found." );
 
 		$this->_renderer = $className;
-		$this->_target   = $target;
+		$this->_target   = strtolower($target);
+
+		$className::$element_prefix = $prefix;
+		$className::$element_suffix = $suffix;
+		$className::$label_class    = $label_class;
 		return $this;
 	}
 
@@ -201,7 +199,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 		}
 		else {
 			// Signal to the renderer that a submission is underway. This allows it to conditionally add
-			// classes when rendering and an element fails its validation.
+			// classes when rendering
 			$r = $this->_renderer;
 			$r::$submitting = true;
 
