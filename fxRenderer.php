@@ -38,6 +38,31 @@ abstract class fxHTMLRenderer implements fxRenderer
 	}
 
 
+	static public function addErrorMessage( fxFormElement &$e, fxForm &$f )
+	{
+		if( self::$renderingElementSet )
+			return;
+
+		if( 'hidden' === $e->type )	// Never display errors for hidden elements.
+			return;
+
+		$o = '';
+		if( self::$submitting && !$e->_inMeta('valid') ) {
+//echo "<pre>",htmlspecialchars( var_export($e->_getMeta() , true) ),"</pre>";
+			// Element is in error so format a per-element error message and add it...
+			if( is_callable( $f->_formatElementErrors ) ) {
+				$cb = $f->_formatElementErrors;
+				$msg = $cb( $e, $f );
+				if( is_string($msg) )
+					if( '' !== $msg ) $o = $msg;	// Callback can return an empty string to surpress per-element error messages.
+			}
+			else {
+				$o = '<span class="error-msg">'.$f->getErrorFor($e->name).'</span>';
+			}
+		}
+		return $o;
+	}
+
 	static public function addLabel( $thing, fxFormElement &$e, $for_id )
 	{
 		if( $e->_inMeta('nolabel') )
