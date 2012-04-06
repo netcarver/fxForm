@@ -92,6 +92,14 @@ abstract class fxNamedSet
 	}
 
 
+	public function __isset( $name )
+	{
+		if( self::_isMeta($name) )
+			return isset( $this->_meta[$name] );
+
+		return isset($this->_data[$name]);
+	}
+
 	public function _inData($key)
 	{
 		return array_key_exists( $key, $this->_data );
