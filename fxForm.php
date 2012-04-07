@@ -199,7 +199,7 @@ class fxForm extends fxFormElementSet
 		//
 		if( strtoupper( $_SERVER['REQUEST_METHOD'] ) === $src ) {
 			$array = "_$src";
-echo sed_dump( $GLOBALS[$array], $array );
+//echo sed_dump( $GLOBALS[$array], $array );
 			$submitted = !empty($GLOBALS[$array]);
 		}
 
@@ -259,7 +259,7 @@ echo sed_dump( $GLOBALS[$array], $array );
 	}
 
 
-	protected function _render( /*$pre = true*/ )
+	protected function _render()
 	{
 		if( !$this->_form_id || !$this->_form_token )
 			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );
