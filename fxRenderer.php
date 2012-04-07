@@ -67,7 +67,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 		return $o;
 	}
 
-	static public function addLabel( $thing, fxFormElement &$e, $for_set = false )
+	static public function addLabel( $thing, fxFormElement &$e, $parent_id, $for_set = false )
 	{
 		if( $e->_inMeta('nolabel') )
 			return $thing;
@@ -78,7 +78,8 @@ abstract class fxHTMLRenderer implements fxRenderer
 		}
 		else {
 			$lclass = ( '' !== self::$label_class ) ? ' class="'.self::$label_class.'"' : '';
-			$label  = '<label for="'.htmlspecialchars($e->id).'"'.$lclass.'>'.htmlspecialchars($e->_name).'</label>';
+			$id     = self::makeId($e, $parent_id, false);
+			$label  = '<label for="'.htmlspecialchars($id).'"'.$lclass.'>'.htmlspecialchars($e->_name).'</label>';
 			$o = ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
 		}
 
@@ -110,6 +111,14 @@ abstract class fxHTMLRenderer implements fxRenderer
 	static public function renderString( $string )
 	{
 		return ( $string );
+	}
+
+
+	static public function makeId( fxFormElement &$e, $parent_id, $make_attr=true )
+	{
+		$id = fxForm::_simplify( $parent_id . '-' . $e->id );
+		if( $make_attr && '' !== $id ) $id = ' id="'.$id.'"';	// Conditionally prepare it as an attribute.
+		return $id;
 	}
 }
 

@@ -44,7 +44,6 @@ abstract class fxFormElement extends fxNamedSet
 	public function _getSubmittedValue()
 	{
 		$this->_value = fRequest::encode($this->name);
-//fCore::expose( array( 'name'=>$this->name, 'value'=>$this->_value ) );
 		return $this;
 	}
 
@@ -63,7 +62,7 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 	/**
-	 * Override this in derived classes if needed. TODO probably needed in fxFormFieldset.
+	 * Override this in derived classes if needed.
 	 **/
 	public function _isValid( &$errors, fxForm &$f )
 	{
@@ -166,10 +165,7 @@ abstract class fxFormElementSet extends fxFormElement
 	{
 		fxAssert::isNotEmpty( $element, 'element' );
 
-		if( $element instanceof fxFormElementSet ) {
-			$this->_elements = array_merge( $this->_elements, $element->_getExpandedElements() );
-		}
-		elseif( $element instanceof fxFormElement ) {
+		if( $element instanceof fxFormElement ) {
 			$this->_elements[] = $element;
 		}
 		elseif( is_string( $element ) ) {

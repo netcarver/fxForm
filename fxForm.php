@@ -120,7 +120,17 @@ class fxForm extends fxFormElementSet
 	{
 		if( !empty($this->_elements ) ) {
 			foreach( $this->_elements as $e ) {
-				if( self::_simplify($name) == $e->name )
+				if( $e instanceof fxFormFieldset ) {
+					$fs_elements = $e->getElements();
+					if( empty( $fs_elements ) )
+						break;
+
+					foreach( $fs_elements as $fse ) {
+						if( self::_simplify($name) == $fse->name )
+							return $fse->_value;
+					}
+				}
+				elseif( self::_simplify($name) == $e->name )
 					return $e->_value;
 			}
 		}

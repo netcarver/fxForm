@@ -4,11 +4,11 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 {
 	static public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
-		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value' ) );
+		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
 		$label  = htmlspecialchars($e->_name);
 		$subval = $e->_value;
 		$elval  = htmlspecialchars($e->value);
-		$id     = htmlspecialchars($e->id); // TODO include parent_id ?
+		$id     = self::makeId($e, $parent_id);
 		$plce   = (string)$e->_note;
 		if( '' !== $plce )
 			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
@@ -18,7 +18,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$class = self::getClasses($e);
 		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
-		$o[] = "<$type$attr$plce$class";
+		$o[] = "<$type$id$attr$plce$class";
 
 		if( 'submit' == $e->type || 'reset' == $e->type )
 			$o[] = "value=\"$elval\" />$label</button>";
@@ -31,7 +31,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = join( " ", $o );
-		return self::addLabel( $o, $e );
+		return self::addLabel( $o, $e, $parent_id );
 	}
 
 
@@ -39,7 +39,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	{
 		self::$rendering_element_set = false;
 		$o = array();
-		$atts = self::renderAtts( $f->_getInfoExcept() );
+		$atts = self::renderAtts( $f->_getInfoExcept('name') );
 		$o[] = "<form action=\"{$f->_action}\" method=\"{$f->_method}\"$atts>";
 		$o[] = "<input type=\"hidden\" name=\"_form_id\" value=\"{$f->_form_id}\" />";
 		$o[] = "<input type=\"hidden\" name=\"_form_token\" value=\"{$f->_form_token}\" />";
@@ -93,7 +93,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = implode( "\n", $o );
-		return self::addLabel( $o, $e, true );
+		return self::addLabel( $o, $e, $parent_id, true );
 	}
 
 
@@ -111,7 +111,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$o[] = "</fieldset>\n";
 		$o = implode( "\n", $o );
-		return self::addLabel( $o, $e, true );
+		return $o;
 	}
 
 
@@ -139,34 +139,35 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	static public function renderSelect( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
-		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value' ) );
-		//$id     = htmlspecialchars( $e->id );
+		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
+		$id     = self::makeId($e, $parent_id);
 		$label  = htmlspecialchars( $e->_name );
 
-		$o[] = "<select$attr>";
+		$o[] = "<select$id$attr>";
 		$o[] = self::renderOptions( $e->_members, $e, $f );
 		$o[] = '</select>';
 
 		$o = implode( "\n", $o );
-		return self::addLabel( $o, $e );
+		return self::addLabel( $o, $e, $parent_id );
 	}
 
 
 	static public function renderTextarea( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
-		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
-		//$id    = fxForm::_simplify($parent_id . '-' . $e->id);
+		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value,id' ));
+		$id    = self::makeId($e, $parent_id);
 		$class = self::getClasses($e);
-		return self::addLabel( "<textarea$attr$class>{$e->_value}</textarea>".self::addErrorMessage( $e, $f ), $e );
+		return self::addLabel( "<textarea$id$attr$class>{$e->_value}</textarea>".self::addErrorMessage( $e, $f ), $e, $parent_id );
 	}
 
 
-	static public function renderButton( fxFormButton &$e, $parent_id )
+	static public function renderButton( fxFormButton &$e, fxForm &$f, $parent_id )
 	{
-		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
+		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value,id' ));
+		$id    = self::makeId($e, $parent_id);
 		$class = self::getClasses($e);
 		$label = htmlspecialchars($e->_name);
-		return "<button$attr$class>$label</button>";
+		return "<button$id$attr$class>$label</button>";
 	}
 }
 
