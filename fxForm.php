@@ -201,7 +201,7 @@ class fxForm extends fxFormElementSet
 		//
 		if( strtoupper( $_SERVER['REQUEST_METHOD'] ) === $src ) {
 			$array = "_$src";
-//echo sed_dump( $GLOBALS[$array], $array );
+//fCore::expose( array( $array=>$GLOBALS[$array] ) );
 			$submitted = !empty($GLOBALS[$array]);
 		}
 
