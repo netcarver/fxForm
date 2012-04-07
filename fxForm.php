@@ -120,6 +120,8 @@ class fxForm extends fxFormElementSet
 	{
 		if( !empty($this->_elements ) ) {
 			foreach( $this->_elements as $e ) {
+
+				// If we hit an embedded fieldset, we have to search it's contained elements...
 				if( $e instanceof fxFormFieldset ) {
 					$fs_elements = $e->getElements();
 					if( empty( $fs_elements ) )

@@ -89,9 +89,6 @@ class fxFormTextArea extends fxFormElement
 
 
 
-/**
- * Additional utility classes that allow simpler form definitions...
- **/
 class fxFormSubmit extends fxFormButton
 {
 	public function __construct($text)
