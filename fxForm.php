@@ -233,7 +233,6 @@ class fxForm extends fxFormElementSet
 					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid( $this->errors, $this );
 				}
 			}
-//echo "<pre>", htmlspecialchars( var_export( $this->_elements , true )), "\n\n</pre>\n";
 			if( $fields_ok ) {
 				//
 				//	Run the form validator (if any)

@@ -67,7 +67,6 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		}
 		$o[] = "</form>";
 		$o = implode( "\n", $o );
-//echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
 //fCore::expose($f);
 		return $o;
 	}
@@ -75,14 +74,12 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	static public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
-//echo "<pre>",htmlspecialchars( var_export( $e, true ) ), "</pre>\n";
 		$o = array();
 		$class = self::getClasses($e);
 		$o[] = "<div$class>";
 
 		self::$rendering_element_set = true;
 		foreach( $e->getElements() as $el ) {
-//echo "<pre>",htmlspecialchars( var_export( $el, true ) ), "</pre>\n";
 			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
 		}
 		self::$rendering_element_set = false;
@@ -99,13 +96,11 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	static public function renderFieldSet( fxFormFieldset &$e, fxForm &$f, $parent_id )
 	{
-//echo "<pre>",htmlspecialchars( var_export( $e, true ) ), "</pre>\n";
 		$o = array();
 		$class = self::getClasses($e);
 		$o[] = "\n<fieldset $class><legend>{$e->_name}</legend>";
 
 		foreach( $e->getElements() as $el ) {
-//echo "<pre>",htmlspecialchars( var_export( $el, true ) ), "</pre>\n";
 			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
 		}
 
