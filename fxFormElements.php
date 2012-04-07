@@ -178,6 +178,7 @@ abstract class fxFormElementSet extends fxFormElement
 			throw new exception( "Added element must be a string, fxFormElement or fxFormElementSet." );
 		}
 
+
 		return $this;
 	}
 

@@ -190,11 +190,14 @@ class fxFormFieldset extends fxFormElementSet
 
 class fxFormCheckboxset extends fxFormElementSet
 {
-	public function __construct($name, $members)
+	public function __construct($label, $members, $name = null)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 
-		parent::__construct($name);
+		if( null === $name || '' === $name || !is_string($name) )
+			$name = $label;
+
+		parent::__construct($label);
 		$this->_members = $members;
 		$this->name = fxForm::_simplify($name).'[]';
 	}
@@ -206,20 +209,21 @@ class fxFormCheckboxset extends fxFormElementSet
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		foreach( $this->_members as $k => $v ) {
+		$members = $this->_members;
+		foreach( $members as $k => $v ) {
 			$simple_v = $simple_k = fxForm::_simplify($v);
 			if( is_string( $k ) )
 				$simple_k = fxForm::_simplify($k);
 			$el = new fxFormInput($v);
 			$el
 				->type('checkbox')
-				->name($this->_data['name'])
-				->id( fxForm::_simplify($parent_id . '-' . $this->_data['name'] . '-' . $simple_v ))
+				->name($this->name)
+				->id( fxForm::_simplify($parent_id . '-' . $this->name . '-' . $simple_v ))
 				->value($simple_k)
 				->_label_right( $this->_label_right )
 				;
-			if( $this->_inData('required') )
-				$el->required();
+			/* if( $this->_inData('required') ) */
+			/* 	$el->required(); */
 			if( in_array($simple_k, $this->_value ) )
 				$el->checked();
 			$this->_elements[] = $el;
@@ -233,11 +237,16 @@ class fxFormCheckboxset extends fxFormElementSet
 
 class fxFormRadioset extends fxFormElementSet
 {
-	public function __construct($name, $members)
+	public function __construct($label, $members, $name = null )
 	{
-		parent::__construct($name);
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		if( count($members) < 2 ) throw new exception( 'There must be 2 or more members for a RadioSet to be populated.' );
+
+		parent::__construct($label);
+
+		if( null === $name || '' === $name || !is_string($name) )
+			$name = $label;
+
 		$this->_members = $members;
 		$this->name = fxForm::_simplify($name);
 	}
@@ -249,7 +258,8 @@ class fxFormRadioset extends fxFormElementSet
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
-		foreach( $this->_members as $k => $v ) {
+		$members = $this->_members;
+		foreach( $members as $k => $v ) {
 			$simple_v = $simple_k = fxForm::_simplify($v);
 			if( is_string( $k ) )
 				$simple_k = $k;
@@ -257,7 +267,7 @@ class fxFormRadioset extends fxFormElementSet
 			$el
 				->type('radio')
 				->name($this->name)
-				->id( $parent_id . '-' . $this->name . '-' . $simple_v )
+				->id( fxForm::_simplify( $parent_id . '-' . $this->name . '-' . $simple_v ) )
 				->value($simple_k)
 				->_label_right( $this->_label_right )
 				;
@@ -311,8 +321,8 @@ class fxFormMSelect extends fxFormSelect
  * Convenience creator functions. These allow chaining from point of creation and make for a more fluent interface...
  **/
 function Form		( $form_name, $action, $method="post" )	{ return new fxForm( $form_name, $action, $method ); }
-function Checkboxes	( $group_name, $members_array ) 		{ return new fxFormCheckboxset( $group_name, $members_array ); }
-function Radios		( $group_name, $members_array ) 		{ return new fxFormRadioset( $group_name, $members_array ); }
+function Checkboxes	( $label, $members_array, $name=null ) 	{ return new fxFormCheckboxset( $label, $members_array, $name ); }
+function Radios		( $label, $members_array, $name=null ) 	{ return new fxFormRadioset( $label, $members_array, $name ); }
 function Text		( $text )            					{ return new fxFormString( $text ); }
 function Input		( $label, $note=null )	     			{ return new fxFormInput( $label, $note ); }
 function Password	( $label )      						{ return new fxFormPassword( $label ); }
