@@ -90,7 +90,7 @@ class fxForm extends fxFormElementSet
 	 **/
 	static public function _simplify($name)
 	{
-		$o = wire()->sanitizer->pageName($name, true);
+		//$o = wire()->sanitizer->pageName($name, true);
 		$o = fURL::makeFriendly( $name );
 		return strtr( $o, array('[]'=>'','-'=>'_') );
 	}
@@ -120,7 +120,19 @@ class fxForm extends fxFormElementSet
 	{
 		if( !empty($this->_elements ) ) {
 			foreach( $this->_elements as $e ) {
-				if( self::_simplify($name) == $e->name )
+
+				// If we hit an embedded fieldset, we have to search it's contained elements...
+				if( $e instanceof fxFormFieldset ) {
+					$fs_elements = $e->getElements();
+					if( empty( $fs_elements ) )
+						break;
+
+					foreach( $fs_elements as $fse ) {
+						if( self::_simplify($name) == $fse->name )
+							return $fse->_value;
+					}
+				}
+				elseif( self::_simplify($name) == $e->name )
 					return $e->_value;
 			}
 		}
@@ -189,15 +201,11 @@ class fxForm extends fxFormElementSet
 		//
 		if( strtoupper( $_SERVER['REQUEST_METHOD'] ) === $src ) {
 			$array = "_$src";
-//echo sed_dump( $GLOBALS[$array], $array );
+//fCore::expose( array( $array=>$GLOBALS[$array] ) );
 			$submitted = !empty($GLOBALS[$array]);
 		}
 
-		if( !$submitted ) {
-			// Genetate form id and anti-CSRF token and store them for rendering in the form...
-			$this->_form_token = fxCSRFToken::get( $this->_form_id );
-		}
-		else {
+		if( $submitted ) {
 			// Signal to the renderer that a submission is underway. This allows it to conditionally add
 			// classes when rendering
 			$r = $this->_renderer;
@@ -221,7 +229,6 @@ class fxForm extends fxFormElementSet
 					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid( $this->errors, $this );
 				}
 			}
-//echo "<pre>", htmlspecialchars( var_export( $this->_elements , true )), "\n\n</pre>\n";
 			if( $fields_ok ) {
 				//
 				//	Run the form validator (if any)
@@ -245,11 +252,13 @@ class fxForm extends fxFormElementSet
 			}
 
 		}
+		fxCSRFToken::clear( $this->_form_id );
+		$this->_form_token = fxCSRFToken::generate( $this->_form_id );
 		return $this->_render();
 	}
 
 
-	protected function _render( /*$pre = true*/ )
+	protected function _render()
 	{
 		if( !$this->_form_id || !$this->_form_token )
 			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );
@@ -261,9 +270,9 @@ class fxForm extends fxFormElementSet
 	/**
 	 * Each element will be asked to use the given renderer to get itself output.
 	 **/
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( $renderer, fxForm &$f, $parent_id )
 	{
-		return $r::renderForm( $f );
+		return $renderer::renderForm( $f );
 	}
 
 }

@@ -165,10 +165,7 @@ abstract class fxFormElementSet extends fxFormElement
 	{
 		fxAssert::isNotEmpty( $element, 'element' );
 
-		if( $element instanceof fxFormElementSet ) {
-			$this->_elements = array_merge( $this->_elements, $element->_getExpandedElements() );
-		}
-		elseif( $element instanceof fxFormElement ) {
+		if( $element instanceof fxFormElement ) {
 			$this->_elements[] = $element;
 		}
 		elseif( is_string( $element ) ) {
@@ -177,6 +174,7 @@ abstract class fxFormElementSet extends fxFormElement
 		else {
 			throw new exception( "Added element must be a string, fxFormElement or fxFormElementSet." );
 		}
+
 
 		return $this;
 	}

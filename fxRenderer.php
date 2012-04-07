@@ -67,15 +67,22 @@ abstract class fxHTMLRenderer implements fxRenderer
 		return $o;
 	}
 
-	static public function addLabel( $thing, fxFormElement &$e, $for_id )
+	static public function addLabel( $thing, fxFormElement &$e, $parent_id, $for_set = false )
 	{
 		if( $e->_inMeta('nolabel') )
 			return $thing;
 
-		$lclass = ( '' !== self::$label_class ) ? ' class="'.self::$label_class.'"' : '';
-		$label  = '<label for="'.htmlspecialchars($e->id).'"'.$lclass.'>'.htmlspecialchars($e->_name).'</label>';
+		if( $for_set ) {
+			$label  = '<span>'.htmlspecialchars($e->_name).'</span>';
+			$o = $label . "\n" . $thing;
+		}
+		else {
+			$lclass = ( '' !== self::$label_class ) ? ' class="'.self::$label_class.'"' : '';
+			$id     = self::makeId($e, $parent_id, false);
+			$label  = '<label for="'.htmlspecialchars($id).'"'.$lclass.'>'.htmlspecialchars($e->_name).'</label>';
+			$o = ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
+		}
 
-		$o = ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
 		if( !self::$rendering_element_set )
 			$o = self::$element_prefix . $o . self::$element_suffix;
 		return $o;
@@ -89,7 +96,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 			$classes[] = htmlspecialchars($e->class);
 
 		if( !self::$rendering_element_set ) {
-			if( !self::$submitting && $e->_inData('required') )
+			if( !self::$submitting && $e->_inData('required') && empty($e->_value) )
 				$classes[] = 'required';
 			if( self::$submitting && !$e->_inMeta('valid') )
 				$classes[] = 'error';
@@ -104,6 +111,14 @@ abstract class fxHTMLRenderer implements fxRenderer
 	static public function renderString( $string )
 	{
 		return ( $string );
+	}
+
+
+	static public function makeId( fxFormElement &$e, $parent_id, $make_attr=true )
+	{
+		$id = fxForm::_simplify( $parent_id . '-' . $e->id );
+		if( $make_attr && '' !== $id ) $id = ' id="'.$id.'"';	// Conditionally prepare it as an attribute.
+		return $id;
 	}
 }
 
