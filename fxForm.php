@@ -205,11 +205,7 @@ class fxForm extends fxFormElementSet
 			$submitted = !empty($GLOBALS[$array]);
 		}
 
-		if( !$submitted ) {
-			// Genetate form id and anti-CSRF token and store them for rendering in the form...
-			$this->_form_token = fxCSRFToken::get( $this->_form_id );
-		}
-		else {
+		if( $submitted ) {
 			// Signal to the renderer that a submission is underway. This allows it to conditionally add
 			// classes when rendering
 			$r = $this->_renderer;
@@ -256,6 +252,8 @@ class fxForm extends fxFormElementSet
 			}
 
 		}
+		fxCSRFToken::clear( $this->_form_id );
+		$this->_form_token = fxCSRFToken::generate( $this->_form_id );
 		return $this->_render();
 	}
 

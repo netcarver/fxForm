@@ -12,7 +12,7 @@ class fxCSRFToken
 	 *
 	 * Multiple forms can be catered for within a session if needed.
 	 **/
-	static public function get( $form_name )
+	static public function generate( $form_name )
 	{
 		$tok = sha1( fCryptography::randomString(32) );
 		wire()->session->set( $form_name . '.CSRFToken', $tok );
