@@ -100,6 +100,8 @@ abstract class fxHTMLRenderer implements fxRenderer
 				$classes[] = 'required';
 			if( self::$submitting && !$e->_inMeta('valid') )
 				$classes[] = 'error';
+			if( self::$submitting && $e->_inData('required') && $e->_inMeta('valid') )
+				$classes[] = 'ok';
 		}
 
 		if( empty( $classes ) )
