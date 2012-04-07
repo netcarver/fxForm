@@ -181,6 +181,7 @@ class fxFormFieldset extends fxFormElementSet
 
 	public function renderUsing( $r, fxForm &$f, $parent_id )
 	{
+		throw new exception( "Rendering {$this->name} with id[{$this->id}], parent_id[$parent_id]" );
 		return $r::render($this, $f, $parent_id );
 	}
 }

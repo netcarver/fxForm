@@ -44,6 +44,7 @@ abstract class fxFormElement extends fxNamedSet
 	public function _getSubmittedValue()
 	{
 		$this->_value = fRequest::encode($this->name);
+//fCore::expose( array( 'name'=>$this->name, 'value'=>$this->_value ) );
 		return $this;
 	}
 
