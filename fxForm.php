@@ -90,7 +90,7 @@ class fxForm extends fxFormElementSet
 	 **/
 	static public function _simplify($name)
 	{
-		$o = wire()->sanitizer->pageName($name, true);
+		//$o = wire()->sanitizer->pageName($name, true);
 		$o = fURL::makeFriendly( $name );
 		return strtr( $o, array('[]'=>'','-'=>'_') );
 	}
@@ -261,9 +261,9 @@ class fxForm extends fxFormElementSet
 	/**
 	 * Each element will be asked to use the given renderer to get itself output.
 	 **/
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( $renderer, fxForm &$f, $parent_id )
 	{
-		return $r::renderForm( $f );
+		return $renderer::renderForm( $f );
 	}
 
 }

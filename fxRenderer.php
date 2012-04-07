@@ -67,15 +67,21 @@ abstract class fxHTMLRenderer implements fxRenderer
 		return $o;
 	}
 
-	static public function addLabel( $thing, fxFormElement &$e, $for_id )
+	static public function addLabel( $thing, fxFormElement &$e, $for_set = false )
 	{
 		if( $e->_inMeta('nolabel') )
 			return $thing;
 
-		$lclass = ( '' !== self::$label_class ) ? ' class="'.self::$label_class.'"' : '';
-		$label  = '<label for="'.htmlspecialchars($e->id).'"'.$lclass.'>'.htmlspecialchars($e->_name).'</label>';
+		if( $for_set ) {
+			$label  = '<span>'.htmlspecialchars($e->_name).'</span>';
+			$o = $label . "\n" . $thing;
+		}
+		else {
+			$lclass = ( '' !== self::$label_class ) ? ' class="'.self::$label_class.'"' : '';
+			$label  = '<label for="'.htmlspecialchars($e->id).'"'.$lclass.'>'.htmlspecialchars($e->_name).'</label>';
+			$o = ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
+		}
 
-		$o = ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
 		if( !self::$rendering_element_set )
 			$o = self::$element_prefix . $o . self::$element_suffix;
 		return $o;

@@ -76,20 +76,24 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	{
 		$o = array();
 		$class = self::getClasses($e);
-		self::$rendering_element_set = true;
 		$o[] = "<div$class>";
+
+		self::$rendering_element_set = true;
 		foreach( $e->getElements() as $el ) {
 //echo "<pre>",htmlspecialchars( var_export( $el, true ) ), "</pre>\n";
 			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
 		}
 		self::$rendering_element_set = false;
+
 		$o[] = '</div>';
+
 		$errmsg = self::addErrorMessage( $e, $f );
 		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = implode( "\n", $o );
 		return $o;
 	}
+
 
 	static public function renderOptions( $options, fxFormElementSet &$e, fxForm &$f, $parent = '' )
 	{
