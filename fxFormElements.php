@@ -62,7 +62,7 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 	/**
-	 * Override this in derived classes if needed.
+	 * Override this in derived classes if needed. TODO probably needed in fxFormFieldset.
 	 **/
 	public function _isValid( &$errors, fxForm &$f )
 	{

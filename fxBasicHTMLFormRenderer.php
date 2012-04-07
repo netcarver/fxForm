@@ -8,7 +8,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$label  = htmlspecialchars($e->_name);
 		$subval = $e->_value;
 		$elval  = htmlspecialchars($e->value);
-		$id     = htmlspecialchars($e->id);
+		$id     = htmlspecialchars($e->id); // TODO include parent_id ?
 		$plce   = (string)$e->_note;
 		if( '' !== $plce )
 			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
@@ -68,12 +68,14 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$o[] = "</form>";
 		$o = implode( "\n", $o );
 //echo "<pre>",htmlspecialchars( var_export( $o, true ) ), "</pre>\n";
+//fCore::expose($f);
 		return $o;
 	}
 
 
 	static public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
+//echo "<pre>",htmlspecialchars( var_export( $e, true ) ), "</pre>\n";
 		$o = array();
 		$class = self::getClasses($e);
 		$o[] = "<div$class>";
@@ -91,7 +93,25 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = implode( "\n", $o );
-		return $o;
+		return self::addLabel( $o, $e, true );
+	}
+
+
+	static public function renderFieldSet( fxFormFieldset &$e, fxForm &$f, $parent_id )
+	{
+//echo "<pre>",htmlspecialchars( var_export( $e, true ) ), "</pre>\n";
+		$o = array();
+		$class = self::getClasses($e);
+		$o[] = "\n<fieldset $class><legend>{$e->_name}</legend>";
+
+		foreach( $e->getElements() as $el ) {
+//echo "<pre>",htmlspecialchars( var_export( $el, true ) ), "</pre>\n";
+			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
+		}
+
+		$o[] = "</fieldset>\n";
+		$o = implode( "\n", $o );
+		return self::addLabel( $o, $e, true );
 	}
 
 
@@ -135,6 +155,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	static public function renderTextarea( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
 		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value' ));
+		//$id    = fxForm::_simplify($parent_id . '-' . $e->id);
 		$class = self::getClasses($e);
 		return self::addLabel( "<textarea$attr$class>{$e->_value}</textarea>".self::addErrorMessage( $e, $f ), $e );
 	}
