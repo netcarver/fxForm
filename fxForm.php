@@ -51,6 +51,7 @@ class fxForm extends fxFormElementSet
 		return $this;
 	}
 
+
 	public function formatElementErrors( $cb )
 	{
 		fxAssert::isCallable($cb);
@@ -69,6 +70,7 @@ class fxForm extends fxFormElementSet
 	{
 		return @$this->errors[$name];
 	}
+
 
 	public function getErrors()
 	{
@@ -256,6 +258,10 @@ class fxForm extends fxFormElementSet
 		}
 		fxCSRFToken::clear( $this->_form_id );
 		$this->_form_token = fxCSRFToken::generate( $this->_form_id );
+
+		if( true == $this->_show_form_elements )
+			fCore::expose($this);
+
 		return $this->_render();
 	}
 

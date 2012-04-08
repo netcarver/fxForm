@@ -67,7 +67,10 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		}
 		$o[] = "</form>";
 		$o = implode( "\n", $o );
-//fCore::expose($f);
+
+		if( true == $f->_show_html )
+			fCore::expose($o);
+
 		return $o;
 	}
 
