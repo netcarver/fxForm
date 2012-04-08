@@ -201,11 +201,13 @@ class fxForm extends fxFormElementSet
 		//
 		if( strtoupper( $_SERVER['REQUEST_METHOD'] ) === $src ) {
 			$array = "_$src";
-//fCore::expose( array( $array=>$GLOBALS[$array] ) );
 			$submitted = !empty($GLOBALS[$array]);
 		}
 
 		if( $submitted ) {
+			if( true == $this->_meta['show_submitted'] )
+				fCore::expose( array( $array=>$GLOBALS[$array] ) );
+
 			// Signal to the renderer that a submission is underway. This allows it to conditionally add
 			// classes when rendering
 			$r = $this->_renderer;
