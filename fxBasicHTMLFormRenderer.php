@@ -2,20 +2,21 @@
 
 class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 {
-	static public function render( fxFormElement &$e, fxForm &$f, $parent_id )
+
+	public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
-		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
+		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
 		$label  = htmlspecialchars($e->_name);
 		$subval = $e->_value;
 		$elval  = htmlspecialchars($e->value);
-		$id     = self::makeId($e, $parent_id);
+		$id     = $this->makeId($e, $parent_id);
 		$plce   = (string)$e->_note;
 		if( '' !== $plce )
 			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
 
 		$o = array();
 
-		$class = self::getClasses($e);
+		$class = $this->getClasses($e);
 		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
 		$o[] = "<$type$id$attr$plce$class";
@@ -27,19 +28,20 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		else
 			$o[] = "value=\"$subval\" />";
 
-		$errmsg = self::addErrorMessage( $e, $f );
+		$errmsg = $this->addErrorMessage( $e, $f );
 		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = join( " ", $o );
-		return self::addLabel( $o, $e, $parent_id );
+		return $this->addLabel( $o, $e, $parent_id );
 	}
 
 
-	static public function renderForm( fxForm &$f )
+
+	public function renderForm( fxForm &$f )
 	{
-		self::$rendering_element_set = false;
+		$this->rendering_element_set = false;
 		$o = array();
-		$atts = self::renderAtts( $f->_getInfoExcept('name') );
+		$atts = $this->renderAtts( $f->_getInfoExcept('name') );
 		$o[] = "<form action=\"{$f->_action}\" method=\"{$f->_method}\"$atts>";
 		$o[] = "<input type=\"hidden\" name=\"_form_id\" value=\"{$f->_form_id}\" />";
 		$o[] = "<input type=\"hidden\" name=\"_form_token\" value=\"{$f->_form_token}\" />";
@@ -47,7 +49,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		if( $f->hasErrors() ) {
 			// Use a form errors formatting callback to override basic message.
-			$formErrorsCB = $f->_formatFormErrors;
+			$formErrorsCB = $this->errorBlockFormatter;
 			if( is_callable( $formErrorsCB ) ) {
 				$msg = $formErrorsCB( $f );
 				if( is_string($msg) && '' !== $msg )
@@ -62,46 +64,57 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 			if( is_string($child) )
 				$o[] = $child;
 			else {
-				$o[] = $child->renderUsing( __CLASS__, $f, $f->id );
+				$o[] = $child->renderUsing( $this, $f, $f->id );
 			}
 		}
 		$o[] = "</form>";
 		$o = implode( "\n", $o );
-//fCore::expose($f);
+
+		if( true == $f->_show_html )
+			fCore::expose($o);
+
 		return $o;
 	}
 
 
-	static public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
+
+	public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
-		$class = self::getClasses($e);
+		$class = $this->getClasses($e);
 		$o[] = "<div$class>";
 
-		self::$rendering_element_set = true;
-		foreach( $e->getElements() as $el ) {
-			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
+		$elements = $e->getElements();
+		$this->set_max   = count( $elements );
+		$this->set_index = 0;
+		if( $this->set_max ) $this->set_max--;
+
+		$this->rendering_element_set = true;
+		foreach( $elements as $el ) {
+			$o[] = $el->renderUsing( $this, $f, $parent_id );
+			$this->set_index++;
 		}
-		self::$rendering_element_set = false;
+		$this->rendering_element_set = false;
 
 		$o[] = '</div>';
 
-		$errmsg = self::addErrorMessage( $e, $f );
+		$errmsg = $this->addErrorMessage( $e, $f );
 		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = implode( "\n", $o );
-		return self::addLabel( $o, $e, $parent_id, true );
+		return $this->addLabel( $o, $e, $parent_id, true );
 	}
 
 
-	static public function renderFieldSet( fxFormFieldset &$e, fxForm &$f, $parent_id )
+
+	public function renderFieldSet( fxFormFieldset &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
-		$class = self::getClasses($e);
+		$class = $this->getClasses($e);
 		$o[] = "\n<fieldset $class><legend>{$e->_name}</legend>";
 
 		foreach( $e->getElements() as $el ) {
-			$o[] = $el->renderUsing( __CLASS__, $f, $parent_id );
+			$o[] = $el->renderUsing( $this, $f, $parent_id );
 		}
 
 		$o[] = "</fieldset>\n";
@@ -110,7 +123,8 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	}
 
 
-	static public function renderOptions( $options, fxFormElementSet &$e, fxForm &$f, $parent = '' )
+
+	public function renderOptions( $options, fxFormElementSet &$e, fxForm &$f, $parent = '' )
 	{
 		$html5 = $f->_target === 'html5';
 		$o = array();
@@ -119,7 +133,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 			foreach( $options as $k => $v ) {
 				if( is_array( $v ) ) {
 					$o[] = '<optgroup label="'.htmlspecialchars($k).'">';
-					$o[] = self::renderOptions($v, $e, $f, $parent.fxForm::_simplify($k) );
+					$o[] = $this->renderOptions($v, $e, $f, $parent.fxForm::_simplify($k) );
 					if( !$html5 ) $o[] = "</optgroup>";
 				}
 				else {
@@ -131,39 +145,45 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		return implode("\n",$o);
 	}
 
-	static public function renderSelect( fxFormElementSet &$e, fxForm &$f, $parent_id )
+
+
+	public function renderSelect( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
-		$attr   = self::renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
-		$id     = self::makeId($e, $parent_id);
+		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
+		$id     = $this->makeId($e, $parent_id);
 		$label  = htmlspecialchars( $e->_name );
 
 		$o[] = "<select$id$attr>";
-		$o[] = self::renderOptions( $e->_members, $e, $f );
+		$o[] = $this->renderOptions( $e->_members, $e, $f );
 		$o[] = '</select>';
 
 		$o = implode( "\n", $o );
-		return self::addLabel( $o, $e, $parent_id );
+		return $this->addLabel( $o, $e, $parent_id );
 	}
 
 
-	static public function renderTextarea( fxFormElement &$e, fxForm &$f, $parent_id )
+
+	public function renderTextarea( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
-		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value,id' ));
-		$id    = self::makeId($e, $parent_id);
-		$class = self::getClasses($e);
-		return self::addLabel( "<textarea$id$attr$class>{$e->_value}</textarea>".self::addErrorMessage( $e, $f ), $e, $parent_id );
+		$attr  = $this->renderAtts($e->_getInfoExcept( 'class,value,id' ));
+		$id    = $this->makeId($e, $parent_id);
+		$class = $this->getClasses($e);
+		return $this->addLabel( "<textarea$id$attr$class>{$e->_value}</textarea>".$this->addErrorMessage( $e, $f ), $e, $parent_id );
 	}
 
 
-	static public function renderButton( fxFormButton &$e, fxForm &$f, $parent_id )
+
+	public function renderButton( fxFormButton &$e, fxForm &$f, $parent_id )
 	{
-		$attr  = self::renderAtts($e->_getInfoExcept( 'class,value,id' ));
-		$id    = self::makeId($e, $parent_id);
-		$class = self::getClasses($e);
+		$attr  = $this->renderAtts($e->_getInfoExcept( 'class,value,id' ));
+		$id    = $this->makeId($e, $parent_id);
+		$class = $this->getClasses($e);
 		$label = htmlspecialchars($e->_name);
 		return "<button$id$attr$class>$label</button>";
 	}
+
+
 }
 
 

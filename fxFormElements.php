@@ -14,6 +14,7 @@ abstract class fxFormElement extends fxNamedSet
 	static public $radio_types = array('radio','checkbox');
 
 
+
 	public function __construct($name , $note = null)
 	{
 		$label_right = ('>' === substr($name,0,1));
@@ -29,6 +30,7 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+
 	public function match($pattern)
 	{
 		fxAssert::isNonEmptyString($pattern, 'pattern');
@@ -38,14 +40,20 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+
 	/**
 	 * Encode & store the submitted value (if any) in the meta info
 	 **/
 	public function _getSubmittedValue()
 	{
-		$this->_value = fRequest::encode($this->name);
+		$input = fRequest::encode($this->name);
+		if( is_string( $input ) )
+			$input = trim($input);
+		$this->_value = $input;
 		return $this;
 	}
+
+
 
 	protected function _setValidity($v, $msg = '', &$errors = null  )
 	{
@@ -120,7 +128,7 @@ abstract class fxFormElement extends fxNamedSet
 	/**
 	 * Each element will be asked to use the given renderer to get itself output.
 	 **/
-	abstract public function renderUsing( $r, fxForm &$f, $parent_id );
+	abstract public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id );
 }
 
 

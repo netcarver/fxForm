@@ -44,20 +44,6 @@ class fxForm extends fxFormElementSet
 	}
 
 
-	public function formatFormErrors( $cb )
-	{
-		fxAssert::isCallable($cb);
-		$this->_formatFormErrors = $cb;
-		return $this;
-	}
-
-	public function formatElementErrors( $cb )
-	{
-		fxAssert::isCallable($cb);
-		$this->_formatElementErrors = $cb;
-		return $this;
-	}
-
 
 	public function hasErrors()
 	{
@@ -69,6 +55,7 @@ class fxForm extends fxFormElementSet
 	{
 		return @$this->errors[$name];
 	}
+
 
 	public function getErrors()
 	{
@@ -154,22 +141,9 @@ class fxForm extends fxFormElementSet
 	 * * Hidden
 	 *
 	 **/
-	public function setRenderer( $name, $prefix = '', $suffix = '<br>', $label_class = '', $target = 'html5' )
+	public function setRenderer( fxHTMLRenderer &$r )
 	{
-		fxAssert::isNonEmptyString($name,   'name',   "Renderer name must be a non-empty string.");
-		fxAssert::isNonEmptyString($target, 'target', "Target for renderer must be a non-empty string.");
-
-		$name = ucfirst($name);
-		$className = "fx{$name}FormRenderer";
-		if( !class_exists( $className ) )
-			throw new exception( "Renderer $className cannot be found." );
-
-		$this->_renderer = $className;
-		$this->_target   = strtolower($target);
-
-		$className::$element_prefix = $prefix;
-		$className::$element_suffix = $suffix;
-		$className::$label_class    = $label_class;
+		$this->_renderer = $r;
 		return $this;
 	}
 
@@ -195,21 +169,25 @@ class fxForm extends fxFormElementSet
 		$form_ok        = true;
 		$src            = strtoupper($this->_method);
 		$this->_form_id = $this->_fingerprint();
+		$r              = $this->_renderer;
 
 		//
 		//	Has process been called following a form submission? Submission => method matches form
 		//
 		if( strtoupper( $_SERVER['REQUEST_METHOD'] ) === $src ) {
 			$array = "_$src";
-//fCore::expose( array( $array=>$GLOBALS[$array] ) );
 			$submitted = !empty($GLOBALS[$array]);
 		}
 
+		$r->setSubmitting($submitted);
+
 		if( $submitted ) {
+			if( true == $this->_meta['show_submitted'] )
+				fCore::expose( array( $array=>$GLOBALS[$array] ) );
+
 			// Signal to the renderer that a submission is underway. This allows it to conditionally add
 			// classes when rendering
-			$r = $this->_renderer;
-			$r::$submitting = true;
+			$r->setSubmitting(true);
 
 			// Do the id and token match what is expected?
 			$id_ok = ($this->_form_id === fRequest::get('_form_id') );
@@ -254,12 +232,10 @@ class fxForm extends fxFormElementSet
 		}
 		fxCSRFToken::clear( $this->_form_id );
 		$this->_form_token = fxCSRFToken::generate( $this->_form_id );
-		return $this->_render();
-	}
 
+		if( true == $this->_show_form_elements )
+			fCore::expose($this);
 
-	protected function _render()
-	{
 		if( !$this->_form_id || !$this->_form_token )
 			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );
 
@@ -270,9 +246,9 @@ class fxForm extends fxFormElementSet
 	/**
 	 * Each element will be asked to use the given renderer to get itself output.
 	 **/
-	public function renderUsing( $renderer, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
-		return $renderer::renderForm( $f );
+		return $r->renderForm( $f );
 	}
 
 }

@@ -1,12 +1,14 @@
 <?php
 
 /**
- * Generic HTMLStatement class implementing setters via fluent __call() invocations.
+ * Generic class storing data and meta-data and implementing all getters and setters upon those data via __call() invocations.
  *
- * eg. $s = fxNamedSet('NAME')->class('xyz')->id('abc'); adds 'class' => 'xyz' and 'id' => 'abc' to a set called 'NAME'.
+ * Developed with defining the attributes of HTML statements in mind, this class also allows meta-data to be saved using the same methods but
+ * prefixing the keys of all meta-data with an underscore.
  *
- * Intended for use in defining the attributes that will go in each element's HTML. To avoid possible name collisions between
- * methods in the class and valid HTML attributes all the method names will start with a single underscore.
+ * eg.  $s = new fxNamedSet('NAME');
+ *      $s->class('xyz')->id('abc');  // adds 'class' => 'xyz' and 'id' => 'abc' to the data array in a set called 'NAME'.
+ *      $s->_renderer('bootstrap');   // adds 'renderer' => 'bootstrap' to the meta-data array in the set.
  *
  **/
 abstract class fxNamedSet
@@ -22,6 +24,10 @@ abstract class fxNamedSet
 	protected $_meta;
 
 
+
+	/**
+	 * Sets up a named set containing both data and meta-data.
+	 **/
 	public function __construct($name)
 	{
 		fxAssert::isNonEmptyString($name, 'name', "Each fxNamedSet must be 'named'.");
@@ -92,6 +98,11 @@ abstract class fxNamedSet
 	}
 
 
+
+	/**
+	 * Allows fxNamed set objects to be used in empty() and isset() tests.
+	 * Without this we can get some unexpected results.
+	 **/
 	public function __isset( $name )
 	{
 		if( self::_isMeta($name) )
@@ -100,12 +111,21 @@ abstract class fxNamedSet
 		return isset($this->_data[$name]);
 	}
 
+
+
+	/**
+	 * Tests if the given key exists in the set's data array.
+	 **/
 	public function _inData($key)
 	{
 		return array_key_exists( $key, $this->_data );
 	}
 
 
+
+	/**
+	 * Tests if the given key exists in the set's meta data array.
+	 **/
 	public function _inMeta($key)
 	{
 		return array_key_exists( $key, $this->_meta );
@@ -113,16 +133,24 @@ abstract class fxNamedSet
 
 
 
+	/**
+	 * Returns the array of data from this set.
+	 **/
 	public function _getData()
 	{
 		return $this->_data;
 	}
 
 
+
+	/**
+	 * Returns the array of meta data from this set.
+	 **/
 	public function _getMeta()
 	{
 		return $this->_meta;
 	}
+
 
 
 	/**
@@ -134,6 +162,7 @@ abstract class fxNamedSet
 		$excludes = array_flip(explode( ',', $excludes ));
 		return array_diff_key( (($use_meta) ? $this->_meta : $this->_data) , $excludes );
 	}
+
 
 
 	/**

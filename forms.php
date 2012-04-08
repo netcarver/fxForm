@@ -25,9 +25,9 @@ class fxFormString extends fxFormElement
 		return true;
 	}
 
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
-		return $r::renderString($this->value);
+		return $r->renderString($this->value);
 	}
 }
 
@@ -43,9 +43,9 @@ class fxFormInput extends fxFormElement
 		$this->_html = 'input';
 	}
 
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
-		return $r::render($this, $f, $parent_id);
+		return $r->render($this, $f, $parent_id);
 	}
 }
 
@@ -63,9 +63,9 @@ class fxFormButton extends fxFormElement
 		$this->_html = 'button';
 	}
 
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
-		return $r::renderButton($this, $f, $parent_id );
+		return $r->renderButton($this, $f, $parent_id );
 	}
 }
 
@@ -80,9 +80,9 @@ class fxFormTextArea extends fxFormElement
 		$this->maxlength = 2000;
 	}
 
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
-		return $r::renderTextArea($this, $f, $parent_id );
+		return $r->renderTextArea($this, $f, $parent_id );
 	}
 }
 
@@ -102,9 +102,9 @@ class fxFormSubmit extends fxFormButton
 		return 'fxFormButton';
 	}
 
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
-		return $r::renderButton($this, $f, $parent_id );
+		return $r->renderButton($this, $f, $parent_id );
 	}
 }
 
@@ -168,9 +168,9 @@ class fxFormHidden extends fxFormInput
 
 class fxFormFieldset extends fxFormElementSet
 {
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
-		return $r::renderFieldset($this, $f, $parent_id );
+		return $r->renderFieldset($this, $f, $parent_id );
 	}
 
 	public function _getSubmittedValue()
@@ -204,7 +204,7 @@ class fxFormCheckboxset extends fxFormElementSet
 		$this->name = fxForm::_simplify($name).'[]';
 	}
 
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
 		$members = $this->_members;
 		foreach( $members as $k => $v ) {
@@ -223,7 +223,7 @@ class fxFormCheckboxset extends fxFormElementSet
 				$el->checked();
 			$this->_elements[] = $el;
 		}
-		return $r::renderElementSet($this, $f, $parent_id );
+		return $r->renderElementSet($this, $f, $parent_id );
 	}
 }
 
@@ -246,7 +246,7 @@ class fxFormRadioset extends fxFormElementSet
 		$this->name = fxForm::_simplify($name);
 	}
 
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
 		$members = $this->_members;
 		foreach( $members as $k => $v ) {
@@ -267,7 +267,7 @@ class fxFormRadioset extends fxFormElementSet
 				$el->checked();
 			$this->_elements[] = $el;
 		}
-		return $r::renderElementSet( $this, $f, $parent_id );
+		return $r->renderElementSet( $this, $f, $parent_id );
 	}
 }
 
@@ -289,9 +289,9 @@ class fxFormSelect extends fxFormElementSet
 	}
 
 
-	public function renderUsing( $r, fxForm &$f, $parent_id )
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
-		return $r::renderSelect($this, $f, $parent_id );
+		return $r->renderSelect($this, $f, $parent_id );
 	}
 }
 
