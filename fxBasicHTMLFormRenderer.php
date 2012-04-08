@@ -11,8 +11,10 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$elval  = htmlspecialchars($e->value);
 		$id     = $this->makeId($e, $parent_id);
 		$plce   = (string)$e->_note;
-		if( '' !== $plce )
+		if( '' !== $plce && $this->target == 'html5' )
 			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
+		else
+			$plce = ''; // HTML4 doesn't have placeholder.
 
 		$o = array();
 
