@@ -46,7 +46,10 @@ abstract class fxFormElement extends fxNamedSet
 	 **/
 	public function _getSubmittedValue()
 	{
-		$this->_value = fRequest::encode($this->name);
+		$input = fRequest::encode($this->name);
+		if( is_string( $input ) )
+			$input = trim($input);
+		$this->_value = $input;
 		return $this;
 	}
 
