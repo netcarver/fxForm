@@ -156,26 +156,6 @@ class fxForm extends fxFormElementSet
 	 * * Hidden
 	 *
 	 **/
-	/* public function setRenderer( $name, $prefix = '', $suffix = '<br>', $label_class = '', $target = 'html5' ) */
-	/* { */
-	/* 	fxAssert::isNonEmptyString($name,   'name',   "Renderer name must be a non-empty string."); */
-	/* 	fxAssert::isNonEmptyString($target, 'target', "Target for renderer must be a non-empty string."); */
-
-	/* 	$name = ucfirst($name); */
-	/* 	$className = "fx{$name}FormRenderer"; */
-	/* 	if( !class_exists( $className ) ) */
-	/* 		throw new exception( "Renderer $className cannot be found." ); */
-
-	/* 	$this->_renderer = $className; */
-	/* 	$this->_target   = strtolower($target); */
-
-	/* 	$className::$element_prefix = $prefix; */
-	/* 	$className::$element_suffix = $suffix; */
-	/* 	$className::$label_class    = $label_class; */
-	/* 	return $this; */
-	/* } */
-
-
 	public function setRenderer( fxHTMLRenderer &$r )
 	{
 		$this->_renderer = $r;

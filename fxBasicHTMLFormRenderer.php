@@ -2,6 +2,7 @@
 
 class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 {
+
 	public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
 		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
@@ -33,6 +34,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$o = join( " ", $o );
 		return $this->addLabel( $o, $e, $parent_id );
 	}
+
 
 
 	public function renderForm( fxForm &$f )
@@ -75,6 +77,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	}
 
 
+
 	public function renderElementSet( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
@@ -97,6 +100,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	}
 
 
+
 	public function renderFieldSet( fxFormFieldset &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
@@ -111,6 +115,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$o = implode( "\n", $o );
 		return $o;
 	}
+
 
 
 	public function renderOptions( $options, fxFormElementSet &$e, fxForm &$f, $parent = '' )
@@ -134,6 +139,8 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		return implode("\n",$o);
 	}
 
+
+
 	public function renderSelect( fxFormElementSet &$e, fxForm &$f, $parent_id )
 	{
 		$o = array();
@@ -150,6 +157,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	}
 
 
+
 	public function renderTextarea( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
 		$attr  = $this->renderAtts($e->_getInfoExcept( 'class,value,id' ));
@@ -157,6 +165,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$class = $this->getClasses($e);
 		return $this->addLabel( "<textarea$id$attr$class>{$e->_value}</textarea>".$this->addErrorMessage( $e, $f ), $e, $parent_id );
 	}
+
 
 
 	public function renderButton( fxFormButton &$e, fxForm &$f, $parent_id )
@@ -167,6 +176,8 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$label = htmlspecialchars($e->_name);
 		return "<button$id$attr$class>$label</button>";
 	}
+
+
 }
 
 

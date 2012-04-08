@@ -11,6 +11,8 @@ interface fxRenderer
 
 
 
+
+
 abstract class fxHTMLRenderer implements fxRenderer
 {
 	protected $rendering_element_set = false;
@@ -29,22 +31,20 @@ abstract class fxHTMLRenderer implements fxRenderer
 	}
 
 
+
 	public function setSubmitting($val)
 	{
 		$this->submitting = $val;
 	}
 
 
-	/* public function setRenderingSet($val) */
-	/* { */
-	/* 	$this->rendering_element_set = $val; */
-	/* } */
-
 
 	public function setTarget($target='html5')
 	{
 		$this->target = $target;
 	}
+
+
 
 	/**
 	 * Takes an array of attributes ( name => values ) and creates an HTML formatted string from it.
@@ -71,6 +71,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 		}
 		return $o;
 	}
+
 
 
 	public function addErrorMessage( fxFormElement &$e, fxForm &$f )
