@@ -44,21 +44,6 @@ class fxForm extends fxFormElementSet
 	}
 
 
-	public function formatFormErrors( $cb )
-	{
-		fxAssert::isCallable($cb);
-		$this->_formatFormErrors = $cb;
-		return $this;
-	}
-
-
-	public function formatElementErrors( $cb )
-	{
-		fxAssert::isCallable($cb);
-		$this->_formatElementErrors = $cb;
-		return $this;
-	}
-
 
 	public function hasErrors()
 	{

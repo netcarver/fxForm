@@ -21,6 +21,9 @@ abstract class fxHTMLRenderer implements fxRenderer
 	protected $element_suffix        = '';
 	protected $label_class           = '';
 	protected $target                = 'html5';
+	protected $errorBlockFormatter   = null;
+	protected $elementErrorFormatter = null;
+	protected $affixFormatter        = null;
 
 
 	public function __construct( $prefix = '', $suffix = '<br>', $label_class = '' )
@@ -35,13 +38,38 @@ abstract class fxHTMLRenderer implements fxRenderer
 	public function setSubmitting($val)
 	{
 		$this->submitting = $val;
+		return $this;
 	}
-
 
 
 	public function setTarget($target='html5')
 	{
 		$this->target = $target;
+		return $this;
+	}
+
+
+	public function setErrorBlockFormatter( $cb )
+	{
+		fxAssert::isCallable($cb);
+		$this->errorBlockFormatter = $cb;
+		return $this;
+	}
+
+
+	public function setElementErrorFormatter( $cb )
+	{
+		fxAssert::isCallable($cb);
+		$this->elementErrorFormatter = $cb;
+		return $this;
+	}
+
+
+	public function setAffixFormatter( $cb )
+	{
+		fxAssert::isCallable($cb);
+		$this->affixFormatter = $cb;
+		return $this;
 	}
 
 
@@ -86,8 +114,8 @@ abstract class fxHTMLRenderer implements fxRenderer
 		if( $this->submitting && !$e->_inMeta('valid') ) {
 //echo "<pre>",htmlspecialchars( var_export($e->_getMeta() , true) ),"</pre>";
 			// Element is in error so format a per-element error message and add it...
-			if( is_callable( $f->_formatElementErrors ) ) {
-				$cb = $f->_formatElementErrors;
+			$cb = $this->elementErrorFormatter;
+			if( is_callable( $cb ) ) {
 				$msg = $cb( $e, $f );
 				if( is_string($msg) )
 					if( '' !== $msg ) $o = $msg;	// Callback can return an empty string to surpress per-element error messages.
@@ -119,6 +147,12 @@ abstract class fxHTMLRenderer implements fxRenderer
 
 		if( !$this->rendering_element_set )
 			$o = $this->element_prefix . $o . $this->element_suffix;
+		else {
+			$cb = $this->affixFormatter;
+			if( is_callable( $cb ) )
+				$o = $cb( $o, fxForm::_simplify($e->name), $this->set_index, $this->set_max );
+		}
+
 		return $o;
 	}
 

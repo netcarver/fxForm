@@ -49,7 +49,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		if( $f->hasErrors() ) {
 			// Use a form errors formatting callback to override basic message.
-			$formErrorsCB = $f->_formatFormErrors;
+			$formErrorsCB = $this->errorBlockFormatter;
 			if( is_callable( $formErrorsCB ) ) {
 				$msg = $formErrorsCB( $f );
 				if( is_string($msg) && '' !== $msg )
@@ -84,9 +84,15 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$class = $this->getClasses($e);
 		$o[] = "<div$class>";
 
+		$elements = $e->getElements();
+		$this->set_max   = count( $elements );
+		$this->set_index = 0;
+		if( $this->set_max ) $this->set_max--;
+
 		$this->rendering_element_set = true;
-		foreach( $e->getElements() as $el ) {
+		foreach( $elements as $el ) {
 			$o[] = $el->renderUsing( $this, $f, $parent_id );
+			$this->set_index++;
 		}
 		$this->rendering_element_set = false;
 
