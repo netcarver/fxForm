@@ -251,12 +251,6 @@ class fxForm extends fxFormElementSet
 		if( true == $this->_show_form_elements )
 			fCore::expose($this);
 
-		return $this->_render();
-	}
-
-
-	protected function _render()
-	{
 		if( !$this->_form_id || !$this->_form_token )
 			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );
 
