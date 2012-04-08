@@ -1,11 +1,15 @@
 <?php
 
+
+
 interface fxRenderer
 {
 	static public function renderString( $s );
 	static public function renderAtts( $atts );
 	static public function render( fxFormElement &$e, fxForm &$f, $parent_id );
 }
+
+
 
 abstract class fxHTMLRenderer implements fxRenderer
 {
@@ -67,6 +71,8 @@ abstract class fxHTMLRenderer implements fxRenderer
 		return $o;
 	}
 
+
+
 	static public function addLabel( $thing, fxFormElement &$e, $parent_id, $for_set = false )
 	{
 		if( $e->_inMeta('nolabel') )
@@ -87,6 +93,8 @@ abstract class fxHTMLRenderer implements fxRenderer
 			$o = self::$element_prefix . $o . self::$element_suffix;
 		return $o;
 	}
+
+
 
 
 	static public function getClasses(fxFormElement &$e)
@@ -110,10 +118,15 @@ abstract class fxHTMLRenderer implements fxRenderer
 		return ' class="'.implode(' ',$classes).'"';
 	}
 
+
+
+
 	static public function renderString( $string )
 	{
 		return ( $string );
 	}
+
+
 
 
 	static public function makeId( fxFormElement &$e, $parent_id, $make_attr=true )

@@ -14,6 +14,7 @@ abstract class fxFormElement extends fxNamedSet
 	static public $radio_types = array('radio','checkbox');
 
 
+
 	public function __construct($name , $note = null)
 	{
 		$label_right = ('>' === substr($name,0,1));
@@ -29,6 +30,7 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+
 	public function match($pattern)
 	{
 		fxAssert::isNonEmptyString($pattern, 'pattern');
@@ -36,6 +38,7 @@ abstract class fxFormElement extends fxNamedSet
 		$this->_validator = $pattern;
 		return $this;
 	}
+
 
 
 	/**
@@ -46,6 +49,8 @@ abstract class fxFormElement extends fxNamedSet
 		$this->_value = fRequest::encode($this->name);
 		return $this;
 	}
+
+
 
 	protected function _setValidity($v, $msg = '', &$errors = null  )
 	{
