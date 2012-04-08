@@ -49,6 +49,18 @@ abstract class fxHTMLRenderer implements fxRenderer
 	}
 
 
+	/**
+	 * Define a custom formatter for rendering the message at the top of a form when it is submitted and there are errors.
+	 *
+	 * By default, if there is no callback formatter, a simple one line message will be displayed. However, if you want to list all the
+	 * errors here, then you need to generate that list in your own callback.
+	 *
+	 * Make the callback match this signature...
+	 *
+	 * function myFormErrorsFormatter( fxForm &$f )
+	 *
+	 * And you can get the errors by calling $f->getErrors() and then iterating over the result generating your list.
+	 **/
 	public function setErrorBlockFormatter( $cb )
 	{
 		fxAssert::isCallable($cb);
@@ -57,6 +69,17 @@ abstract class fxHTMLRenderer implements fxRenderer
 	}
 
 
+	/**
+	 * Tells the renderer to call this method to custom format per-element errors.
+	 *
+	 * The callback must match this signature...
+	 *
+	 * function myElementErrorsFormatter( fxFormElement &$e, fxForm &$f )
+	 *
+	 * Where $e is the form element in error and $f is the owning form. All errors are stored in the form so you can
+	 * get the error message itself from the form by calling ($f->getErrorFor($e->name)). Don't forget to pass it through
+	 * htmlspecialchars() too.
+	 **/
 	public function setElementErrorFormatter( $cb )
 	{
 		fxAssert::isCallable($cb);
@@ -65,6 +88,20 @@ abstract class fxHTMLRenderer implements fxRenderer
 	}
 
 
+
+	/**
+	 * Configures the renderer to use a custom 'affix' formatter on radio and checkbox member elements.
+	 *
+	 * The callback must match the following signature...
+	 *
+	 * function myAffixFormatter( $element, $owner_name, $index, $max )
+	 *
+	 * Where, $element is the rendered control, $owner_name is the name of the owning set, $index is this elements
+	 * position within the set (zero based) and $max is the index of the maximum element.
+	 *
+	 * Knowing the zero-based index and the maximum index is enough to allow the detection of elements in the first and last
+	 * position and to allow nth-child based additions (like odd/even classes) in the affixed code.
+	 **/
 	public function setAffixFormatter( $cb )
 	{
 		fxAssert::isCallable($cb);
