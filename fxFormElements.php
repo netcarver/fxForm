@@ -128,7 +128,7 @@ abstract class fxFormElement extends fxNamedSet
 	/**
 	 * Each element will be asked to use the given renderer to get itself output.
 	 **/
-	abstract public function renderUsing( $r, fxForm &$f, $parent_id );
+	abstract public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id );
 }
 
 
