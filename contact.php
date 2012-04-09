@@ -117,6 +117,8 @@ $contact_form = Form('contact', './')
  * fine enough control over your form output not to have to resort to hand-crafted HTML.
  *
  * They are all enabled by setting values on the renderer.
+ * Thay are also totally option. In fact, the default output of the renderer should be fine in most
+ * cases so you can probably delete all the code in this part of the file.
  **/
 
 
@@ -206,8 +208,7 @@ function myNameValidator( fxFormElement &$e, fxForm &$f )
  **/
 function mySuccessHandler( fxForm &$form )
 {
-	return "<h3>Thank you {$form->getValueOf('Name')}, your message has been sent.</h3>"; // TODO add a getValueByName and getValueByLabel
-	// TODO check that these methods are HTML safe -- that is, they already have applied htmlspecialvals() to it.
+	return "<h3>Thank you {$form->getValueOf('Name')}, your message has been sent.</h3>";
 }
 
 
