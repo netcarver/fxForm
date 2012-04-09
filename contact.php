@@ -5,13 +5,12 @@ include("./head.inc");
 require_once( wire('config')->paths->root . "site/forms/forms.php" );
 
 #
-#	TODO: Store element errors in the element, as well as the form. Allows easier query interface to extract the error in element error handler.
-#	TODO: Package as PW module
-#	TODO: How to handle notes on html4 elements that don't support the placeholder tag? Perhaps use the elementError formatter?
 #	TODO: How to use flourish for validation? Does this make any sense?
 #	TODO: Upload element.
 #	TODO: Add Bootstrap renderer
-#	TODO: Handle Multilingual strings and numbers
+#	TODO: Package as PW module
+#	TODO: How to handle notes on html4 elements that don't support the placeholder tag? Perhaps use the elementError formatter?
+#	TODO: Handle Multilingual strings and numbers?
 #	TODO: Add population of form definition within a new admin page (public forms->contact) etc. Would allow form defs to be done in admin if.
 #
 #	TODO: Autogeneration of conditional enable/disable js code??
@@ -181,7 +180,7 @@ function myAffixFormatter( $element, $owner_name, $index, $max )
  **/
 function myConditionValidator( fxFormElement &$e, fxForm &$f )
 {
-	if( 'y' === $f->getValueOf('agree') )
+	if( 'y' === $e->_value )
 		return true;
 	return 'Sorry, but we cannot continue without your agreement.';
 }
@@ -193,9 +192,9 @@ function myConditionValidator( fxFormElement &$e, fxForm &$f )
 function myNameValidator( fxFormElement &$e, fxForm &$f )
 {
 	$ok = 'Ben';
-	if( $ok === $f->getValueOf('Name') )	// TODO: Why not just ask the element for it's value -- duh!
+	if( $ok === $e->_value )
 		return true;
-	return 'Name must be "'.$ok.'". No exceptions.';
+	return "Name must be '$ok'. No exceptions.";
 }
 
 
