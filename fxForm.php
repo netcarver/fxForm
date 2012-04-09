@@ -62,6 +62,7 @@ class fxForm extends fxFormElementSet
 		return $this->errors;
 	}
 
+
 	/**
 	 * Dumps the contents of the form in a way that is viewable in your browser.
 	 **/

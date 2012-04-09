@@ -55,7 +55,7 @@ abstract class fxFormElement extends fxNamedSet
 
 
 
-	protected function _setValidity($v, $msg = '', &$errors = null  )
+	public function _setValidity($v, $msg = '', &$errors = null  )
 	{
 		if( $v )
 			$this->_meta['valid'] = $v;
