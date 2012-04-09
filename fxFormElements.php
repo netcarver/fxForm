@@ -44,6 +44,23 @@ abstract class fxFormElement extends fxNamedSet
 
 
 
+	public function whitelist($list)
+	{
+		if( is_string($list) )
+			$list = explode( ',', $list );
+
+		fxAssert::isArray( $list );
+		fxAssert::isNotEmpty( $list );
+
+		foreach( $list as &$v )
+			$v = trim( $v );
+
+		$this->_fvalidator->addValidValuesRule($this->name, $list);
+		return $this;
+	}
+
+
+
 	public function pattern( $pattern, $msg='' )
 	{
 		fxAssert::isNonEmptyString($pattern);

@@ -78,7 +78,7 @@ $contact_form = Form('contact', './')
 	//->_show_submitted(true)			// Causes the form to show submitted values
 	//->_show_html(true)				// Causes the form's renderer to expose the generated HTML for the form.
 	//->_show_form_elements(true)		// Causes the form to show its internal structure
-	//->match('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
+	//->_match('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
 	->onSuccess('MySuccessHandler')
 
 	// Here come the form elements...
@@ -93,6 +93,7 @@ $contact_form = Form('contact', './')
 		->add( TextArea('Message *', 'Your message to us')
 				->required()
 				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines the HTML5 parameter *and* server-side regex for validation. Can add second string parameter for the error message
+				->whitelist('great,good,fantastic,amazing')
 		)
 	)
 
