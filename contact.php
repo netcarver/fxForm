@@ -5,13 +5,13 @@ include("./head.inc");
 require_once( wire('config')->paths->root . "site/forms/forms.php" );
 
 #
-#	TODO: Upload element.
-#	TODO: Add Bootstrap renderer
-#	TODO: Package as PW module
 #	TODO: How to handle notes on html4 elements that don't support the placeholder tag? Perhaps use the elementError formatter?
+#	TODO: Add Bootstrap renderer
+#	TODO: Upload element.
+#	TODO: Package as PW module
 #	TODO: Handle Multilingual strings and numbers?
-#	TODO: Add population of form definition within a new admin page (public forms->contact) etc. Would allow form defs to be done in admin if.
 #
+#	TODO: Add population of form definition within a new admin page (public forms->contact) etc. Would allow form defs to be done in admin if.
 #	TODO: Autogeneration of conditional enable/disable js code??
 #	TODO: Add support for nested fieldsets?? (I'd prefer not to have to do this.)
 #

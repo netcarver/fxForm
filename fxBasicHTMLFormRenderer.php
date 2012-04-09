@@ -5,10 +5,11 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
-		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
+		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id,type' ) );
 		$label  = htmlspecialchars($e->_name);
 		$subval = $e->_value;
 		$elval  = htmlspecialchars($e->value);
+		$itype  = $e->type;
 		$id     = $this->makeId($e, $parent_id);
 		$plce   = (string)$e->_note;
 		if( '' !== $plce && $this->target == 'html5' )
@@ -18,14 +19,19 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$o = array();
 
+		if( 'html4' == $this->target ) {
+			if( in_array( $itype, array('tel','number','date','search','email','url') ) )
+				$itype='text';
+		}
+
 		$class = $this->getClasses($e);
 		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
-		$o[] = "<$type$id$attr$plce$class";
+		$o[] = "<$type type=\"$itype\" $id$attr$plce$class";
 
-		if( 'submit' == $e->type || 'reset' == $e->type )
+		if( 'submit' == $itype || 'reset' == $itype )
 			$o[] = "value=\"$elval\" />$label</button>";
-		elseif( in_array( $e->type, fxFormElement::$radio_types) || 'hidden' === $e->type )
+		elseif( in_array( $itype, fxFormElement::$radio_types) || 'hidden' === $itype )
 			$o[] = "value=\"$elval\" />";
 		else
 			$o[] = "value=\"$subval\" />";
