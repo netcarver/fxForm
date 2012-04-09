@@ -5,7 +5,6 @@ include("./head.inc");
 require_once( wire('config')->paths->root . "site/forms/forms.php" );
 
 #
-#	TODO: How to use flourish for validation? Does this make any sense?
 #	TODO: Upload element.
 #	TODO: Add Bootstrap renderer
 #	TODO: Package as PW module
@@ -91,7 +90,10 @@ $contact_form = Form('contact', './')
 		)
 
 	->add( Fieldset('Your message...')
-		->add( TextArea('Message *', 'Your message to us')->required()->matchPattern('^[^0-9]*$') )
+		->add( TextArea('Message *', 'Your message to us')
+				->required()
+				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines the HTML5 parameter *and* server-side regex for validation. Can add second string parameter for the error message
+		)
 	)
 
 	->add( Fieldset('Legal stuff...')
@@ -232,6 +234,7 @@ function mySuccessHandler( fxForm &$form )
 		}
 		span.error-msg {
 			font-weight: bold;
+			margin-left: 0.5em;
 		}
 	</style>
 	<div>

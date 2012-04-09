@@ -44,14 +44,14 @@ abstract class fxFormElement extends fxNamedSet
 
 
 
-	public function matchPattern( $pattern, $msg='' )
+	public function pattern( $pattern, $msg='' )
 	{
 		fxAssert::isNonEmptyString($pattern);
-		fxAssert::isString($msg);
-		if( '' === $msg )
+		//fxAssert::isString($msg);
+		if( '' == $msg )
 			$msg = "Value must match the pattern: \"$pattern\"";
 		$this->_fvalidator->addRegexRule( $this->name, $pattern, $msg );
-		$this->pattern($pattern);	// HTML5 can take a pattern parameter!
+		$this->_data['pattern'] = $pattern;	// HTML5 can take a pattern parameter!
 		return $this;
 	}
 
@@ -61,20 +61,8 @@ abstract class fxFormElement extends fxNamedSet
 		fxAssert::isNonEmptyString($t);
 
 		$t = strtolower($t);
-		$this->_data['type'] = $t;	// TODO Although this might be set to an HTML5 supported value, like 'email', an html4 renderer would need to render this as an input of type=text
-
-		switch( $t ) {
-		case 'date' :
-			$this->_fvalidator->addDateFields($this->name); break;
-		case 'email' :
-			$this->_fvalidator->addEmailFields($this->name); break;
-		case 'url' :
-			$this->_fvalidator->addURLFields($this->name); break;
-		case 'number' :
-			$this->_fvalidator->addFloatFields($this->name); break;  // HTML5 spec says this means a float value, if present...
-		default :
-			break;
-		}
+		$this->_data['type'] = $t;	// TODO Although this might be set to an HTML5 supported value, like 'email',
+									// 		an html4 renderer would need to render this as an input of type=text
 
 		return $this;
 	}
@@ -273,6 +261,30 @@ class fxFormInput extends fxFormElement
 		parent::__construct($label, $note);
 		$this->type = 'text';
 		$this->_html = 'input';
+	}
+
+
+	public function type($t)
+	{
+		parent::type($t);
+
+		switch( $t ) {
+		case 'search' :
+		case 'text' :
+			$this->_fvalidator->addEmailHeaderFields($this->name); break; // HTML5 spec says text+search should exclude \r \n and that's exactly what addEmailHeaderFields() checks for, perfect!
+		case 'date' :
+			$this->_fvalidator->addDateFields($this->name); break;
+		case 'email' :
+			$this->_fvalidator->addEmailFields($this->name); break;
+		case 'url' :
+			$this->_fvalidator->addURLFields($this->name); break;
+		case 'number' :
+			$this->_fvalidator->addFloatFields($this->name); break;  // HTML5 spec says this means a float value, if present...
+		default :
+			break;
+		}
+
+		return $this;
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
