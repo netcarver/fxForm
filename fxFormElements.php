@@ -156,15 +156,6 @@ abstract class fxFormElementSet extends fxFormElement
 	}
 
 
-	protected function _getExpandedElements()
-	{
-		/**
-		 * Take element-dependent action. Allows containers like RadioSets and CheckboxSets to convert
-		 * themselves to a real set of normal inputs.
-		 **/
-		return $this->_elements;
-	}
-
 
 	/**
 	 * Allows the addition of an element to a form
