@@ -5,7 +5,6 @@ include("./head.inc");
 require_once( wire('config')->paths->root . "site/forms/forms.php" );
 
 #
-#	TODO: How to use flourish for validation? Does this make any sense?
 #	TODO: Upload element.
 #	TODO: Add Bootstrap renderer
 #	TODO: Package as PW module
@@ -79,19 +78,26 @@ $contact_form = Form('contact', './')
 	//->_show_submitted(true)			// Causes the form to show submitted values
 	//->_show_html(true)				// Causes the form's renderer to expose the generated HTML for the form.
 	//->_show_form_elements(true)		// Causes the form to show its internal structure
+	//->_show_form_errors(true)
 	//->match('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
 	->onSuccess('MySuccessHandler')
 
 	// Here come the form elements...
 	->add( Fieldset('About you...')
-		->add( Input('Name *', 'Your name please')->required()->match('myNameValidator') )
-		->add( Input('Email *', 'Your email address')->type('email')->required() )
+		->add( Input('Name', 'Your name please')->required()->match('myNameValidator') )
+		->add( Input('Email', 'Your email address')->type('email')->required() )
 		->add( Input('URL', 'Your URL here (optional)')->type('url') )
-		//->add( Hidden('secret','123') )
+		->add( Hidden('secret','123') )
+		->add( Password( 'Password', 'Enter a password')->required()->whitelist('password') )
+		->add( Input('Phone', 'A contact number please')->type('tel')->pattern('/^[\s0-9]+$/') )
 		)
 
 	->add( Fieldset('Your message...')
-		->add( TextArea('Message *', 'Your message to us')->required() )
+		->add( TextArea('Message', 'Your message to us')
+				->required()
+				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines the HTML5 parameter *and* server-side regex for validation. Can add second string parameter for the error message
+				->whitelist('great,good,fantastic,amazing')
+		)
 	)
 
 	->add( Fieldset('Legal stuff...')
@@ -232,6 +238,7 @@ function mySuccessHandler( fxForm &$form )
 		}
 		span.error-msg {
 			font-weight: bold;
+			margin-left: 0.5em;
 		}
 	</style>
 	<div>

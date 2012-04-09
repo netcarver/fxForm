@@ -2,7 +2,6 @@
 
 /**
  * Basic HTML form element.
- * Adds _meta elements for behaviour control.
  *
  * Note, this extends fxNamedSet but that *doesn't* mean it *is* a set of elements; it means that
  * an element *has* an associated set of data and meta-data. In this case, that data holds an
@@ -13,7 +12,7 @@ abstract class fxFormElement extends fxNamedSet
 {
 	static public $radio_types = array('radio','checkbox');
 
-
+	protected $_fvalidator = null;
 
 	public function __construct($name , $note = null)
 	{
@@ -27,18 +26,63 @@ abstract class fxFormElement extends fxNamedSet
 		$this->name = $this->id = fxForm::_simplify( $name );
 		$this->_label_right = $label_right;
 
+		$this->_fvalidator = new fValidation();
 	}
 
 
 
-	public function match($pattern)
+	/**
+	 * Adds a validation callback
+	 * Calls to new method type() can be used to add certain rules like URL / Email
+	 **/
+	public function match($cb)
 	{
-		fxAssert::isNonEmptyString($pattern, 'pattern');
-		fxAssert::isNotInArrayKeys('match', $this->_meta, 'Cannot redefine match $pattern for ['.$this->_name.'].');
-		$this->_validator = $pattern;
+		fxAssert::isCallable($cb, 'cb');
+		$this->_validation_cb = $cb;
 		return $this;
 	}
 
+
+
+	public function whitelist($list)
+	{
+		if( is_string($list) )
+			$list = explode( ',', $list );
+
+		fxAssert::isArray( $list );
+		fxAssert::isNotEmpty( $list );
+
+		foreach( $list as &$v )
+			$v = trim( $v );
+
+		$this->_fvalidator->addValidValuesRule($this->name, $list);
+		return $this;
+	}
+
+
+
+	public function pattern( $pattern, $msg='' )
+	{
+		fxAssert::isNonEmptyString($pattern);
+		//fxAssert::isString($msg);
+		if( '' == $msg )
+			$msg = "Value must match the pattern: \"$pattern\"";
+		$this->_fvalidator->addRegexRule( $this->name, $pattern, $msg );
+		$this->_data['pattern'] = $pattern;	// HTML5 can take a pattern parameter!
+		return $this;
+	}
+
+
+	public function type($t)
+	{
+		fxAssert::isNonEmptyString($t);
+
+		$t = strtolower($t);
+		$this->_data['type'] = $t;	// TODO Although this might be set to an HTML5 supported value, like 'email',
+									// 		an html4 renderer would need to render this as an input of type=text
+
+		return $this;
+	}
 
 
 	/**
@@ -80,12 +124,9 @@ abstract class fxFormElement extends fxNamedSet
 	 **/
 	public function _validate( &$errors, fxForm &$f )
 	{
-		$validator = $this->_validator;
-		$required  = $this->_inData('required');
 		$submitted = $this->_value;
-
-		if( !$required && !$validator )			// Not required and no validator => always ok.
-			return $this;
+		$required  = $this->_inData('required');
+		$cb        = $this->_validation_cb;
 
 		if( !$required && '' == $submitted )	// Not required and no input => always ok.
 			return $this;
@@ -93,13 +134,23 @@ abstract class fxFormElement extends fxNamedSet
 		if( $required && '' == $submitted )		// A required value but no input => always a fail.
 			return $this->_addError( '* requires a value.' ,$errors);
 
-		if( !$validator )						// Required, but not empty, and no validator => always ok.
-			return $this;
+		try {
+			$validation_errors = $this->_fvalidator->validate( TRUE, TRUE );	// We are only getting errors for this element, so we can safely remove the names.
+		} catch (fProgrammerException $e) {
+			// If we get here then there were no fValidation rules on this element => ok so far now to check our callback routine...
+		}
 
-		$valid = false;
+		if( !empty( $validation_errors ) ) {
+			// fValidation found some error(s)...
+			$this->_meta['errors'] = array_values($validation_errors);
+			$errors[$this->name]   = array_values($validation_errors);
+			return $this;
+		}
+
+		$valid = true;
 		$msg   = null;
-		if( is_callable( $validator ) ) {
-			$r = $validator( $this, $f );
+		if( is_callable( $cb ) ) {
+			$r = $cb( $this, $f );
 			if( $r === true || (is_string($r) && !empty($r)) ) {
 				$valid = ( $r === true );
 				if( !$valid )
@@ -109,11 +160,6 @@ abstract class fxFormElement extends fxNamedSet
 				throw new exception( "Validator function for {$this->name} must return (bool)true or a non-empty string." );
 			}
 		}
-		elseif( is_string( $validator ) ) {
-		//	$valid = preg_match( "~$validator~", $this->_value );
-		}
-		else
-			$msg = 'Invalid value.';
 
 		if( !$valid )
 			$this->_addError( $msg, $errors );
@@ -136,6 +182,8 @@ abstract class fxFormElement extends fxNamedSet
 	 **/
 	abstract public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id );
 }
+
+
 
 
 /**
@@ -232,6 +280,31 @@ class fxFormInput extends fxFormElement
 		parent::__construct($label, $note);
 		$this->type = 'text';
 		$this->_html = 'input';
+	}
+
+
+	public function type($t)
+	{
+		parent::type($t);
+
+		switch( $t ) {
+		case 'search' :
+		case 'text' :
+		case 'tel' :
+			$this->_fvalidator->addEmailHeaderFields($this->name); break; // HTML5 spec says text+search should exclude \r \n and that's exactly what addEmailHeaderFields() checks for, perfect!
+		case 'date' :
+			$this->_fvalidator->addDateFields($this->name); break;
+		case 'email' :
+			$this->_fvalidator->addEmailFields($this->name); break;
+		case 'url' :
+			$this->_fvalidator->addURLFields($this->name); break;
+		case 'number' :
+			$this->_fvalidator->addFloatFields($this->name); break;  // HTML5 spec says this means a float value, if present...
+		default :
+			break;
+		}
+
+		return $this;
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
