@@ -54,44 +54,47 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
-
-	protected function _setValidity($v, $msg = '', &$errors = null  )
+	/**
+	 * Use this to test if an element has passed its validation.
+	 **/
+	public function _isValid()
 	{
-		if( $v )
-			$this->_meta['valid'] = $v;
-		else {
-			unset($this->_meta['valid']);
-			fxAssert::isNonEmptyString($msg, '$msg');
-			fxAssert::isArray($errors);
-
-			$errors[ $this->name ] = $msg;
-		}
-		return $v;
+		return empty( $this->_meta['errors'] );
 	}
+
+
+
+	public function _addError( $msg = '', &$errors = null  )
+	{
+		fxAssert::isNonEmptyString($msg, '$msg');
+		fxAssert::isArray($errors);
+
+		$errors[ $this->name ][] = $msg;
+		$this->_meta['errors'][] = $msg;
+		return $this;
+	}
+
 
 	/**
 	 * Override this in derived classes if needed.
 	 **/
-	public function _isValid( &$errors, fxForm &$f )
+	public function _validate( &$errors, fxForm &$f )
 	{
 		$validator = $this->_validator;
 		$required  = $this->_inData('required');
 		$submitted = $this->_value;
 
-		if( !$required )
-			return $this->_setValidity(true);
+		if( !$required && !$validator )			// Not required and no validator => always ok.
+			return $this;
 
-		/**
-		 * Ok, if we get here then this is a required value. That implies, that it can't be empty so return false if it is...
-		 **/
-		if( '' == $submitted )
-			return $this->_setValidity(false, '* requires a value.' ,$errors);
+		if( !$required && '' == $submitted )	// Not required and no input => always ok.
+			return $this;
 
-		/**
-		 * Required & not empty. If there's no validator then that's all that's needed to pass validation...
-		 **/
-		if( !$validator )
-			return $this->_setValidity(true);
+		if( $required && '' == $submitted )		// A required value but no input => always a fail.
+			return $this->_addError( '* requires a value.' ,$errors);
+
+		if( !$validator )						// Required, but not empty, and no validator => always ok.
+			return $this;
 
 		$valid = false;
 		$msg   = null;
@@ -112,7 +115,10 @@ abstract class fxFormElement extends fxNamedSet
 		else
 			$msg = 'Invalid value.';
 
-		return $this->_setValidity($valid, $msg, $errors);
+		if( !$valid )
+			$this->_addError( $msg, $errors );
+
+		return $this;
 	}
 
 
@@ -155,15 +161,6 @@ abstract class fxFormElementSet extends fxFormElement
 		return $this->_elements;
 	}
 
-
-	protected function _getExpandedElements()
-	{
-		/**
-		 * Take element-dependent action. Allows containers like RadioSets and CheckboxSets to convert
-		 * themselves to a real set of normal inputs.
-		 **/
-		return $this->_elements;
-	}
 
 
 	/**
@@ -214,10 +211,9 @@ class fxFormString extends fxFormElement
 		$this->value = $text;
 	}
 
-	public function _isValid( &$errors, fxForm &$f )
+	public function _validate( &$errors, fxForm &$f )
 	{
-		$this->_valid = true;
-		return true;
+		return $this;
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
@@ -374,11 +370,10 @@ class fxFormFieldset extends fxFormElementSet
 		return $this;
 	}
 
-	public function _isValid( &$errors, fxForm &$f )
+	public function _validate( &$errors, fxForm &$f )
 	{
-		$fieldset_ok = true;
-		foreach( $this->_elements as $el ) if( $el instanceof fxFormElement ) $fieldset_ok = $fieldset_ok & $el->_isValid( $errors, $f );
-		return $fieldset_ok;
+		foreach( $this->_elements as $el ) if( $el instanceof fxFormElement ) $el->_validate( $errors, $f );
+		return $this;
 	}
 }
 

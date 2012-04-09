@@ -62,6 +62,7 @@ class fxForm extends fxFormElementSet
 		return $this->errors;
 	}
 
+
 	/**
 	 * Dumps the contents of the form in a way that is viewable in your browser.
 	 **/
@@ -165,7 +166,6 @@ class fxForm extends fxFormElementSet
 	public function process()
 	{
 		$submitted      = false;
-		$fields_ok      = true;
 		$form_ok        = true;
 		$src            = strtoupper($this->_method);
 		$this->_form_id = $this->_fingerprint();
@@ -204,10 +204,10 @@ class fxForm extends fxFormElementSet
 			//
 			foreach( $this->_elements as $e ) {
 				if( !is_string($e) ) {
-					$fields_ok = $fields_ok & $e->_getSubmittedValue()->_isValid( $this->errors, $this );
+					$e->_getSubmittedValue()->_validate( $this->errors, $this );
 				}
 			}
-			if( $fields_ok ) {
+			if( empty($this->errors) ) {
 				//
 				//	Run the form validator (if any)
 				//
