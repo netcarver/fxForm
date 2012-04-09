@@ -78,6 +78,7 @@ $contact_form = Form('contact', './')
 	//->_show_submitted(true)			// Causes the form to show submitted values
 	//->_show_html(true)				// Causes the form's renderer to expose the generated HTML for the form.
 	//->_show_form_elements(true)		// Causes the form to show its internal structure
+	//->_show_form_errors(true)
 	//->_match('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
 	->onSuccess('MySuccessHandler')
 
