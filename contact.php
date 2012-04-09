@@ -91,7 +91,7 @@ $contact_form = Form('contact', './')
 		)
 
 	->add( Fieldset('Your message...')
-		->add( TextArea('Message *', 'Your message to us')->required() )
+		->add( TextArea('Message *', 'Your message to us')->required()->matchPattern('^[^0-9]*$') )
 	)
 
 	->add( Fieldset('Legal stuff...')
