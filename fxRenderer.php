@@ -148,7 +148,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 			return;
 
 		$o = '';
-		if( $this->submitting && !$e->_inMeta('valid') ) {
+		if( $this->submitting && !$e->_isValid() ) {
 //echo "<pre>",htmlspecialchars( var_export($e->_getMeta() , true) ),"</pre>";
 			// Element is in error so format a per-element error message and add it...
 			$cb = $this->elementErrorFormatter;
@@ -158,7 +158,8 @@ abstract class fxHTMLRenderer implements fxRenderer
 					if( '' !== $msg ) $o = $msg;	// Callback can return an empty string to surpress per-element error messages.
 			}
 			else {
-				$o = '<span class="error-msg">'.$f->getErrorFor($e->name).'</span>';
+				//$o = '<span class="error-msg">'.$f->getErrorFor($e->name).'</span>';
+				$o = '<span class="error-msg">'.htmlspecialchars($e->_errors[0]).'</span>';
 			}
 		}
 		return $o;
@@ -205,9 +206,9 @@ abstract class fxHTMLRenderer implements fxRenderer
 		if( !$this->rendering_element_set ) {
 			if( !$this->submitting && $e->_inData('required') && empty($e->_value) )
 				$classes[] = 'required';
-			if( $this->submitting && !$e->_inMeta('valid') )
+			if( $this->submitting && !$e->_isValid() )
 				$classes[] = 'error';
-			if( $this->submitting && $e->_inData('required') && $e->_inMeta('valid') )
+			if( $this->submitting && $e->_inData('required') && $e->_isValid() )
 				$classes[] = 'ok';
 		}
 
