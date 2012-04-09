@@ -184,6 +184,8 @@ abstract class fxFormElement extends fxNamedSet
 }
 
 
+
+
 /**
  * Radiosets, Fieldsets, Checkboxes and Selects are implemented by having multiple elements.
  **/
@@ -288,6 +290,7 @@ class fxFormInput extends fxFormElement
 		switch( $t ) {
 		case 'search' :
 		case 'text' :
+		case 'tel' :
 			$this->_fvalidator->addEmailHeaderFields($this->name); break; // HTML5 spec says text+search should exclude \r \n and that's exactly what addEmailHeaderFields() checks for, perfect!
 		case 'date' :
 			$this->_fvalidator->addDateFields($this->name); break;
