@@ -1,0 +1,20 @@
+h1. An experimental HTML Form class and supporting elements.
+
+Built using some components and ideas from Will Bond's Flourish library and with a little
+inspiration from ProcessWire by Ryan Cramer.
+
+h2. Installation
+
+* Setup a PW testbed
+* Download and install flourish into siteroot/.flourish
+* Follow these instructions to get flourish's classes autoloading: http://processwire.com/talk/topic/1111-integrating-flourish-with-processwire/
+* Create a directory at siteroot/forms and copy all the files here *except* contact.php into it.
+* Copy contact.php into siteroot/templates
+* Login to ProcessWire and go to Setup > Templates and hit the 'Add New Template' button. 
+	Select contact.php and create a template called 'contact', add a title field (if not present) and save the template.
+* Go to Pages and add a new page called 'contact' that uses the template called 'contact'.
+* You should now be able to visit siteroot/contact in your browser and see the example contact form laid out for you.
+
+It should now be fairly trivial to add additional fields to your template for destination email address, SMTP server and password etc such that the
+form's onSuccess method could use that information to send the contact details out for real.
+
