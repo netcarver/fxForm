@@ -85,16 +85,16 @@ $contact_form = Form('contact', './')
 
 	// Here come the form elements...
 	->add( Fieldset('About you...')
-		->add( Input('Name', 'Your name please')->required()->match('myNameValidator') )
-		->add( Input('Email', 'Your email address')->type('email')->required() )
-		->add( Input('URL', 'Your URL here (optional)')->type('url') )
+		->add( Input('name', 'Your Name', 'Your name please')->required()->match('myNameValidator') )
+		->add( Input('email', 'Your Email', 'Your email address')->type('email')->required() )
+		->add( Input('url', 'Website', 'Your URL here (optional)')->type('url') )
 		->add( Hidden('secret','123') )
-		->add( Password( 'Password', 'Enter a password')->required()->whitelist('password') )
-		->add( Input('Phone', 'A contact number please')->type('tel')->pattern('/^[\s0-9]+$/') )
+		->add( Password('pass', 'Your Password', 'Enter a password')->required()->whitelist('password') )
+		->add( Input('tel', 'Phone', 'A contact number please')->type('tel')->pattern('/^[\s0-9]+$/') )
 		)
 
 	->add( Fieldset('Your message...')
-		->add( TextArea('Message', 'Your message to us')
+		->add( TextArea('msg', 'Message', 'Your message to us')
 				->required()
 				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines the HTML5 parameter *and* server-side regex for validation. Can add second string parameter for the error message
 				->whitelist('great,good,fantastic,amazing')
@@ -102,15 +102,15 @@ $contact_form = Form('contact', './')
 	)
 
 	->add( Fieldset('Legal stuff...')
-		->add( Radios('>Do you agree to our terms? *', $conditions, 'agree' )
+		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
 				->required()
 				->match('myConditionValidator')
 				//->_value('n')					// Configure the initial value. Use the key of the item you want selected from the $conditions array.
 		)
-		->add( Checkboxes( 'Additional Options...', $checkboxes, 'options' )
+		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
 				//->_value( array( 'spam' ) )	// Initial value(s). Just add more keys from the $checkboxes array for multiple checkmarks.
 		)
-		->add( MSelect( 'Forward to which departments?', $departments, 'departments' ) )
+		->add( MSelect('depts', 'Forward to which departments?', $departments) )
 	)
 
 	->add( Submit('Send') )
@@ -173,7 +173,7 @@ function myAffixFormatter( $element, $owner_name, $index, $max )
 	}
 
 	// Adds breaks after each radiobutton...
-	if( 'agree' == $owner_name ) $element .= "<br>";
+	if( 'agreement' == $owner_name ) $element .= "<br>";
 
 	return $element;
 }
@@ -189,9 +189,7 @@ function myAffixFormatter( $element, $owner_name, $index, $max )
  **/
 function myConditionValidator( fxFormElement &$e, fxForm &$f )
 {
-	if( 'y' === $e->_value )
-		return true;
-	return 'Sorry, but we cannot continue without your agreement.';
+	return ( 'y' === $e->_value ) ? true : 'Sorry, but we cannot continue without your agreement.';
 }
 
 
@@ -200,10 +198,7 @@ function myConditionValidator( fxFormElement &$e, fxForm &$f )
  **/
 function myNameValidator( fxFormElement &$e, fxForm &$f )
 {
-	$ok = 'Ben';
-	if( $ok === $e->_value )
-		return true;
-	return "Name must be '$ok'. No exceptions.";
+	return ( 'Ben' === $e->_value ) ? true : "Name must be 'Ben'. No exceptions.";
 }
 
 

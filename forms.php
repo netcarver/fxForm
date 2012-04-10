@@ -13,15 +13,15 @@ require_once( 'fxBasicHTMLFormRenderer.php' );
  * Convenience creator functions. These allow chaining from point of creation and make for a more fluent interface...
  **/
 function Form		( $form_name, $action, $method="post" )	{ return new fxForm( $form_name, $action, $method ); }
-function Checkboxes	( $label, $members_array, $name=null ) 	{ return new fxFormCheckboxset( $label, $members_array, $name ); }
-function Radios		( $label, $members_array, $name=null ) 	{ return new fxFormRadioset( $label, $members_array, $name ); }
-function Select  	( $label, $options_array, $name=null )	{ return new fxFormSelect( $label, $options_array, $name ); }
-function MSelect 	( $label, $options_array, $name=null )	{ return new fxFormMSelect( $label, $options_array, $name ); }
+function Checkboxes	( $name, $label, $members_array ) 		{ return new fxFormCheckboxset( $name, $label, $members_array ); }
+function Radios		( $name, $label, $members_array )	 	{ return new fxFormRadioset( $name, $label, $members_array ); }
+function Select  	( $name, $label, $options_array )		{ return new fxFormSelect( $name, $label, $options_array ); }
+function MSelect 	( $name, $label, $options_array )		{ return new fxFormMSelect( $name, $label, $options_array ); }
 function Text		( $text )            					{ return new fxFormString( $text ); }
-function Input		( $label, $note=null )	     			{ return new fxFormInput( $label, $note ); }
-function Password	( $label )      						{ return new fxFormPassword( $label ); }
+function Input		( $name, $label, $note=null )	     	{ return new fxFormInput( $name, $label, $note ); }
+function Password	( $name, $label )      					{ return new fxFormPassword( $name, $label ); }
 function Hidden		( $name, $value ) 						{ return new fxFormHidden( $name, $value ); }
-function TextArea	( $label, $note )      					{ return new fxFormTextArea( $label, $note ); }
+function TextArea	( $name, $label, $note )      			{ return new fxFormTextArea( $name, $label, $note ); }
 function Button		( $text )         						{ return new fxFormButton( $text ); }
 function Submit		( $text ) 	     						{ return new fxFormSubmit( $text ); }
 //function Reset 		( $text ) 	 							{ return new fxFormReset( $text ); }
