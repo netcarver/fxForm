@@ -208,7 +208,7 @@ class fxForm extends fxFormElementSet
 				//
 				//	Run the form validator (if any)
 				//
-				$validator = $this->_validator;
+				$validator = $this->_validation_cb;
 				if( is_callable( $validator ) ) {
 					$v = $validator( $this );
 					$form_ok = (true === $v);

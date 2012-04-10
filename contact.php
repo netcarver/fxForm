@@ -5,8 +5,8 @@ include("./head.inc");
 require_once( wire('config')->paths->root . "site/forms/forms.php" );
 
 #
-#	TODO: How to handle notes on html4 elements that don't support the placeholder tag? Perhaps use the elementError formatter?
 #	TODO: Add form level validation
+#	TODO: How to handle notes on html4 elements that don't support the placeholder tag? Perhaps use the elementError formatter?
 #	TODO: Add Bootstrap renderer
 #	TODO: Upload element.
 #	TODO: Package as PW module
