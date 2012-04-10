@@ -119,7 +119,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	{
 		$o = array();
 		$class = $this->getClasses($e);
-		$o[] = "\n<fieldset $class><legend>{$e->_name}</legend>";
+		$o[] = "\n<fieldset $class><legend>{$e->_label}</legend>";
 
 		foreach( $e->getElements() as $el ) {
 			$o[] = $el->renderUsing( $this, $f, $parent_id );
@@ -187,7 +187,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$attr  = $this->renderAtts($e->_getInfoExcept( 'class,value,id' ));
 		$id    = $this->makeId($e, $parent_id);
 		$class = $this->getClasses($e);
-		$label = htmlspecialchars($e->_name);
+		$label = htmlspecialchars($e->_label);
 		return "<button$id$attr$class>$label</button>";
 	}
 

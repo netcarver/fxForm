@@ -6,7 +6,6 @@ require_once( wire('config')->paths->root . "site/forms/forms.php" );
 
 #
 #	TODO: How to handle notes on html4 elements that don't support the placeholder tag? Perhaps use the elementError formatter?
-#	TODO: Move name field into element constructor?
 #	TODO: Add form level validation
 #	TODO: Add Bootstrap renderer
 #	TODO: Upload element.
@@ -77,8 +76,8 @@ $r
  **/
 $contact_form = Form('contact', './')
 	->setRenderer( $r )					// Tells the form which renderer to use to generate its output.
-	//->_show_submitted(true)			// Causes the form to show submitted values
-	//->_show_html(true)				// Causes the form's renderer to expose the generated HTML for the form.
+	->_show_submitted(true)			// Causes the form to show submitted values
+	->_show_html(true)				// Causes the form's renderer to expose the generated HTML for the form.
 	//->_show_form_elements(true)		// Causes the form to show its internal structure
 	//->_show_form_errors(true)
 	//->match('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
@@ -103,7 +102,7 @@ $contact_form = Form('contact', './')
 	)
 
 	->add( Fieldset('Legal stuff...')
-		->add( Radios('agreement', '>Do you agree to our terms? *', $conditions)
+		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
 				->required()
 				->match('myConditionValidator')
 				//->_value('n')					// Configure the initial value. Use the key of the item you want selected from the $conditions array.

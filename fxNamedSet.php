@@ -30,7 +30,7 @@ abstract class fxNamedSet
 	 **/
 	public function __construct($name)
 	{
-		fxAssert::isNonEmptyString($name, 'name', "Each fxNamedSet must be 'named'.");
+		fxAssert::isNonEmptyString($name, 'name', "Each fxNamedSet must be have a name.");
 		$this->_data = $this->_meta = array();
 		$this->_meta['name'] = $name;
 	}

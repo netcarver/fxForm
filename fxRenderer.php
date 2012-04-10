@@ -173,13 +173,13 @@ abstract class fxHTMLRenderer implements fxRenderer
 			return $thing;
 
 		if( $for_set ) {
-			$label  = '<span>'.htmlspecialchars($e->_name).'</span>';
+			$label  = '<span>'.htmlspecialchars($e->_label).'</span>';
 			$o = $label . "\n" . $thing;
 		}
 		else {
 			$lclass = ( '' !== $this->label_class ) ? ' class="'.$this->label_class.'"' : '';
 			$id     = $this->makeId($e, $parent_id, false);
-			$label  = '<label for="'.htmlspecialchars($id).'"'.$lclass.'>'.htmlspecialchars($e->_name).'</label>';
+			$label  = '<label for="'.htmlspecialchars($id).'"'.$lclass.'>'.htmlspecialchars($e->_label).'</label>';
 			$o = ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
 		}
 

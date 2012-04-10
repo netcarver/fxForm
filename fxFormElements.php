@@ -14,16 +14,21 @@ abstract class fxFormElement extends fxNamedSet
 
 	protected $_fvalidator = null;
 
-	public function __construct($name , $label, $note = null)
+	public function __construct($name, $label = null, $note = null)
 	{
-		$label_right = ('>' === substr($label,0,1));
+		$label_right = ('>' === @substr($label,0,1));
 		if( $label_right ) {
 			$label = substr($label,1);
 		}
 
+		$name = fxForm::_simplify($name);
 		parent::__construct($name);
-		$this->_note = $note;
-		$this->name = $this->id = fxForm::_simplify( $name );
+		$this->name = $this->id = $name;	// The html form element's name and id are set from the initial, simplified, name.
+
+		if( $label )
+			$this->_label = $label;
+		if( $note )
+			$this->_note = $note;
 		$this->_label_right = $label_right;
 
 		$this->_fvalidator = new fValidation();
@@ -194,10 +199,10 @@ abstract class fxFormElementSet extends fxFormElement
 	protected $_elements;
 
 
-	public function __construct( $name, $note = null )
+	public function __construct( $name, $label, $note = null )
 	{
-		parent::__construct($name);
-		$this->_note = $note;
+		parent::__construct($name, $label, $note);
+		//$this->_note = $note;
 		$this->_elements = array();
 	}
 
@@ -318,9 +323,9 @@ class fxFormInput extends fxFormElement
 
 class fxFormButton extends fxFormElement
 {
-	public function __construct($label, $note=null)
+	public function __construct($name, $note=null)
 	{
-		parent::__construct($label, $note);
+		parent::__construct($name, $name, $note);
 		$this->type = 'button';
 		$this->value = fxForm::_simplify($name);
 		$this->_nolabel = true;
@@ -432,6 +437,11 @@ class fxFormHidden extends fxFormInput
 
 class fxFormFieldset extends fxFormElementSet
 {
+	public function __construct($label)
+	{
+		parent::__construct( fxForm::_simplify($label) ,$label);
+	}
+
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
 		return $r->renderFieldset($this, $f, $parent_id );
@@ -462,7 +472,7 @@ class fxFormCheckboxset extends fxFormElementSet
 		/* if( null === $name || '' === $name || !is_string($name) ) */
 		/* 	$name = $label; */
 
-		parent::__construct($label);
+		parent::__construct($name, $label);
 		$this->_members = $members;
 		$this->name = fxForm::_simplify($name).'[]';
 	}
@@ -474,7 +484,7 @@ class fxFormCheckboxset extends fxFormElementSet
 			$simple_v = $simple_k = fxForm::_simplify($v);
 			if( is_string( $k ) )
 				$simple_k = fxForm::_simplify($k);
-			$el = new fxFormInput($v);
+			$el = new fxFormInput($this->name, $v);
 			$el
 				->type('checkbox')
 				->name($this->name)
@@ -500,13 +510,13 @@ class fxFormRadioset extends fxFormElementSet
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		if( count($members) < 2 ) throw new exception( 'There must be 2 or more members for a RadioSet to be populated.' );
 
-		parent::__construct($label);
+		parent::__construct($name, $label);
 
 		/* if( null === $name || '' === $name || !is_string($name) ) */
 		/* 	$name = $label; */
 
 		$this->_members = $members;
-		$this->name = fxForm::_simplify($name);
+		//$this->name = fxForm::_simplify($name);
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
@@ -516,10 +526,10 @@ class fxFormRadioset extends fxFormElementSet
 			$simple_v = $simple_k = fxForm::_simplify($v);
 			if( is_string( $k ) )
 				$simple_k = $k;
-			$el = new fxFormInput($v);
+			$el = new fxFormInput($this->name, $v);
 			$el
 				->type('radio')
-				->name($this->name)
+				//->name($this->name)
 				->id( fxForm::_simplify( $this->name . '-' . $simple_v ) )
 				->value($simple_k)
 				->_label_right( $this->_label_right )
@@ -541,11 +551,12 @@ class fxFormSelect extends fxFormElementSet
 {
 	public function __construct($name, $label, $members)
 	{
+		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
+
 		/* if( null === $name || '' === $name || !is_string($name) ) */
 		/* 	$name = $label; */
 
-		parent::__construct($label);
-		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
+		parent::__construct($name, $label);
 		$this->_members = $members;
 		$this->id = $tmp = fxForm::_simplify($name);
 		$this->name = $tmp.'[]';
