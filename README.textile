@@ -1,7 +1,6 @@
 h1. An experimental HTML Form class and supporting elements.
 
-Built using some components and ideas from Will Bond's Flourish library and with a little
-inspiration from ProcessWire by Ryan Cramer.
+Built using some components and ideas from Will Bond's Flourish library and with a little inspiration from ProcessWire by Ryan Cramer.
 
 h2. Installation
 
@@ -14,12 +13,17 @@ h2. Installation
 * Go to Pages and add a new page called 'contact' that uses the template called 'contact'.
 * You should now be able to visit siteroot/contact in your browser and see the example contact form laid out for you.
 
-It should now be fairly trivial to add additional fields to your template for destination email address, SMTP server and password etc such that the form's onSuccess method could use that information to send the contact details out for real.
+h2. Extension
 
+It should now be fairly trivial to add additional fields to your template for destination email address, SMTP server and password etc such that the form's onSuccess method could use that information to send the contact details out for real.
 
 The supplied contact.php file is a simple demonstration of some of the features of this library and of how to use a fluent interface to define a public facing HTML form. Feel free to tinker within that file, you should find it fairly well documented, or to start developing your own forms.
 
+h2. Feedback
+
 Any feedback on #processwire, by email to processwire@netcarving.com or PM in the ProcessWire forums please.
+
+h2. Confidentiality
 
 *Please treat this code as confidential until such time as I decide to release it publicly.*
 
