@@ -14,11 +14,11 @@ abstract class fxFormElement extends fxNamedSet
 
 	protected $_fvalidator = null;
 
-	public function __construct($name , $note = null)
+	public function __construct($name , $label, $note = null)
 	{
-		$label_right = ('>' === substr($name,0,1));
+		$label_right = ('>' === substr($label,0,1));
 		if( $label_right ) {
-			$name = substr($name,1);
+			$label = substr($label,1);
 		}
 
 		parent::__construct($name);
@@ -275,9 +275,9 @@ class fxFormString extends fxFormElement
 
 class fxFormInput extends fxFormElement
 {
-	public function __construct($label, $note=null)
+	public function __construct($name, $label, $note=null)
 	{
-		parent::__construct($label, $note);
+		parent::__construct($name, $label, $note);
 		$this->type = 'text';
 		$this->_html = 'input';
 	}
@@ -338,9 +338,9 @@ class fxFormButton extends fxFormElement
 
 class fxFormTextArea extends fxFormElement
 {
-	public function __construct($label, $note=null)
+	public function __construct($name, $label, $note=null)
 	{
-		parent::__construct($label, $note);
+		parent::__construct($name, $label, $note);
 		$this->maxlength = 2000;
 	}
 
@@ -394,9 +394,9 @@ class fxFormReset extends fxFormButton
 
 class fxFormPassword extends fxFormInput
 {
-	public function __construct($label, $note)
+	public function __construct($name, $label, $note)
 	{
-		parent::__construct($label, $note);
+		parent::__construct($name, $label, $note);
 		$this->type = 'password';
 		$this->_html = 'input';
 	}
@@ -455,12 +455,12 @@ class fxFormFieldset extends fxFormElementSet
 
 class fxFormCheckboxset extends fxFormElementSet
 {
-	public function __construct($label, $members, $name = null)
+	public function __construct($name, $label, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 
-		if( null === $name || '' === $name || !is_string($name) )
-			$name = $label;
+		/* if( null === $name || '' === $name || !is_string($name) ) */
+		/* 	$name = $label; */
 
 		parent::__construct($label);
 		$this->_members = $members;
@@ -495,15 +495,15 @@ class fxFormCheckboxset extends fxFormElementSet
 
 class fxFormRadioset extends fxFormElementSet
 {
-	public function __construct($label, $members, $name = null )
+	public function __construct($name, $label, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 		if( count($members) < 2 ) throw new exception( 'There must be 2 or more members for a RadioSet to be populated.' );
 
 		parent::__construct($label);
 
-		if( null === $name || '' === $name || !is_string($name) )
-			$name = $label;
+		/* if( null === $name || '' === $name || !is_string($name) ) */
+		/* 	$name = $label; */
 
 		$this->_members = $members;
 		$this->name = fxForm::_simplify($name);
@@ -539,10 +539,10 @@ class fxFormRadioset extends fxFormElementSet
 
 class fxFormSelect extends fxFormElementSet
 {
-	public function __construct($label, $members, $name=null)
+	public function __construct($name, $label, $members)
 	{
-		if( null === $name || '' === $name || !is_string($name) )
-			$name = $label;
+		/* if( null === $name || '' === $name || !is_string($name) ) */
+		/* 	$name = $label; */
 
 		parent::__construct($label);
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
@@ -562,9 +562,9 @@ class fxFormSelect extends fxFormElementSet
 
 class fxFormMSelect extends fxFormSelect
 {
-	public function __construct($label, $members, $name=null)
+	public function __construct($name, $label, $members)
 	{
-		parent::__construct($label, $members, $name);
+		parent::__construct($name, $label, $members);
 		$this->multiple();
 	}
 }
