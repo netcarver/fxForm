@@ -76,8 +76,8 @@ $r
  **/
 $contact_form = Form('contact', './')
 	->setRenderer( $r )					// Tells the form which renderer to use to generate its output.
-	->_show_submitted(true)			// Causes the form to show submitted values
-	->_show_html(true)				// Causes the form's renderer to expose the generated HTML for the form.
+	//->_show_submitted(true)			// Causes the form to show submitted values
+	//->_show_html(true)				// Causes the form's renderer to expose the generated HTML for the form.
 	//->_show_form_elements(true)		// Causes the form to show its internal structure
 	//->_show_form_errors(true)
 	//->match('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
