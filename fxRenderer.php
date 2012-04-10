@@ -169,7 +169,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 
 	public function addLabel( $thing, fxFormElement &$e, $parent_id, $for_set = false )
 	{
-		if( $e->_inMeta('nolabel') )
+		if( $e->_inMeta('nolabel') ) // TODO test this branch
 			return $thing;
 
 		if( $for_set ) {
