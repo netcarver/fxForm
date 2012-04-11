@@ -78,6 +78,15 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+	public function required( $msg = null )
+	{
+		$this->_data['required'] = null;
+		if( is_string($msg) && '' !== $msg )
+			$this->_meta['required_message'] = $msg;
+		return $this;
+	}
+
+
 	public function type($t)
 	{
 		fxAssert::isNonEmptyString($t);
@@ -136,13 +145,13 @@ abstract class fxFormElement extends fxNamedSet
 		if( !$required && '' == $submitted )	// Not required and no input => always ok.
 			return $this;
 
-		if( $required && '' == $submitted )		// A required value but no input => always a fail.
-			return $this->_addError( '* requires a value.' ,$errors);
+		if( $required && '' == $submitted )		// A required value but no input => always a fail. If a custom fail message was supplied, use that.
+			return $this->_addError( (($this->_meta['required_message']) ? $this->_meta['required_message'] : '* Requires a value.') ,$errors);
 
 		try {
 			$validation_errors = $this->_fvalidator->validate( TRUE, TRUE );	// We are only getting errors for this element, so we can safely remove the names.
 		} catch (fProgrammerException $e) {
-			// If we get here then there were no fValidation rules on this element => ok so far now to check our callback routine...
+			// If we get here then there were no fValidation rules on this element => ok so far; now to check our callback routine...
 		}
 
 		if( !empty( $validation_errors ) ) {
@@ -152,22 +161,15 @@ abstract class fxFormElement extends fxNamedSet
 			return $this;
 		}
 
-		$valid = true;
-		$msg   = null;
 		if( is_callable( $cb ) ) {
 			$r = $cb( $this, $f );
-			if( $r === true || (is_string($r) && !empty($r)) ) {
-				$valid = ( $r === true );
-				if( !$valid )
-					$msg = $r;
+			if( true === $r || (is_string($r) && !empty($r)) ) {
+				if( true !== $r )
+					$this->_addError( $r, $errors );
 			}
-			else {
+			else
 				throw new exception( "Validator function for {$this->name} must return (bool)true or a non-empty string." );
-			}
 		}
-
-		if( !$valid )
-			$this->_addError( $msg, $errors );
 
 		return $this;
 	}

@@ -93,11 +93,11 @@ class fxForm extends fxFormElementSet
 	}
 
 
-	public function match($pattern)
-	{
-		$this->_validator = $pattern;
-		return $this;
-	}
+	/* public function match($pattern) */
+	/* { */
+	/* 	$this->_validator = $pattern; */
+	/* 	return $this; */
+	/* } */
 
 
 
@@ -208,7 +208,7 @@ class fxForm extends fxFormElementSet
 				//
 				//	Run the form validator (if any)
 				//
-				$validator = $this->_validator;
+				$validator = $this->_validation_cb;
 				if( is_callable( $validator ) ) {
 					$v = $validator( $this );
 					$form_ok = (true === $v);

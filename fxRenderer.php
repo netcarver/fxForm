@@ -158,7 +158,6 @@ abstract class fxHTMLRenderer implements fxRenderer
 					if( '' !== $msg ) $o = $msg;	// Callback can return an empty string to surpress per-element error messages.
 			}
 			else {
-				//$o = '<span class="error-msg">'.$f->getErrorFor($e->name).'</span>';
 				$o = '<span class="error-msg">'.htmlspecialchars($e->_errors[0]).'</span>';
 			}
 		}
