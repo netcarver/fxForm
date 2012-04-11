@@ -93,11 +93,11 @@ class fxForm extends fxFormElementSet
 	}
 
 
-	public function match($pattern)
-	{
-		$this->_validator = $pattern;
-		return $this;
-	}
+	/* public function match($pattern) */
+	/* { */
+	/* 	$this->_validator = $pattern; */
+	/* 	return $this; */
+	/* } */
 
 
 
