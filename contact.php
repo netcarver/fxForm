@@ -103,7 +103,7 @@ $contact_form = Form('contact', './')
 
 	->add( Fieldset('Legal stuff...')
 		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
-				->required()
+				->required('* Please select one of the options')
 				->match('myConditionValidator')
 				//->_value('n')					// Configure the initial value. Use the key of the item you want selected from the $conditions array.
 		)
@@ -189,7 +189,7 @@ function myAffixFormatter( $element, $owner_name, $index, $max )
  **/
 function myConditionValidator( fxFormElement &$e, fxForm &$f )
 {
-	return ( 'y' === $e->_value ) ? true : 'Sorry, but we cannot continue without your agreement.';
+	return ( 'y' === $e->_value ) ? true : 'To proceed, we need your agreement.';
 }
 
 
