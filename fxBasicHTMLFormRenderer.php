@@ -1,11 +1,12 @@
 <?php
 
+// TODO refactor this mess!
 class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 {
 
 	public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
-		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id,type' ) );
+		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id,type,pattern' ) );
 		$label  = htmlspecialchars($e->_name);
 		$subval = $e->_value;
 		$elval  = htmlspecialchars($e->value);
@@ -19,6 +20,10 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$o = array();
 
+		if( 'integer' === $itype )
+			$itype = 'number';
+		if( 'boolean' === $itype )
+			$itype = 'text';
 		if( 'html4' == $this->target ) {
 			if( in_array( $itype, array('tel','number','date','search','email','url') ) )
 				$itype='text';

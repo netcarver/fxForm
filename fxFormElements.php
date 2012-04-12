@@ -146,7 +146,7 @@ abstract class fxFormElement extends fxNamedSet
 			return $this;
 
 		if( $required && '' == $submitted )		// A required value but no input => always a fail. If a custom fail message was supplied, use that.
-			return $this->_addError( (($this->_meta['required_message']) ? $this->_meta['required_message'] : '* Requires a value.') ,$errors);
+			return $this->_addError( (($this->_meta['required_message']) ? $this->_meta['required_message'] : '* Requires your input') ,$errors);
 
 		try {
 			$validation_errors = $this->_fvalidator->validate( TRUE, TRUE );	// We are only getting errors for this element, so we can safely remove the names.
@@ -290,10 +290,9 @@ class fxFormInput extends fxFormElement
 	}
 
 
-	public function type($t)
+	public function type($t)	// TODO add an unsigned type?
 	{
-		parent::type($t);
-
+		$t = strtolower( $t );
 		switch( $t ) {
 		case 'search' :
 		case 'text' :
@@ -307,10 +306,19 @@ class fxFormInput extends fxFormElement
 			$this->_fvalidator->addURLFields($this->name); break;
 		case 'number' :
 			$this->_fvalidator->addFloatFields($this->name); break;  // HTML5 spec says this means a float value, if present...
+		case 'int' :
+			$t = 'integer';
+		case 'integer' :
+			$this->_fvalidator->addIntegerFields($this->name); break; // Not an HTML5 type so we'll evaluate it as an integer, renderers get to choose how to present this...
+		case 'bool' :
+			$t = 'boolean';
+		case 'boolean' :
+			$this->_fvalidator->addBooleanFields($this->name); break; // Not an HTML5 type so we'll evaluate it as a boolean, renderers get to choose how to present this...
 		default :
 			break;
 		}
 
+		parent::type($t);
 		return $this;
 	}
 
