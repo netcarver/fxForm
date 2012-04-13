@@ -231,7 +231,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 	public function makeId( fxFormElement &$e, $parent_id, $make_attr=true )
 	{
 		$id = fxForm::_simplify( $parent_id . '-' . $e->id );
-		if( $make_attr && '' !== $id ) $id = ' id="'.$id.'"';	// Conditionally prepare it as an attribute.
+		if( $make_attr && '' !== $id ) $id = 'id="'.$id.'"';	// Conditionally prepare it as an attribute.
 		return $id;
 	}
 }

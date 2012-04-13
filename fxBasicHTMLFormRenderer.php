@@ -167,7 +167,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$id     = $this->makeId($e, $parent_id);
 		$label  = htmlspecialchars( $e->_name );
 
-		$o[] = "<select$id$attr>";
+		$o[] = "<select $id$attr>";
 		$o[] = $this->renderOptions( $e->_members, $e, $f );
 		$o[] = '</select>';
 
@@ -182,7 +182,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$attr  = $this->renderAtts($e->_getInfoExcept( 'class,value,id' ));
 		$id    = $this->makeId($e, $parent_id);
 		$class = $this->getClasses($e);
-		return $this->addLabel( "<textarea$id$attr$class>{$e->_value}</textarea>".$this->addErrorMessage( $e, $f ), $e, $parent_id );
+		return $this->addLabel( "<textarea $id$attr$class>{$e->_value}</textarea>".$this->addErrorMessage( $e, $f ), $e, $parent_id );
 	}
 
 
@@ -193,7 +193,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$id    = $this->makeId($e, $parent_id);
 		$class = $this->getClasses($e);
 		$label = htmlspecialchars($e->_label);
-		return "<button$id$attr$class>$label</button>";
+		return "<button $id$attr$class>$label</button>";
 	}
 
 
