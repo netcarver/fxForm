@@ -29,7 +29,6 @@ include("./head.inc");
 require_once( wire('config')->paths->root . "site/forms/forms.php" );	// Bring in the form loader.
 
 #
-#	TODO: Add min/max checks
 #	TODO: Add form level validation
 #	TODO: How to handle notes on html4 elements that don't support the placeholder tag?
 #		  Perhaps use the elementError formatter?
@@ -121,18 +120,33 @@ $contact_form = Form('contact', './')
 
 	// Here come the form elements...
 	->add( Fieldset('About you...')
-		->add( Input('name', 'Your Name', 'Your name please')->required()->match('myNameValidator') )
-		->add( Input('email', 'Your Email', 'Your email address')->type('email')->required() )
-		->add( Input('url', 'Website', 'Your URL here (optional)')->type('url') )
-		->add( Hidden('secret','123') )
-		->add( Password('pass', 'Your Password', 'Enter a password')->required()->whitelist('password') )
-		->add( Input('tel', 'Phone', 'A contact number please')->type('tel')->pattern('/^[\s0-9]+$/') )
+	->add( Input('name', 'Your Name', 'Your name please')/*->required()->match('myNameValidator')*/ )
+		//->add( Input('email', 'Your Email', 'Your email address')->type('email')->required() )
+		//->add( Input('url', 'Website', 'Your URL here (optional)')->type('url') )
+		//->add( Hidden('secret','123') )
+		//->add( Password('pass', 'Your Password', 'Enter a password')->required()->whitelist('password') )
+		//->add( Input('tel', 'Phone', 'A contact number please')->type('tel')->pattern('/^[\s0-9]+$/') )
+		->add( Input('human', 'Are you human?')
+			->pattern('/^yes|yep|yeah|sure am|indeed$/i','Some form of affirmation is needed.')
+			->required()
+		)
+	//	->add( YesNo('alive', 'Were you alive when you celebrated your last birthday?', 'Babies excluded.', 'Just yes or no please.')->required() )
+		->add( Integer('age', 'How old are you?')
+			->required()
+			->value(5)
+			->min(2)
+			->max(10)
+			//->_show_submitted()	// Show the submitted value for this element.
+			//->_show_data()		// Show the data
+			//->_show_meta()		// Show the meta-data
+			//->_show_html()		// Show the rendered HTML for the element.
+			)
 		)
 
 	->add( Fieldset('Your message...')
 		->add( TextArea('msg', 'Message', 'Your message to us')
 				->required()
-				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines the HTML5 parameter *and* server-side regex for validation. Can add second string parameter for the error message
+				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines server-side regex for validation. Can add second string parameter for the error message
 				->whitelist('great,good,fantastic,amazing')
 		)
 	)
@@ -141,12 +155,15 @@ $contact_form = Form('contact', './')
 		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
 				->required('* Please select one of the options')
 				->match('myConditionValidator')
-				//->_value('n')					// Configure the initial value. Use the key of the item you want selected from the $conditions array.
+				//->_show_meta()
+				//->_show_submitted()
+				//->_value('n')					// TODO use html's value param here. Configures the initial value. Use the key of the item you want selected from the $conditions array.
 		)
 		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
-				//->_value( array( 'spam' ) )	// Initial value(s). Just add more keys from the $checkboxes array for multiple checkmarks.
+			//->_value( array( 'spam' ) )	// Initial value(s). Just add more keys from the $checkboxes array for multiple checkmarks.
+			//->_show_data()
 		)
-		->add( MSelect('depts', 'Forward to which departments?', $departments) )
+		//->add( MSelect('depts', 'Forward to which departments?', $departments) )
 	)
 
 	->add( Submit('Send') )

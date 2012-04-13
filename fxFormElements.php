@@ -161,6 +161,20 @@ abstract class fxFormElement extends fxNamedSet
 			return $this;
 		}
 
+		// Handle min value checking (if applicable)
+		if( $this->_inData('min') ) {
+			$min = $this->min;
+			if( $submitted < $min )
+				$this->_addError( "Value must be $min or more", $errors );
+		}
+
+		// Handle max value checking (if applcable)
+		if( $this->_inData('max') ) {
+			$max = $this->max;
+			if( $submitted > $max )
+				$this->_addError( "Value must be $max or less", $errors );
+		}
+
 		if( is_callable( $cb ) ) {
 			$r = $cb( $this, $f );
 			if( true === $r || (is_string($r) && !empty($r)) ) {
@@ -282,6 +296,8 @@ class fxFormString extends fxFormElement
 
 class fxFormInput extends fxFormElement
 {
+	static $numberTypes = array('number','integer');
+
 	public function __construct($name, $label, $note=null)
 	{
 		parent::__construct($name, $label, $note);
@@ -290,7 +306,24 @@ class fxFormInput extends fxFormElement
 	}
 
 
-	public function type($t)	// TODO add an unsigned type?
+	public function min($v)
+	{
+		fxAssert::isInArray($this->type, self::$numberTypes );
+		$this->_data['min'] = $v;
+		return $this;
+	}
+
+
+	public function max($v)
+	{
+		fxAssert::isInArray($this->type, self::$numberTypes );
+		$this->_data['max'] = $v;
+		return $this;
+	}
+
+
+	// TODO add an unsigned type?
+	public function type($t)
 	{
 		$t = strtolower( $t );
 		switch( $t ) {
@@ -479,9 +512,6 @@ class fxFormCheckboxset extends fxFormElementSet
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 
-		/* if( null === $name || '' === $name || !is_string($name) ) */
-		/* 	$name = $label; */
-
 		parent::__construct($name, $label);
 		$this->_members = $members;
 		$this->name = fxForm::_simplify($name).'[]';
@@ -522,11 +552,7 @@ class fxFormRadioset extends fxFormElementSet
 
 		parent::__construct($name, $label);
 
-		/* if( null === $name || '' === $name || !is_string($name) ) */
-		/* 	$name = $label; */
-
 		$this->_members = $members;
-		//$this->name = fxForm::_simplify($name);
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
@@ -539,7 +565,6 @@ class fxFormRadioset extends fxFormElementSet
 			$el = new fxFormInput($this->name, $v);
 			$el
 				->type('radio')
-				//->name($this->name)
 				->id( fxForm::_simplify( $this->name . '-' . $simple_v ) )
 				->value($simple_k)
 				->_label_right( $this->_label_right )
@@ -562,9 +587,6 @@ class fxFormSelect extends fxFormElementSet
 	public function __construct($name, $label, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
-
-		/* if( null === $name || '' === $name || !is_string($name) ) */
-		/* 	$name = $label; */
 
 		parent::__construct($name, $label);
 		$this->_members = $members;
