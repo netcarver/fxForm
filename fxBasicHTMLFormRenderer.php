@@ -38,8 +38,12 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 			$o[] = "value=\"$elval\" />$label</button>";
 		elseif( in_array( $itype, fxFormElement::$radio_types) || 'hidden' === $itype )
 			$o[] = "value=\"$elval\" />";
-		else
-			$o[] = "value=\"$subval\" />";
+		else {
+			if( $elval && !$subval )
+				$o[] = "value=\"$elval\" />";
+			else
+				$o[] = "value=\"$subval\" />";
+		}
 
 		$errmsg = $this->addErrorMessage( $e, $f );
 		if( '' !== $errmsg ) $o[] = $errmsg;
