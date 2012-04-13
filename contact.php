@@ -3,16 +3,23 @@
 /**
  * Welcome to the example contact form.
  *
- * The main aim of this exercise is to show off some of the features of the fxForm classes and the fluent API they provide
- * as an example of a DSL[1] (Domain Specific Language) that allows you to build HTML forms quickly and easily.
+ * The main aim of this exercise is to show off some of the features of
+ * the fxForm classes and the fluent API they provide as an example of
+ * a DSL[1] (Domain Specific Language) that allows you to build HTML
+ * forms quickly and easily.
  *
- * The fxForm classes allow a form to be defined and populated pretty simply and all rendering of the form into visible
- * HTML is delegated to a renderer. You can write your own renderers to deal with specific layout needs of various
- * frameworks if you want to. It's up to the renderer how to transform your 'abstract' form definition into HTML.
+ * The fxForm classes allow a form to be defined and populated pretty
+ * simply and all rendering of the form into visible HTML is delegated
+ * to a renderer. You can write your own renderers to deal with specific
+ * layout needs of various frameworks if you want to. It's up to the
+ * renderer how to transform your 'abstract' form definition into HTML.
  *
- * I've included a basic renderer that should output HTML5 by default but I'm working on having it output HTML4 too via the
- * ->target('html4') instruction. This renderer also currently allows several aspects of its rendering to be customised
- * via callback routines. I hope this will provide a simple, yet powerful tool to get you started.
+ * I've included a basic renderer that should output HTML5 by default
+ * but I'm working on having it output HTML4 too via
+ * the->target('html4') instruction. This renderer also currently allows
+ * several aspects of its rendering to be customised via callback routines.
+ *
+ * I hope this will provide a simple, yet powerful tool to get you started.
  *
  * [1] http://www.martinfowler.com/bliki/DomainSpecificLanguage.html
  **/
