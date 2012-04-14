@@ -149,7 +149,6 @@ abstract class fxHTMLRenderer implements fxRenderer
 
 		$o = '';
 		if( $this->submitting && !$e->_isValid() ) {
-//echo "<pre>",htmlspecialchars( var_export($e->_getMeta() , true) ),"</pre>";
 			// Element is in error so format a per-element error message and add it...
 			$cb = $this->elementErrorFormatter;
 			if( is_callable( $cb ) ) {
@@ -211,9 +210,15 @@ abstract class fxHTMLRenderer implements fxRenderer
 	}
 
 
-	public function getClasses(fxFormElement &$e)
+	public function getClasses(fxFormElement &$e, $extras = '' )
 	{
-		$classes = array();
+		if( is_string($extras) && '' !== $extras )
+			$classes = explode(',', $extras);
+		elseif(is_array($extras))
+			$classes = $extras;
+		else
+			$classes = array();
+
 		if( $e->class )
 			$classes[] = htmlspecialchars($e->class);
 

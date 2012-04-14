@@ -174,10 +174,14 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
 		$id     = $this->makeId($e, $parent_id);
 		$label  = htmlspecialchars( $e->_name );
+		$multi  = $e->_inData('multiple');
+		$class  = $this->getClasses( $e, ($multi) ? 'mselect' : 'select' );
 
-		$o[] = "<select $id$attr>";
+		$o[] = "<select $id$attr$class>";
 		$o[] = $this->renderOptions( $e->_members, $e, $f );
 		$o[] = '</select>';
+		$errmsg = $this->addErrorMessage( $e, $f );
+		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = implode( "\n", $o );
 		$o = $this->addLabel( $o, $e, $parent_id );

@@ -161,16 +161,23 @@ abstract class fxFormElement extends fxNamedSet
 			return $this;
 		}
 
+		$min = $this->min;	// Could be null (if not present)
+		$max = $this->max;	// 	"
+
+		// Check for programming mistakes in setting of min & max values...
+		if( $this->_inData('min') && $this->_inData('max') ) {
+			if( $min > $max )
+				throw new fProgrammerException( "Element {$this->name} has min[$min] > max[$max]" );
+		}
+
 		// Handle min value checking (if applicable)
 		if( $this->_inData('min') ) {
-			$min = $this->min;
 			if( $submitted < $min )
 				$this->_addError( "Value must be $min or more", $errors );
 		}
 
 		// Handle max value checking (if applcable)
 		if( $this->_inData('max') ) {
-			$max = $this->max;
 			if( $submitted > $max )
 				$this->_addError( "Value must be $max or less", $errors );
 		}
@@ -515,6 +522,7 @@ class fxFormCheckboxset extends fxFormElementSet
 		parent::__construct($name, $label);
 		$this->_members = $members;
 		$this->name = fxForm::_simplify($name).'[]';
+		$this->class('checkboxset');
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
@@ -538,6 +546,13 @@ class fxFormCheckboxset extends fxFormElementSet
 		}
 		return $r->renderElementSet($this, $f, $parent_id );
 	}
+
+	public function value($v)
+	{
+		$this->_value($v);
+		return $this;
+	}
+
 }
 
 
@@ -553,6 +568,7 @@ class fxFormRadioset extends fxFormElementSet
 		parent::__construct($name, $label);
 
 		$this->_members = $members;
+		$this->class('radioset');
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
@@ -577,6 +593,12 @@ class fxFormRadioset extends fxFormElementSet
 		}
 		return $r->renderElementSet( $this, $f, $parent_id );
 	}
+
+	public function value($v)
+	{
+		$this->_value($v);
+		return $this;
+	}
 }
 
 
@@ -598,6 +620,13 @@ class fxFormSelect extends fxFormElementSet
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
 		return $r->renderSelect($this, $f, $parent_id );
+	}
+
+
+	public function value($v)
+	{
+		$this->_value($v);
+		return $this;
 	}
 }
 

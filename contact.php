@@ -145,23 +145,22 @@ $contact_form = Form('contact', './')
 
 	->add( Fieldset('Your message...')
 		->add( TextArea('msg', 'Message', 'Your message to us')
-				->required()
-				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines server-side regex for validation. Can add second string parameter for the error message
-				->whitelist('great,good,fantastic,amazing')
+			->required()
+			->pattern('/^[^0-9]*$/','No numbers please!')	// Defines server-side regex for validation. Can add second string parameter for the error message
+			->whitelist('great,good,fantastic,amazing')
 		)
 	)
 
 	->add( Fieldset('Legal stuff...')
 		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
-				->required('* Please select one of the options')
-				->match('myConditionValidator')
-				//->_show_meta()
-				//->_show_submitted()
-				//->_value('n')					// TODO use html's value param here. Configures the initial value. Use the key of the item you want selected from the $conditions array.
+			->required('* Please select one of the options')
+			->match('myConditionValidator')
+			->value('n')	// Configures the initial checked value.
+								// Use the name of the item you want selected from the $conditions array.
 		)
 		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
-			//->_value( array( 'spam' ) )	// Initial value(s). Just add more keys from the $checkboxes array for multiple checkmarks.
-			//->_show_data()
+			->value( array( 'spam_me' ) )	// Configures the initial checked values.
+											// Add more keys from the $checkboxes array for multiple checkmarks.
 		)
 		//->add( MSelect('depts', 'Forward to which departments?', $departments) )
 	)
@@ -292,13 +291,25 @@ function mySuccessHandler( fxForm &$form )
 <div class="content document-markup">
 	<!-- Some yukky bold styles to show off the element states -->
 	<style>
-		div.ok, input.ok, textarea.ok {
+		label {
+			display: inline-block;
+			width: 250px;
+			padding-left: 3em;
+		}
+		div.radioset input {
+			margin-left: 3em;
+		}
+		li label, div.radioset label {
+			padding-left: 0.5em;
+			display: inline;
+		}
+		div.ok, input.ok, textarea.ok, select.ok {
 			border: 2px solid #30cf30;
 		}
-		div.required, input.required, textarea.required {
+		div.required, input.required, textarea.required, select.required {
 			border: 2px solid #cf30cf;
 		}
-		div.error, input.error, textarea.error {
+		div.error, input.error, textarea.error, select.error {
 			border: 2px solid #cf3030;
 		}
 		fieldset legend {
