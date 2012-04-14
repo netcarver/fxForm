@@ -291,6 +291,11 @@ function mySuccessHandler( fxForm &$form )
 <div class="content document-markup">
 	<!-- Some yukky bold styles to show off the element states -->
 	<style>
+		label {
+			display: inline-block;
+			width: 200px;
+			padding-left: 3em;
+		}
 		div.ok, input.ok, textarea.ok {
 			border: 2px solid #30cf30;
 		}
