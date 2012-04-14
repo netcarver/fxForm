@@ -545,6 +545,13 @@ class fxFormCheckboxset extends fxFormElementSet
 		}
 		return $r->renderElementSet($this, $f, $parent_id );
 	}
+
+	public function value($v)
+	{
+		$this->_value($v);
+		return $this;
+	}
+
 }
 
 
@@ -583,6 +590,12 @@ class fxFormRadioset extends fxFormElementSet
 			$this->_elements[] = $el;
 		}
 		return $r->renderElementSet( $this, $f, $parent_id );
+	}
+
+	public function value($v)
+	{
+		$this->_value($v);
+		return $this;
 	}
 }
 
