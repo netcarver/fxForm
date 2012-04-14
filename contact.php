@@ -293,8 +293,15 @@ function mySuccessHandler( fxForm &$form )
 	<style>
 		label {
 			display: inline-block;
-			width: 200px;
+			width: 250px;
 			padding-left: 3em;
+		}
+		div.radioset input {
+			margin-left: 3em;
+		}
+		li label, div.radioset label {
+			padding-left: 0.5em;
+			display: inline;
 		}
 		div.ok, input.ok, textarea.ok {
 			border: 2px solid #30cf30;
