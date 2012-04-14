@@ -180,6 +180,8 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$o[] = "<select $id$attr$class>";
 		$o[] = $this->renderOptions( $e->_members, $e, $f );
 		$o[] = '</select>';
+		$errmsg = $this->addErrorMessage( $e, $f );
+		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = implode( "\n", $o );
 		$o = $this->addLabel( $o, $e, $parent_id );

@@ -303,13 +303,13 @@ function mySuccessHandler( fxForm &$form )
 			padding-left: 0.5em;
 			display: inline;
 		}
-		div.ok, input.ok, textarea.ok {
+		div.ok, input.ok, textarea.ok, select.ok {
 			border: 2px solid #30cf30;
 		}
-		div.required, input.required, textarea.required {
+		div.required, input.required, textarea.required, select.required {
 			border: 2px solid #cf30cf;
 		}
-		div.error, input.error, textarea.error {
+		div.error, input.error, textarea.error, select.error {
 			border: 2px solid #cf3030;
 		}
 		fieldset legend {
