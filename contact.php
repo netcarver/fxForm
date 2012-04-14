@@ -3,16 +3,23 @@
 /**
  * Welcome to the example contact form.
  *
- * The main aim of this exercise is to show off some of the features of the fxForm classes and the fluent API they provide
- * as an example of a DSL[1] (Domain Specific Language) that allows you to build HTML forms quickly and easily.
+ * The main aim of this exercise is to show off some of the features of
+ * the fxForm classes and the fluent API they provide as an example of
+ * a DSL[1] (Domain Specific Language) that allows you to build HTML
+ * forms quickly and easily.
  *
- * The fxForm classes allow a form to be defined and populated pretty simply and all rendering of the form into visible
- * HTML is delegated to a renderer. You can write your own renderers to deal with specific layout needs of various
- * frameworks if you want to. It's up to the renderer how to transform your 'abstract' form definition into HTML.
+ * The fxForm classes allow a form to be defined and populated pretty
+ * simply and all rendering of the form into visible HTML is delegated
+ * to a renderer. You can write your own renderers to deal with specific
+ * layout needs of various frameworks if you want to. It's up to the
+ * renderer how to transform your 'abstract' form definition into HTML.
  *
- * I've included a basic renderer that should output HTML5 by default but I'm working on having it output HTML4 too via the
- * ->target('html4') instruction. This renderer also currently allows several aspects of its rendering to be customised
- * via callback routines. I hope this will provide a simple, yet powerful tool to get you started.
+ * I've included a basic renderer that should output HTML5 by default
+ * but I'm working on having it output HTML4 too via
+ * the->target('html4') instruction. This renderer also currently allows
+ * several aspects of its rendering to be customised via callback routines.
+ *
+ * I hope this will provide a simple, yet powerful tool to get you started.
  *
  * [1] http://www.martinfowler.com/bliki/DomainSpecificLanguage.html
  **/
@@ -23,20 +30,23 @@ require_once( wire('config')->paths->root . "site/forms/forms.php" );	// Bring i
 
 #
 #	TODO: Add form level validation
-#	TODO: How to handle notes on html4 elements that don't support the placeholder tag? Perhaps use the elementError formatter?
+#	TODO: How to handle notes on html4 elements that don't support the placeholder tag?
+#		  Perhaps use the elementError formatter?
 #	TODO: Add Bootstrap renderer
 #	TODO: Upload element.
 #	TODO: Package as PW module
 #	TODO: Handle Multilingual strings and numbers?
 #
-#	TODO: Add population of form definition within a new admin page (public forms->contact) etc. Would allow form defs to be done in admin if.
+#	TODO: Add population of form definition within a new admin page (public forms->contact)
+#		  etc. Would allow form defs to be done in admin if.
 #	TODO: Autogeneration of conditional enable/disable js code??
 #	TODO: Add support for nested fieldsets?? (I'd prefer not to have to do this.)
 #
 
-/** ===================  Set up the arrays of members for the radios / checkboxes / selects... ===================
+/** ====================  Set up members for radios/checkboxes/selects ====================
  *
- *	When this is packaged as a PW module, this kind of data is probably going to be populated via the wire API
+ *	When this is packaged as a PW module, this kind of data is probably
+ *	going to be populated via the wire API
  *
  **/
 $departments = array(	// This sets up the values for a multi-select element in the form.
@@ -54,22 +64,23 @@ $departments = array(	// This sets up the values for a multi-select element in t
 	),
 );
 
-$conditions  = array(	// This sets up the values for a radio-set in the form
+$conditions  = array(	// Values for a radio-set in the form
 	'n'=>'You must be joking.',
 	'y'=>'Yes, I do, I do, I do!'
 );
 
-$checkboxes  = array(	// This sets up the values for a checkbox set in the form
+$checkboxes  = array(	// Values for a checkbox set in the form
 	'spam_me' => 'Spam my email address',
 	'extra' => 'Extra frequently'
 );
 
 
-/** ================================== Configure the renderer ==================================
+/** ==================== Configure the renderer ====================
  *
  * Set up the renderer that this form will use to generate output.
- * Even the basic HTML renderer output can be customised via callbacks for the form-level errors, element-level errors
- * and for prefix/suffix on checkbox and radiobox sets.
+ * Even the basic HTML renderer output can be customised via callbacks for
+ * the form-level errors, element-level errors and for prefix/suffix on
+ * checkbox and radiobox sets.
  **/
 $r = new fxBasicHTMLFormRenderer( '', '<br>' );				// Defines the prefix (blank) and suffix ('<br>') to use on each form element. If you like divs, '<div class="blah">', '</div>' should go in here.
 $r
@@ -79,16 +90,23 @@ $r
 	//->setElementErrorFormatter('myElementErrorsFormatter')	// Provides a custom format routine for rendering an elements error next to it. If you don't want any output near the element, just return ''. Else format the error as you wish.
 	;
 
-/** ================================== The actual form... ==================================
+/** ==================== The actual form... ====================
  *
- * You can set any html attribute on forms and their elements using the ->attribname(value) syntax. So to add a class you'd do ->class('someclass'),
- * for a placeholder: ->placeholder('Some text'). If the attribute doesn't take a value just omit it, so : ->required()
+ * You can set any html attribute on forms and their elements using the
+ * ->attribname(value) syntax. So to add a class you'd do
+ * ->class('someclass'),
+ * for a placeholder: ->placeholder('Some text'). If the attribute doesn't
+ * take a value just omit it, so : ->required()
  *
- * In addition to HTML attributes, each element takes meta-data such as the submitted value. All meta-data is set in exactly the same way but is prefixed
- * with a single underscore. For example, you can set the form's show_submitted flag with ->_show_submitted(true), or force an initial check on a specific
- * item in a radioset using ->_value('name') -- in this case you are setting up the element to appear as if that value was already submitted to it.
+ * In addition to HTML attributes, each element takes meta-data such as the
+ * submitted value. All meta-data is set in exactly the same way but is prefixed
+ * with a single underscore. For example, you can set the form's show_submitted
+ * flag with ->_show_submitted(true), or force an initial check on a specific
+ * item in a radioset using ->_value('name') -- in this case you are setting up
+ * the element to appear as if that value was already submitted to it.
  *
- * This is all done to make form specification as terse and fluent as possible -- yet still giving control where needed.
+ * This is all done to make form specification as terse and fluent as possible
+ * -- yet still giving control where needed.
  *
  **/
 $contact_form = Form('contact', './')
@@ -102,18 +120,33 @@ $contact_form = Form('contact', './')
 
 	// Here come the form elements...
 	->add( Fieldset('About you...')
-		->add( Input('name', 'Your Name', 'Your name please')->required()->match('myNameValidator') )
-		->add( Input('email', 'Your Email', 'Your email address')->type('email')->required() )
-		->add( Input('url', 'Website', 'Your URL here (optional)')->type('url') )
-		->add( Hidden('secret','123') )
-		->add( Password('pass', 'Your Password', 'Enter a password')->required()->whitelist('password') )
-		->add( Input('tel', 'Phone', 'A contact number please')->type('tel')->pattern('/^[\s0-9]+$/') )
+	->add( Input('name', 'Your Name', 'Your name please')/*->required()->match('myNameValidator')*/ )
+		//->add( Input('email', 'Your Email', 'Your email address')->type('email')->required() )
+		//->add( Input('url', 'Website', 'Your URL here (optional)')->type('url') )
+		//->add( Hidden('secret','123') )
+		//->add( Password('pass', 'Your Password', 'Enter a password')->required()->whitelist('password') )
+		//->add( Input('tel', 'Phone', 'A contact number please')->type('tel')->pattern('/^[\s0-9]+$/') )
+		->add( Input('human', 'Are you human?')
+			->pattern('/^yes|yep|yeah|sure am|indeed$/i','Some form of affirmation is needed.')
+			->required()
+		)
+	//	->add( YesNo('alive', 'Were you alive when you celebrated your last birthday?', 'Babies excluded.', 'Just yes or no please.')->required() )
+		->add( Integer('age', 'How old are you?')
+			->required()
+			->value(5)
+			->min(2)
+			->max(10)
+			//->_show_submitted()	// Show the submitted value for this element.
+			//->_show_data()		// Show the data
+			//->_show_meta()		// Show the meta-data
+			//->_show_html()		// Show the rendered HTML for the element.
+			)
 		)
 
 	->add( Fieldset('Your message...')
 		->add( TextArea('msg', 'Message', 'Your message to us')
 				->required()
-				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines the HTML5 parameter *and* server-side regex for validation. Can add second string parameter for the error message
+				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines server-side regex for validation. Can add second string parameter for the error message
 				->whitelist('great,good,fantastic,amazing')
 		)
 	)
@@ -122,12 +155,15 @@ $contact_form = Form('contact', './')
 		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
 				->required('* Please select one of the options')
 				->match('myConditionValidator')
-				//->_value('n')					// Configure the initial value. Use the key of the item you want selected from the $conditions array.
+				//->_show_meta()
+				//->_show_submitted()
+				//->_value('n')					// TODO use html's value param here. Configures the initial value. Use the key of the item you want selected from the $conditions array.
 		)
 		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
-				//->_value( array( 'spam' ) )	// Initial value(s). Just add more keys from the $checkboxes array for multiple checkmarks.
+			//->_value( array( 'spam' ) )	// Initial value(s). Just add more keys from the $checkboxes array for multiple checkmarks.
+			//->_show_data()
 		)
-		->add( MSelect('depts', 'Forward to which departments?', $departments) )
+		//->add( MSelect('depts', 'Forward to which departments?', $departments) )
 	)
 
 	->add( Submit('Send') )
@@ -135,21 +171,26 @@ $contact_form = Form('contact', './')
 	->process()
 	;
 
-/** ================================== Custom formatters follow ==================================
+/** ==================== Custom formatters follow ====================
  *
- * These all override, or append to, some aspect of the renderer's output and should allow you
- * fine enough control over your form output not to have to resort to hand-crafted HTML.
+ * These all override, or append to, some aspect of the renderer's output
+ * and should allow you fine enough control over your form output not to
+ * have to resort to hand-crafted HTML.
  *
  * They are all enabled by setting values on the renderer.
- * Thay are also totally option. In fact, the default output of the renderer should be fine in most
- * cases so you can probably delete all the code in this part of the file.
+ * Thay are also totally option. In fact, the default output of the renderer
+ * should be fine in most cases so you can probably delete all the code in
+ * this part of the file.
  **/
 
 
 /**
- * Controls the output that goes at the head of the form when there are any invalid elements. Use this only if the renderer's default markup isn't what you need.
+ * Controls the output that goes at the head of the form when there are any
+ * invalid elements. Use this only if the renderer's default markup isn't
+ * what you need.
  *
- * **Make sure the renderer's ->setErrorBlockFormatter() is uncommented and pointing here for it to get used**
+ * Make sure the renderer's ->setErrorBlockFormatter() is uncommented and
+ * pointing here for it to get used
  **/
 function myFormErrorsFormatter( fxForm &$f )
 {
@@ -158,9 +199,11 @@ function myFormErrorsFormatter( fxForm &$f )
 
 
 /**
- * Controls the markup that goes around each element's errors. Use this only if the renderer's default markup isn't what you need.
+ * Controls the markup that goes around each element's errors. Use this
+ * only if the renderer's default markup isn't what you need.
  *
- * **Make sure the renderer's ->setElementErrorFormatter() is uncommented and pointing here for it to get used**
+ * Make sure the renderer's ->setElementErrorFormatter() is uncommented
+ * and pointing here for it to get used
  **/
 function myElementErrorsFormatter( fxFormElement &$e, fxForm &$f )
 {
@@ -169,10 +212,15 @@ function myElementErrorsFormatter( fxFormElement &$e, fxForm &$f )
 
 
 /**
- * Custom radio + checkbox formatter. **Make sure the renderer's ->setAffixFormatter() is uncommented and pointing here for it to be used*
- * Allows you to override the renderer's default wrapping of each radio / checkbox option.
+ * Custom radio + checkbox formatter. **Make sure the renderer's
+ * ->setAffixFormatter() is uncommented and pointing here for it to
+ * be used*
  *
- * In this case, I've chosen to turn the 'options' checkboxes an ordered list and the 'agree' radio buttons have <br> tags between them.
+ * Allows you to override the renderer's default wrapping of each
+ * radio / checkbox option.
+ *
+ * In this case, I've chosen to turn the 'options' checkboxes an ordered
+ * list and the 'agree' radio buttons have <br> tags between them.
  **/
 function myAffixFormatter( $element, $owner_name, $index, $max )
 {
@@ -197,12 +245,14 @@ function myAffixFormatter( $element, $owner_name, $index, $max )
 
 
 
-/** ================================== Form validation callbacks follow ==================================
- *
+/** ==================== Form validation callbacks follow ====================
  **/
 
 /**
- * A custom validation callback for the 'agree' radioset. **Make sure the agree radioset's ->match() method is uncommented and pointing here for it to get called**
+ * A custom validation callback for the 'agree' radioset.
+ *
+ * Make sure the agree radioset's ->match() method is uncommented and
+ * pointing here for it to get called
  **/
 function myConditionValidator( fxFormElement &$e, fxForm &$f )
 {
@@ -211,7 +261,10 @@ function myConditionValidator( fxFormElement &$e, fxForm &$f )
 
 
 /**
- * A custom validation callback for the 'Name' input. **Make sure the name input's ->match() method is uncommented and pointing here for it to get called**
+ * A custom validation callback for the 'Name' input.
+ *
+ * Make sure the name input's ->match() method is uncommented and
+ * pointing here for it to get called
  **/
 function myNameValidator( fxFormElement &$e, fxForm &$f )
 {
@@ -220,10 +273,12 @@ function myNameValidator( fxFormElement &$e, fxForm &$f )
 
 
 
-/** ================================== Form submission handler follows ==================================
+/** ==================== Form submission handler follows ====================
  *
- * A success handler for the form. **Make sure the form's ->onSuccess() method is uncommented and pointing here for it to get called**
+ * A success handler for the form.
  *
+ * Make sure the form's ->onSuccess() method is uncommented and pointing
+ * here for it to get called
  **/
 function mySuccessHandler( fxForm &$form )
 {

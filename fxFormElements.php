@@ -146,7 +146,7 @@ abstract class fxFormElement extends fxNamedSet
 			return $this;
 
 		if( $required && '' == $submitted )		// A required value but no input => always a fail. If a custom fail message was supplied, use that.
-			return $this->_addError( (($this->_meta['required_message']) ? $this->_meta['required_message'] : '* Requires a value.') ,$errors);
+			return $this->_addError( (($this->_meta['required_message']) ? $this->_meta['required_message'] : '* Requires your input') ,$errors);
 
 		try {
 			$validation_errors = $this->_fvalidator->validate( TRUE, TRUE );	// We are only getting errors for this element, so we can safely remove the names.
@@ -159,6 +159,20 @@ abstract class fxFormElement extends fxNamedSet
 			$this->_meta['errors'] = array_values($validation_errors);
 			$errors[$this->name]   = array_values($validation_errors);
 			return $this;
+		}
+
+		// Handle min value checking (if applicable)
+		if( $this->_inData('min') ) {
+			$min = $this->min;
+			if( $submitted < $min )
+				$this->_addError( "Value must be $min or more", $errors );
+		}
+
+		// Handle max value checking (if applcable)
+		if( $this->_inData('max') ) {
+			$max = $this->max;
+			if( $submitted > $max )
+				$this->_addError( "Value must be $max or less", $errors );
 		}
 
 		if( is_callable( $cb ) ) {
@@ -282,6 +296,8 @@ class fxFormString extends fxFormElement
 
 class fxFormInput extends fxFormElement
 {
+	static $numberTypes = array('number','integer');
+
 	public function __construct($name, $label, $note=null)
 	{
 		parent::__construct($name, $label, $note);
@@ -290,10 +306,26 @@ class fxFormInput extends fxFormElement
 	}
 
 
+	public function min($v)
+	{
+		fxAssert::isInArray($this->type, self::$numberTypes );
+		$this->_data['min'] = $v;
+		return $this;
+	}
+
+
+	public function max($v)
+	{
+		fxAssert::isInArray($this->type, self::$numberTypes );
+		$this->_data['max'] = $v;
+		return $this;
+	}
+
+
+	// TODO add an unsigned type?
 	public function type($t)
 	{
-		parent::type($t);
-
+		$t = strtolower( $t );
 		switch( $t ) {
 		case 'search' :
 		case 'text' :
@@ -307,10 +339,19 @@ class fxFormInput extends fxFormElement
 			$this->_fvalidator->addURLFields($this->name); break;
 		case 'number' :
 			$this->_fvalidator->addFloatFields($this->name); break;  // HTML5 spec says this means a float value, if present...
+		case 'int' :
+			$t = 'integer';
+		case 'integer' :
+			$this->_fvalidator->addIntegerFields($this->name); break; // Not an HTML5 type so we'll evaluate it as an integer, renderers get to choose how to present this...
+		case 'bool' :
+			$t = 'boolean';
+		case 'boolean' :
+			$this->_fvalidator->addBooleanFields($this->name); break; // Not an HTML5 type so we'll evaluate it as a boolean, renderers get to choose how to present this...
 		default :
 			break;
 		}
 
+		parent::type($t);
 		return $this;
 	}
 
@@ -471,9 +512,6 @@ class fxFormCheckboxset extends fxFormElementSet
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
 
-		/* if( null === $name || '' === $name || !is_string($name) ) */
-		/* 	$name = $label; */
-
 		parent::__construct($name, $label);
 		$this->_members = $members;
 		$this->name = fxForm::_simplify($name).'[]';
@@ -514,11 +552,7 @@ class fxFormRadioset extends fxFormElementSet
 
 		parent::__construct($name, $label);
 
-		/* if( null === $name || '' === $name || !is_string($name) ) */
-		/* 	$name = $label; */
-
 		$this->_members = $members;
-		//$this->name = fxForm::_simplify($name);
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
@@ -531,7 +565,6 @@ class fxFormRadioset extends fxFormElementSet
 			$el = new fxFormInput($this->name, $v);
 			$el
 				->type('radio')
-				//->name($this->name)
 				->id( fxForm::_simplify( $this->name . '-' . $simple_v ) )
 				->value($simple_k)
 				->_label_right( $this->_label_right )
@@ -554,9 +587,6 @@ class fxFormSelect extends fxFormElementSet
 	public function __construct($name, $label, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
-
-		/* if( null === $name || '' === $name || !is_string($name) ) */
-		/* 	$name = $label; */
 
 		parent::__construct($name, $label);
 		$this->_members = $members;

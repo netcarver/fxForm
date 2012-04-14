@@ -1,11 +1,12 @@
 <?php
 
+// TODO refactor this mess!
 class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 {
 
 	public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
-		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id,type' ) );
+		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id,type,pattern' ) );
 		$label  = htmlspecialchars($e->_name);
 		$subval = $e->_value;
 		$elval  = htmlspecialchars($e->value);
@@ -19,6 +20,10 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$o = array();
 
+		if( 'integer' === $itype )
+			$itype = 'number';
+		if( 'boolean' === $itype )
+			$itype = 'text';
 		if( 'html4' == $this->target ) {
 			if( in_array( $itype, array('tel','number','date','search','email','url') ) )
 				$itype='text';
@@ -33,14 +38,20 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 			$o[] = "value=\"$elval\" />$label</button>";
 		elseif( in_array( $itype, fxFormElement::$radio_types) || 'hidden' === $itype )
 			$o[] = "value=\"$elval\" />";
-		else
-			$o[] = "value=\"$subval\" />";
+		else {
+			if( $elval && !$subval )
+				$o[] = "value=\"$elval\" />";
+			else
+				$o[] = "value=\"$subval\" />";
+		}
 
 		$errmsg = $this->addErrorMessage( $e, $f );
 		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = join( " ", $o );
-		return $this->addLabel( $o, $e, $parent_id );
+		$o = $this->addLabel( $o, $e, $parent_id );
+		$this->checkExposure( $e, $o );
+		return $o;
 	}
 
 
@@ -110,7 +121,9 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		if( '' !== $errmsg ) $o[] = $errmsg;
 
 		$o = implode( "\n", $o );
-		return $this->addLabel( $o, $e, $parent_id, true );
+		$o = $this->addLabel( $o, $e, $parent_id, true );
+		$this->checkExposure( $e, $o );
+		return $o;
 	}
 
 
@@ -162,12 +175,14 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$id     = $this->makeId($e, $parent_id);
 		$label  = htmlspecialchars( $e->_name );
 
-		$o[] = "<select$id$attr>";
+		$o[] = "<select $id$attr>";
 		$o[] = $this->renderOptions( $e->_members, $e, $f );
 		$o[] = '</select>';
 
 		$o = implode( "\n", $o );
-		return $this->addLabel( $o, $e, $parent_id );
+		$o = $this->addLabel( $o, $e, $parent_id );
+		$this->checkExposure( $e, $o );
+		return $o;
 	}
 
 
@@ -177,7 +192,9 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$attr  = $this->renderAtts($e->_getInfoExcept( 'class,value,id' ));
 		$id    = $this->makeId($e, $parent_id);
 		$class = $this->getClasses($e);
-		return $this->addLabel( "<textarea$id$attr$class>{$e->_value}</textarea>".$this->addErrorMessage( $e, $f ), $e, $parent_id );
+		$o = $this->addLabel( "<textarea $id$attr$class>{$e->_value}</textarea>".$this->addErrorMessage( $e, $f ), $e, $parent_id );
+		$this->checkExposure( $e, $o );
+		return $o;
 	}
 
 
@@ -188,7 +205,9 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$id    = $this->makeId($e, $parent_id);
 		$class = $this->getClasses($e);
 		$label = htmlspecialchars($e->_label);
-		return "<button$id$attr$class>$label</button>";
+		$o = "<button $id$attr$class>$label</button>";
+		$this->checkExposure( $e, $o );
+		return $o;
 	}
 
 

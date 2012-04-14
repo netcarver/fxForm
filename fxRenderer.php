@@ -194,6 +194,21 @@ abstract class fxHTMLRenderer implements fxRenderer
 	}
 
 
+	public function checkExposure( fxFormElement &$e, $html )
+	{
+		if( $e->_inMeta('show_data') )
+			fCore::expose( array( "Data for {$e->_name}" => $e->_getData()) );
+		if( $e->_inMeta('show_meta') )
+			fCore::expose( array( "Meta-data for {$e->_name}" => $e->_getMeta()) );
+		if( $e->_inMeta('show_submitted') )
+			fCore::expose( array("Submitted value for {$e->name}" => $e->_value) );
+		if( $e->_inMeta('show_elements') )
+			fCore::expose( array( "{$e->name}"=>$e ));
+		if( $e->_inMeta('show_errors') )
+			fCore::expose( array( "Errors for {$e->name}" => $e->_getErrors()) );
+		if( $e->_inMeta('show_html') )
+			fCore::expose( array("HTML for {$e->name}" => $html) );
+	}
 
 
 	public function getClasses(fxFormElement &$e)
@@ -231,7 +246,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 	public function makeId( fxFormElement &$e, $parent_id, $make_attr=true )
 	{
 		$id = fxForm::_simplify( $parent_id . '-' . $e->id );
-		if( $make_attr && '' !== $id ) $id = ' id="'.$id.'"';	// Conditionally prepare it as an attribute.
+		if( $make_attr && '' !== $id ) $id = 'id="'.$id.'"';	// Conditionally prepare it as an attribute.
 		return $id;
 	}
 }

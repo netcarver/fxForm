@@ -19,6 +19,9 @@ function Select  	( $name, $label, $options_array )		{ return new fxFormSelect( 
 function MSelect 	( $name, $label, $options_array )		{ return new fxFormMSelect( $name, $label, $options_array ); }
 function Text		( $text )            					{ return new fxFormString( $text ); }
 function Input		( $name, $label, $note=null )	     	{ return new fxFormInput( $name, $label, $note ); }
+function Integer    ( $name, $label, $note=null )			{ return Input($name, $label, $note)->type('integer'); }
+function Boolean    ( $name, $label, $note=null )			{ return Input($name, $label, $note)->type('boolean'); }
+function YesNo      ( $name, $label, $note=null, $msg=null)	{ return Input($name, $label, $note)->pattern('/^yes|no$/i',$msg); }
 function Password	( $name, $label )      					{ return new fxFormPassword( $name, $label ); }
 function Hidden		( $name, $value ) 						{ return new fxFormHidden( $name, $value ); }
 function TextArea	( $name, $label, $note )      			{ return new fxFormTextArea( $name, $label, $note ); }
