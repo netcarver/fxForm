@@ -161,16 +161,23 @@ abstract class fxFormElement extends fxNamedSet
 			return $this;
 		}
 
+		$min = $this->min;	// Could be null (if not present)
+		$max = $this->max;	// 	"
+
+		// Check for programming mistakes in setting of min & max values...
+		if( $this->_inData('min') && $this->_inData('max') ) {
+			if( $min > $max )
+				throw new fProgrammerException( "Element {$this->name} has min[$min] > max[$max]" );
+		}
+
 		// Handle min value checking (if applicable)
 		if( $this->_inData('min') ) {
-			$min = $this->min;
 			if( $submitted < $min )
 				$this->_addError( "Value must be $min or more", $errors );
 		}
 
 		// Handle max value checking (if applcable)
 		if( $this->_inData('max') ) {
-			$max = $this->max;
 			if( $submitted > $max )
 				$this->_addError( "Value must be $max or less", $errors );
 		}
