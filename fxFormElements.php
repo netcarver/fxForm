@@ -522,6 +522,7 @@ class fxFormCheckboxset extends fxFormElementSet
 		parent::__construct($name, $label);
 		$this->_members = $members;
 		$this->name = fxForm::_simplify($name).'[]';
+		$this->class('checkboxset');
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
@@ -567,6 +568,7 @@ class fxFormRadioset extends fxFormElementSet
 		parent::__construct($name, $label);
 
 		$this->_members = $members;
+		$this->class('radioset');
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
