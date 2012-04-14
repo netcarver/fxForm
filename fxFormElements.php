@@ -619,6 +619,13 @@ class fxFormSelect extends fxFormElementSet
 	{
 		return $r->renderSelect($this, $f, $parent_id );
 	}
+
+
+	public function value($v)
+	{
+		$this->_value($v);
+		return $this;
+	}
 }
 
 
