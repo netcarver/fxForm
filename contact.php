@@ -145,23 +145,22 @@ $contact_form = Form('contact', './')
 
 	->add( Fieldset('Your message...')
 		->add( TextArea('msg', 'Message', 'Your message to us')
-				->required()
-				->pattern('/^[^0-9]*$/','No numbers please!')	// Defines server-side regex for validation. Can add second string parameter for the error message
-				->whitelist('great,good,fantastic,amazing')
+			->required()
+			->pattern('/^[^0-9]*$/','No numbers please!')	// Defines server-side regex for validation. Can add second string parameter for the error message
+			->whitelist('great,good,fantastic,amazing')
 		)
 	)
 
 	->add( Fieldset('Legal stuff...')
 		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
-				->required('* Please select one of the options')
-				->match('myConditionValidator')
-				//->_show_meta()
-				//->_show_submitted()
-				//->_value('n')					// TODO use html's value param here. Configures the initial value. Use the key of the item you want selected from the $conditions array.
+			->required('* Please select one of the options')
+			->match('myConditionValidator')
+			->value('n')	// Configures the initial checked value.
+								// Use the name of the item you want selected from the $conditions array.
 		)
 		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
-			//->_value( array( 'spam' ) )	// Initial value(s). Just add more keys from the $checkboxes array for multiple checkmarks.
-			//->_show_data()
+			->value( array( 'spam_me' ) )	// Configures the initial checked values.
+											// Add more keys from the $checkboxes array for multiple checkmarks.
 		)
 		//->add( MSelect('depts', 'Forward to which departments?', $departments) )
 	)
