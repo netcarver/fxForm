@@ -219,7 +219,7 @@ class fxForm extends fxFormElementSet
 						return $fn($this);
 					}
 					else
-						throw new exception( "Form submission successful but no onSuccess callback defined." );
+						throw new fxProgrammerException( "Form submission successful but no onSuccess callback defined." );
 				}
 				else {
 					return $v;
@@ -236,7 +236,7 @@ class fxForm extends fxFormElementSet
 			fCore::expose($this->errors);
 
 		if( !$this->_form_id || !$this->_form_token )
-			throw new exception( "Form cannot be rendered without _form_id and _form_token being defined." );
+			throw new fxProgrammerException( "Form cannot be rendered without _form_id and _form_token being defined." );
 
 		return $this->renderUsing( $this->_renderer, $this, $this->id );
 	}

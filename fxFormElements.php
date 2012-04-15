@@ -189,7 +189,7 @@ abstract class fxFormElement extends fxNamedSet
 					$this->_addError( $r, $errors );
 			}
 			else
-				throw new exception( "Validator function for {$this->name} must return (bool)true or a non-empty string." );
+				throw new fProgrammerException( "Validator function for {$this->name} must return (bool)true or a non-empty string." );
 		}
 
 		return $this;
@@ -253,7 +253,7 @@ abstract class fxFormElementSet extends fxFormElement
 			$this->_elements[] = new fxFormString( $element );
 		}
 		else {
-			throw new exception( "Added element must be a string, fxFormElement or fxFormElementSet." );
+			throw new fxProgrammerException( "Added element must be a string, fxFormElement or fxFormElementSet." );
 		}
 
 
@@ -272,6 +272,9 @@ abstract class fxFormElementSet extends fxFormElement
 	}
 
 
+	/**
+	 * Allows the use of HTML's value attribute to set an initial value by simulating submission
+	 **/
 	public function value($v)
 	{
 		$this->_value($v);
@@ -562,7 +565,7 @@ class fxFormRadioset extends fxFormElementSet
 	public function __construct($name, $label, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
-		if( count($members) < 2 ) throw new exception( 'There must be 2 or more members for a RadioSet to be populated.' );
+		if( count($members) < 2 ) throw new fxProgrammerException( 'There must be 2 or more members for a RadioSet to be populated.' );
 
 		parent::__construct($name, $label);
 
