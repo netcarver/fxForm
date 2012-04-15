@@ -123,6 +123,8 @@ $contact_form = Form('contact', './')
 	//->match('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
 	->onSuccess('MySuccessHandler')
 
+	->novalidate()						// Stop FF doing client-side evaluation whilst testing.
+
 	// Here come the form elements...
 	->add( Fieldset('About you...')
 	->add( Input('name', 'Your Name', 'Your name please')/*->required()->match('myNameValidator')*/ )
