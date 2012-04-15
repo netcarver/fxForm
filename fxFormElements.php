@@ -338,7 +338,6 @@ class fxFormInput extends fxFormElement
 	}
 
 
-	// TODO add an unsigned type?
 	public function type($t)
 	{
 		$t = strtolower( $t );

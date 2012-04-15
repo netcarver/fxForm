@@ -22,8 +22,13 @@
  * I hope this will provide a simple, yet powerful tool to get you started.
  *
  *
- * 	TODO: Add minlength and maxlength parameters (maxlength is HTML, so allow in rendered output) + validation
- * 	TODO: Add error msg substitutions like {value}, {name}, {id} etc
+ * Things yet to be done...
+ *
+ *	TODO: Add support for the new date/time based collection of inputs.
+ *	TODO: Have placeholder string auto-trimmed for HTML5 output in renderer
+ *	TODO: Add an unsigned type?
+ *	TODO: Add minlength and maxlength parameters (maxlength is HTML, so allow in rendered output) + validation
+ *	TODO: Add error msg substitutions like {value}, {name}, {id} etc
  *	TODO: Add whitelist semantics to select/mselect?
  *	TODO: Add form level validation
  *			Where should form-level errors be placed?
@@ -123,30 +128,42 @@ $contact_form = Form('contact', './')
 	//->match('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
 	->onSuccess('MySuccessHandler')
 
+	->novalidate()						// Stop FF doing client-side evaluation whilst testing.
+
 	// Here come the form elements...
 	->add( Fieldset('About you...')
-	->add( Input('name', 'Your Name', 'Your name please')/*->required()->match('myNameValidator')*/ )
-		//->add( Input('email', 'Your Email', 'Your email address')->type('email')->required() )
-		//->add( Input('url', 'Website', 'Your URL here (optional)')->type('url') )
-		//->add( Hidden('secret','123') )
-		//->add( Password('pass', 'Your Password', 'Enter a password')->required()->whitelist('password') )
-		//->add( Input('tel', 'Phone', 'A contact number please')->type('tel')->pattern('/^[\s0-9]+$/') )
+		->add( Input('name', 'Your Name', 'Your name please')
+			->autocomplete('off')		// prevent preivious matching input being shown
+			->autofocus()
+			->required()
+			->match('myNameValidator')
+		)
+		->add( Email('email', 'Your Email', 'Your email address')
+			->required()
+			->autocomplete('off')
+		)
+		->add( URL('url', 'Website', 'Your URL here (optional)')
+   		)
+		->add( Hidden('secret','123') )
+		->add( Password('pass', 'Your Password', 'Enter a password')
+			->required()
+   		)
+		->add( Tel('tel', 'Phone', 'A contact number please')
+			->pattern('/^[\s0-9]+$/')
+		)
 		->add( Input('human', 'Are you human?')
 			->pattern('/^yes|yep|yeah|sure am|indeed$/i','Some form of affirmation is needed.')
 			->required()
 		)
-	//	->add( YesNo('alive', 'Were you alive when you celebrated your last birthday?', 'Babies excluded.', 'Just yes or no please.')->required() )
-		->add( Integer('age', 'How old are you?')
+		->add( YesNo('alive', 'Were you alive when you celebrated your last birthday?', 'Babies excluded.', 'Just yes or no please.')
 			->required()
+		)
+		->add( Integer('age', 'How old are you?')
 			->value(5)
 			->min(2)
 			->max(10)
-			//->_show_submitted()	// Show the submitted value for this element.
-			//->_show_data()		// Show the data
-			//->_show_meta()		// Show the meta-data
-			//->_show_html()		// Show the rendered HTML for the element.
-			)
 		)
+	)
 
 	->add( Fieldset('Your message...')
 		->add( TextArea('msg', 'Message', 'Your message to us')
@@ -160,14 +177,16 @@ $contact_form = Form('contact', './')
 		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
 			->required('* Please select one of the options')
 			->match('myConditionValidator')
-			->value('n')	// Configures the initial checked value.
-								// Use the name of the item you want selected from the $conditions array.
 		)
 		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
+			->required()
 			->value( array( 'spam_me' ) )	// Configures the initial checked values.
 											// Add more keys from the $checkboxes array for multiple checkmarks.
 		)
-		//->add( MSelect('depts', 'Forward to which departments?', $departments) )
+		->add( MSelect('depts', 'Forward to which departments?', $departments)
+			->required('Please choose at least one department')
+			->value( array( 'complaints-2', 'complaints-3', 'sales-0') ) // Select some initial values.
+		)
 	)
 
 	->add( Submit('Send') )
