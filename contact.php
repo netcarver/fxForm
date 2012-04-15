@@ -16,32 +16,35 @@
  *
  * I've included a basic renderer that should output HTML5 by default
  * but I'm working on having it output HTML4 too via
- * the->target('html4') instruction. This renderer also currently allows
+ * the ->target('html4') method. This renderer also currently allows
  * several aspects of its rendering to be customised via callback routines.
  *
  * I hope this will provide a simple, yet powerful tool to get you started.
+ *
+ *
+ *	WIP : Add required rule checking to Selects and MSelects
+ *	TODO: Add form level validation
+ *			Where should form-level errors be placed?
+ *	TODO: Add conditional requirements on elements?
+ *	TODO: How to handle notes on html4 elements that don't support the placeholder tag?
+ *		  Perhaps use the elementError formatter?
+ *	TODO: Add Bootstrap renderer
+ *	TODO: Upload element.
+ *	TODO: Package as PW module
+ *	TODO: Handle Multilingual strings and numbers?
+ *
+ *	TODO: Add population of form definition within a new admin page (public forms->contact)
+ *		  etc. Would allow form defs to be done in admin if.
+ *	TODO: Autogeneration of conditional enable/disable js code??
+ *	TODO: Add support for nested fieldsets?? (I'd prefer not to have to do this.)
+ *
  *
  * [1] http://www.martinfowler.com/bliki/DomainSpecificLanguage.html
  **/
 
 include("./head.inc");
-
 require_once( wire('config')->paths->root . "site/forms/forms.php" );	// Bring in the form loader.
 
-#
-#	TODO: Add form level validation
-#	TODO: How to handle notes on html4 elements that don't support the placeholder tag?
-#		  Perhaps use the elementError formatter?
-#	TODO: Add Bootstrap renderer
-#	TODO: Upload element.
-#	TODO: Package as PW module
-#	TODO: Handle Multilingual strings and numbers?
-#
-#	TODO: Add population of form definition within a new admin page (public forms->contact)
-#		  etc. Would allow form defs to be done in admin if.
-#	TODO: Autogeneration of conditional enable/disable js code??
-#	TODO: Add support for nested fieldsets?? (I'd prefer not to have to do this.)
-#
 
 /** ====================  Set up members for radios/checkboxes/selects ====================
  *
