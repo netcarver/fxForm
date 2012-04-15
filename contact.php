@@ -22,8 +22,11 @@
  * I hope this will provide a simple, yet powerful tool to get you started.
  *
  *
- * 	TODO: Add minlength and maxlength parameters (maxlength is HTML, so allow in rendered output) + validation
- * 	TODO: Add error msg substitutions like {value}, {name}, {id} etc
+ *	TODO: Add range support
+ *	TODO: Add convenience wrappers for email, url, telephone etc
+ *	TODO: Have placeholder string auto-trimmed for HTML5 output in renderer
+ *	TODO: Add minlength and maxlength parameters (maxlength is HTML, so allow in rendered output) + validation
+ *	TODO: Add error msg substitutions like {value}, {name}, {id} etc
  *	TODO: Add whitelist semantics to select/mselect?
  *	TODO: Add form level validation
  *			Where should form-level errors be placed?
