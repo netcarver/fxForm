@@ -606,6 +606,23 @@ class fxFormRadioset extends fxFormElementSet
 
 class fxFormSelect extends fxFormElementSet
 {
+	static public function getMemberMap( &$members, $prefix='' )
+	{
+		fxAssert::isArray( $members, '$members' );
+		$o = array();
+		if( !empty( $members ) ) {
+			foreach( $members as $k => $v ) {
+				$simple_k = $prefix . fxForm::_simplify( (string)$k );
+				if( is_array( $v ) )
+					$o += self::getMemberMap($v, "$simple_k-");
+				else
+					$o[ $simple_k ] = $v;
+			}
+		}
+		return $o;
+	}
+
+
 	public function __construct($name, $label, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
@@ -614,6 +631,8 @@ class fxFormSelect extends fxFormElementSet
 		$this->_members = $members;
 		$this->id = $tmp = fxForm::_simplify($name);
 		$this->name = $tmp.'[]';
+
+		$this->_mmap = self::getMemberMap( $members );
 	}
 
 
