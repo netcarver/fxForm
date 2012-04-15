@@ -20,6 +20,9 @@ function MSelect 	( $name, $label, $options_array )		{ return new fxFormMSelect(
 function Text		( $text )            					{ return new fxFormString( $text ); }
 function Input		( $name, $label, $note=null )	     	{ return new fxFormInput( $name, $label, $note ); }
 function Integer    ( $name, $label, $note=null )			{ return Input($name, $label, $note)->type('integer'); }
+function Email		( $name, $label, $note=null )	     	{ return Input($name, $label, $note)->type('email'); }
+function URL  		( $name, $label, $note=null )	     	{ return Input($name, $label, $note)->type('url'); }
+function Tel  		( $name, $label, $note=null )	     	{ return Input($name, $label, $note)->type('tel'); }
 function Boolean    ( $name, $label, $note=null )			{ return Input($name, $label, $note)->type('boolean'); }
 function YesNo      ( $name, $label, $note=null, $msg=null)	{ return Input($name, $label, $note)->pattern('/^yes|no$/i',$msg); }
 function Password	( $name, $label )      					{ return new fxFormPassword( $name, $label ); }
