@@ -508,13 +508,17 @@ class fxFormFieldset extends fxFormElementSet
 
 	public function _getSubmittedValue()
 	{
-		foreach( $this->_elements as $el ) if( $el instanceof fxFormElement ) $el->_getSubmittedValue();
+		foreach( $this->_elements as $el )
+			if( $el instanceof fxFormElement )
+				$el->_getSubmittedValue();
 		return $this;
 	}
 
 	public function _validate( &$errors, fxForm &$f )
 	{
-		foreach( $this->_elements as $el ) if( $el instanceof fxFormElement ) $el->_validate( $errors, $f );
+		foreach( $this->_elements as $el )
+			if( $el instanceof fxFormElement )
+				$el->_validate( $errors, $f );
 		return $this;
 	}
 }
