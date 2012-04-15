@@ -602,7 +602,37 @@ class fxFormRadioset extends fxFormElementSet
 
 class fxFormSelect extends fxFormElementSet
 {
-	static public function getMemberMap( &$members, $prefix='' )
+	/**
+	 * Static function to build a flattened mapping of compound-keys => labels
+	 * from a given array.
+	 *
+	 * Given this input...
+	 *
+	 * $members = array(
+	 * 		'Depts' => array(	// An optgroup
+	 * 			'Books'     => 'Books',
+	 * 			'Audio'     => array(
+	 * 				'CDs'   => 'CDs',
+	 * 				'Tapes' => 'Tapes',
+	 * 				'Vinyl' => 'Records',
+	 * 			)
+	 * 			'Furniture' => 'Small furniture and fittings',
+	 * 		),
+	 * 	);
+	 *
+	 * 	You'd get...
+	 * 	$map = array(
+	 * 		'depts-books'       => 'Books',
+	 * 		'depts-audio-cds'   => 'CDs',
+	 * 		'depts-audio-tapes' => 'Tapes',
+	 * 		'depts-audio-vinyl' => 'Records',
+	 * 		'depts-furniture'   => 'Small furniture and fittings',
+	 * 	);
+	 *
+	 * 	You can access the member map, for an element $el, using...
+	 * 	$map = $el->_mmap;
+	 **/
+	static public function makeMemberMap( &$members, $prefix='' )
 	{
 		fxAssert::isArray( $members, '$members' );
 		$o = array();
@@ -619,6 +649,7 @@ class fxFormSelect extends fxFormElementSet
 	}
 
 
+
 	public function __construct($name, $label, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
@@ -628,7 +659,7 @@ class fxFormSelect extends fxFormElementSet
 		$this->id = $tmp = fxForm::_simplify($name);
 		$this->name = $tmp.'[]';
 
-		$this->_mmap = self::getMemberMap( $members );
+		$this->_mmap = self::makeMemberMap( $members );
 	}
 
 
