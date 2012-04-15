@@ -155,7 +155,9 @@ $contact_form = Form('contact', './')
 			->pattern('/^yes|yep|yeah|sure am|indeed$/i','Some form of affirmation is needed.')
 			->required()
 		)
-	//	->add( YesNo('alive', 'Were you alive when you celebrated your last birthday?', 'Babies excluded.', 'Just yes or no please.')->required() )
+		->add( YesNo('alive', 'Were you alive when you celebrated your last birthday?', 'Babies excluded.', 'Just yes or no please.')
+			->required()
+		)
 		->add( Integer('age', 'How old are you?')
 			->value(5)
 			->min(2)
@@ -165,7 +167,7 @@ $contact_form = Form('contact', './')
 
 	->add( Fieldset('Your message...')
 		->add( TextArea('msg', 'Message', 'Your message to us')
-//			->required()
+			->required()
 			->pattern('/^[^0-9]*$/','No numbers please!')	// Defines server-side regex for validation. Can add second string parameter for the error message
 			->whitelist('great,good,fantastic,amazing')
 		)
@@ -175,14 +177,16 @@ $contact_form = Form('contact', './')
 		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
 			->required('* Please select one of the options')
 			->match('myConditionValidator')
-			->value('n')	// Configures the initial checked value.
-								// Use the name of the item you want selected from the $conditions array.
 		)
 		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
+			->required()
 			->value( array( 'spam_me' ) )	// Configures the initial checked values.
 											// Add more keys from the $checkboxes array for multiple checkmarks.
 		)
-		//->add( MSelect('depts', 'Forward to which departments?', $departments) )
+		->add( MSelect('depts', 'Forward to which departments?', $departments)
+			->required('Please choose at least one department')
+			->value( array( 'complaints-2', 'complaints-3', 'sales-0') ) // Select some initial values.
+		)
 	)
 
 	->add( Submit('Send') )
