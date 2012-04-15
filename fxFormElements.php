@@ -644,7 +644,7 @@ class fxFormSelect extends fxFormElementSet
 			foreach( $members as $k => $v ) {
 				$simple_k = $prefix . fxForm::_simplify( (string)$k );
 				if( is_array( $v ) )
-					$o += self::getMemberMap($v, "$simple_k-");
+					$o += self::makeMemberMap($v, "$simple_k-");
 				else
 					$o[ $simple_k ] = $v;
 			}

@@ -22,7 +22,9 @@
  * I hope this will provide a simple, yet powerful tool to get you started.
  *
  *
- *	WIP : Add required rule checking to Selects and MSelects
+ * 	TODO: Add minlength and maxlength parameters (maxlength is HTML, so allow in rendered output) + validation
+ * 	TODO: Add error msg substitutions like {value}, {name}, {id} etc
+ *	TODO: Add whitelist semantics to select/mselect?
  *	TODO: Add form level validation
  *			Where should form-level errors be placed?
  *	TODO: Add conditional requirements on elements?
