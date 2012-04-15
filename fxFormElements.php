@@ -189,7 +189,7 @@ abstract class fxFormElement extends fxNamedSet
 					$this->_addError( $r, $errors );
 			}
 			else
-				throw new exception( "Validator function for {$this->name} must return (bool)true or a non-empty string." );
+				throw new fProgrammerException( "Validator function for {$this->name} must return (bool)true or a non-empty string." );
 		}
 
 		return $this;
@@ -253,7 +253,7 @@ abstract class fxFormElementSet extends fxFormElement
 			$this->_elements[] = new fxFormString( $element );
 		}
 		else {
-			throw new exception( "Added element must be a string, fxFormElement or fxFormElementSet." );
+			throw new fxProgrammerException( "Added element must be a string, fxFormElement or fxFormElementSet." );
 		}
 
 
@@ -271,6 +271,15 @@ abstract class fxFormElementSet extends fxFormElement
 		return $this;
 	}
 
+
+	/**
+	 * Allows the use of HTML's value attribute to set an initial value by simulating submission
+	 **/
+	public function value($v)
+	{
+		$this->_value($v);
+		return $this;
+	}
 }
 
 
@@ -499,13 +508,17 @@ class fxFormFieldset extends fxFormElementSet
 
 	public function _getSubmittedValue()
 	{
-		foreach( $this->_elements as $el ) if( $el instanceof fxFormElement ) $el->_getSubmittedValue();
+		foreach( $this->_elements as $el )
+			if( $el instanceof fxFormElement )
+				$el->_getSubmittedValue();
 		return $this;
 	}
 
 	public function _validate( &$errors, fxForm &$f )
 	{
-		foreach( $this->_elements as $el ) if( $el instanceof fxFormElement ) $el->_validate( $errors, $f );
+		foreach( $this->_elements as $el )
+			if( $el instanceof fxFormElement )
+				$el->_validate( $errors, $f );
 		return $this;
 	}
 }
@@ -546,13 +559,6 @@ class fxFormCheckboxset extends fxFormElementSet
 		}
 		return $r->renderElementSet($this, $f, $parent_id );
 	}
-
-	public function value($v)
-	{
-		$this->_value($v);
-		return $this;
-	}
-
 }
 
 
@@ -563,7 +569,7 @@ class fxFormRadioset extends fxFormElementSet
 	public function __construct($name, $label, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members, 'members');
-		if( count($members) < 2 ) throw new exception( 'There must be 2 or more members for a RadioSet to be populated.' );
+		if( count($members) < 2 ) throw new fxProgrammerException( 'There must be 2 or more members for a RadioSet to be populated.' );
 
 		parent::__construct($name, $label);
 
@@ -593,12 +599,6 @@ class fxFormRadioset extends fxFormElementSet
 		}
 		return $r->renderElementSet( $this, $f, $parent_id );
 	}
-
-	public function value($v)
-	{
-		$this->_value($v);
-		return $this;
-	}
 }
 
 
@@ -606,6 +606,54 @@ class fxFormRadioset extends fxFormElementSet
 
 class fxFormSelect extends fxFormElementSet
 {
+	/**
+	 * Static function to build a flattened mapping of compound-keys => labels
+	 * from a given array.
+	 *
+	 * Given this input...
+	 *
+	 * $members = array(
+	 * 		'Depts' => array(	// An optgroup
+	 * 			'Books'     => 'Books',
+	 * 			'Audio'     => array(
+	 * 				'CDs'   => 'CDs',
+	 * 				'Tapes' => 'Tapes',
+	 * 				'Vinyl' => 'Records',
+	 * 			)
+	 * 			'Furniture' => 'Small furniture and fittings',
+	 * 		),
+	 * 	);
+	 *
+	 * 	You'd get...
+	 * 	$map = array(
+	 * 		'depts-books'       => 'Books',
+	 * 		'depts-audio-cds'   => 'CDs',
+	 * 		'depts-audio-tapes' => 'Tapes',
+	 * 		'depts-audio-vinyl' => 'Records',
+	 * 		'depts-furniture'   => 'Small furniture and fittings',
+	 * 	);
+	 *
+	 * 	You can access the member map, for an element $el, using...
+	 * 	$map = $el->_mmap;
+	 **/
+	static public function makeMemberMap( &$members, $prefix='' )
+	{
+		fxAssert::isArray( $members, '$members' );
+		$o = array();
+		if( !empty( $members ) ) {
+			foreach( $members as $k => $v ) {
+				$simple_k = $prefix . fxForm::_simplify( (string)$k );
+				if( is_array( $v ) )
+					$o += self::getMemberMap($v, "$simple_k-");
+				else
+					$o[ $simple_k ] = $v;
+			}
+		}
+		return $o;
+	}
+
+
+
 	public function __construct($name, $label, $members)
 	{
 		fxAssert::isArray($members,'members') && fxAssert::isNotEmpty($members,'members');
@@ -614,19 +662,14 @@ class fxFormSelect extends fxFormElementSet
 		$this->_members = $members;
 		$this->id = $tmp = fxForm::_simplify($name);
 		$this->name = $tmp.'[]';
+
+		$this->_mmap = self::makeMemberMap( $members );
 	}
 
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
 		return $r->renderSelect($this, $f, $parent_id );
-	}
-
-
-	public function value($v)
-	{
-		$this->_value($v);
-		return $this;
 	}
 }
 

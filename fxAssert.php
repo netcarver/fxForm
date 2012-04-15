@@ -72,6 +72,12 @@ class fxAssert
 			throw new fProgrammerException( "$var_name must be an array." );
 	}
 
+	public static function isString( &$var, $var_name )
+	{
+		if( !is_array( $var ) )
+			throw new fProgrammerException( "$var_name must be a string." );
+	}
+
 	public static function isNotEmpty( &$var, $var_name )
 	{
 		if( empty( $var ) )
