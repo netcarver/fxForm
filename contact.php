@@ -24,11 +24,10 @@
  *
  * Things yet to be done...
  *
- *	TODO: Add output elements to range controls
- *	TODO: Add method to toggle the states of an element and its children (if any)
- *	TODO: Skip validation for disabled form elements?
  *	TODO: Add nicer support for single-item checkbox sets (or just a checkbox type?)
+ *	TODO: Add method to toggle the states of an element and its children (if any)
  *	TODO: Add support for the new date/time based collection of inputs.
+ *	TODO: Add output elements to range controls
  *	TODO: Add support for conditional enabling/disabling of dependent fields.
  *	TODO: Add an unsigned type?
  *	TODO: Add error msg substitutions like {value}, {name}, {id} etc
@@ -140,8 +139,17 @@ $contact_form = Form('contact', './')
 	->novalidate()						// Stop FF doing client-side evaluation whilst testing.
 
 	// Here come the form elements...
-	->add( Fieldset('About you...')
-		->add( Input('sal',  'Title',     'Your title please')
+	->add( Fieldset('About you...', 'about')
+		->class('about')
+
+		//->disabled()
+		//->_show_html()
+
+		->add( Checkboxes( 'control', 'Collect Personal Details', array('ok' => 'Yes, collect.') )
+			->_ignore_parent_fields('disabled,readonly,required')
+			//->_toggle( 'id="^form-contact-about-"', 'disabled' )	// TODO add jQuery code to toggle the given elements' attribute
+		)
+		->add( Input('salutation', 'Title', 'Your title please')
 			->autofocus()
 			->datalist( $salutations )
 			->required()
