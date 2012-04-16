@@ -13,6 +13,8 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$itype   = $e->type;
 		$id      = $this->makeId($e, $parent_id);
 		$plce    = (string)$e->_note;
+		if( '' !== $plce )
+			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
 		$pattern = self::makeHTMLPattern( $e->pattern );
 
 		$o = array();
