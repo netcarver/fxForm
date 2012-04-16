@@ -150,6 +150,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$o[] = "</fieldset>\n";
 		$o = implode( "\n", $o );
+		$this->checkExposure( $e, $o );
 		return $o;
 	}
 
