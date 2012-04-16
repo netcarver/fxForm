@@ -17,7 +17,7 @@ function Checkboxes	( $name, $label, $members_array ) 		{ return new fxFormCheck
 function Radios		( $name, $label, $members_array )	 	{ return new fxFormRadioset( $name, $label, $members_array ); }
 function Select  	( $name, $label, $options_array )		{ return new fxFormSelect( $name, $label, $options_array ); }
 function MSelect 	( $name, $label, $options_array )		{ return new fxFormMSelect( $name, $label, $options_array ); }
-function Text		( $text )            					{ return new fxFormString( $text ); }
+//function Text		( $text )            					{ return new fxFormString( $text ); }
 function Input		( $name, $label, $note=null )	     	{ return new fxFormInput( $name, $label, $note ); }
 function Integer    ( $name, $label, $note=null )			{ return Input($name, $label, $note)->type('integer'); }
 function Email		( $name, $label, $note=null )	     	{ return Input($name, $label, $note)->type('email'); }
