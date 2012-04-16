@@ -103,6 +103,7 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+	//	Minlength is *not* an HTML5 attribute, so we store this in the _meta.
 	public function minlength($min, $msg = null)
 	{
 		$this->_minlength = (int)$min;
@@ -111,6 +112,7 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+	//	Maxlength is an HTML5 attribute so we store this in the _data.
 	public function maxlength($max, $msg = null)
 	{
 		$this->_data['maxlength'] = (int)$max;
@@ -216,13 +218,13 @@ abstract class fxFormElement extends fxNamedSet
 		// Handle minlength checking (if applicable)
 		if( $this->_inMata('minlength') ) {
 			if( $len < $minlength )
-				$this->_addError( "Value must be $minlength characters or more", $errors );
+				$this->_addError( (!empty($this->_minlength_msg)) ? $this->_minlength_msg : "Value must be $minlength characters or more", $errors );
 		}
 
 		// Handle maxlength checking (if applcable)
 		if( $this->_inData('maxlength') ) {
 			if( $len > $maxlength )
-				$this->_addError( "Value must be $maxlength characters or less", $errors );
+				$this->_addError( (!empty($this->_maxlength_msg )) ? $this->_maxlength_msg : "Value must be $maxlength characters or less", $errors );
 		}
 
 
