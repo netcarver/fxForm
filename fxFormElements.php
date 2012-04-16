@@ -117,12 +117,22 @@ abstract class fxFormElement extends fxNamedSet
 
 	public function required( $msg = null )
 	{
-		$this->_data['required'] = null;
+		$this->_data['required'] = 'required';
 		if( is_string($msg) && '' !== $msg )
 			$this->_meta['required_message'] = $msg;
 		return $this;
 	}
 
+	public function disabled()
+	{
+		$this->_data['disabled'] = 'disabled';
+		return $this;
+	}
+
+	public function readonly()
+	{
+		$this->_data['readonly'] = 'readonly';
+	}
 
 	public function type($t)
 	{
@@ -196,6 +206,9 @@ abstract class fxFormElement extends fxNamedSet
 		$submitted = $this->_value;
 		$required  = $this->_inData('required');
 		$cb        = $this->_validation_cb;
+
+		if( $this->disabled )
+			return $this;
 
 		if( !$required && '' == $submitted )	// Not required and no input => always ok.
 			return $this;
