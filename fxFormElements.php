@@ -554,9 +554,11 @@ class fxFormHidden extends fxFormInput
 
 class fxFormFieldset extends fxFormElementSet
 {
-	public function __construct($label)
+	public function __construct( $label, $name=null )
 	{
-		parent::__construct( fxForm::_simplify($label) ,$label);
+		if( !is_string($name) || '' === $string )
+			$name = $label;
+		parent::__construct( fxForm::_simplify($name) ,$label);
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )

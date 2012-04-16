@@ -31,6 +31,6 @@ function TextArea	( $name, $label, $note )      			{ return new fxFormTextArea( 
 function Button		( $text )         						{ return new fxFormButton( $text ); }
 function Submit		( $text ) 	     						{ return new fxFormSubmit( $text ); }
 //function Reset 		( $text ) 	 							{ return new fxFormReset( $text ); }
-function Fieldset	( $legend )     						{ return new fxFormFieldset( $legend ); }
+function Fieldset	( $legend, $name=null )					{ return new fxFormFieldset( $legend, $name ); }
 
 #eof
