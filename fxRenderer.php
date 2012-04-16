@@ -43,6 +43,26 @@ abstract class fxHTMLRenderer implements fxRenderer
 	}
 
 
+	static protected function makeDatalist( $name, &$options )
+	{
+		fxAssert::isNonEmptyString( $name );
+		fxAssert::isArray( $options, 'options' );
+
+		$name = fxForm::_simplify( $name );
+
+		$o[] = '';
+		$o[] = '<datalist id="'.$name.'">';
+		if( !empty( $options ) ) {
+			foreach( $options as $v ) {
+				$o[] = "\t<option value=\"".htmlspecialchars($v).'">';
+			}
+		}
+		$o[] = '</datalist>';
+
+		$o = implode( "\n", $o );
+		return $o;
+	}
+
 
 	protected $rendering_element_set = false;
 	protected $submitting            = false;

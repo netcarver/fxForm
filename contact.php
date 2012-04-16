@@ -84,6 +84,12 @@ $checkboxes  = array(	// Values for a checkbox set in the form
 	'extra' => 'Extra frequently'
 );
 
+$salutations = array(
+	'Mr.',
+	'Mrs.',
+	'Miss',
+	'Dr.'
+);
 
 /** ==================== Configure the renderer ====================
  *
@@ -132,6 +138,11 @@ $contact_form = Form('contact', './')
 
 	// Here come the form elements...
 	->add( Fieldset('About you...')
+		->add( Input('sal',  'Title',     'Your title please')
+			->datalist( $salutations )
+			->required()
+			->_show_html()
+		)
 		->add( Input('name', 'Your Name', 'Your name please')
 			->autocomplete('off')		// prevent preivious matching input being shown
 			->autofocus()

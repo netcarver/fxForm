@@ -31,7 +31,16 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$class = $this->getClasses($e);
 		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
-		$o[] = "<$type type=\"$itype\" $id$attr$plce$class$pattern";
+		$listname = '';
+		$datalist = '';
+		if( $e->_inMeta('datalist') && $e->_inMeta('datalist_id') ) {	// Add datalist to element...
+			$listname = $e->_datalist_id;
+			if( null === $listname ) $listname = $this->makeId($e, $parent_id, false).'-datalist';
+			$datalist = self::makeDatalist( $listname, $e->_datalist );
+			$listname = " list=\"$listname\"";
+		}
+
+		$o[] = "<$type type=\"$itype\" $id$attr$plce$class$pattern$listname";
 
 		if( 'submit' == $itype || 'reset' == $itype )
 			$o[] = "value=\"$elval\" />$label</button>";
@@ -46,6 +55,8 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 		$errmsg = $this->addErrorMessage( $e, $f );
 		if( '' !== $errmsg ) $o[] = $errmsg;
+
+		$o[] = $datalist;
 
 		$o = join( " ", $o );
 		$o = $this->addLabel( $o, $e, $parent_id );

@@ -342,6 +342,19 @@ class fxFormInput extends fxFormElement
 	}
 
 
+
+	/**
+	 * Allows a form input to have an attached datalist.
+	 **/
+	public function datalist( $data, $listid=null )
+	{
+		fxAssert::isArray($data, 'data');
+		$this->_datalist    = $data;
+		$this->_datalist_id = $listid;
+		return $this;
+	}
+
+
 	public function type($t)
 	{
 		$t = strtolower( $t );
