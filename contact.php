@@ -27,7 +27,6 @@
  *	TODO: Add support for the new date/time based collection of inputs.
  *	TODO: Add support for conditional enabling/disabling of dependent fields.
  *	TODO: Add an unsigned type?
- *	TODO: Add minlength and maxlength parameters (maxlength is HTML, so allow in rendered output) + validation
  *	TODO: Add error msg substitutions like {value}, {name}, {id} etc
  *	TODO: Add whitelist semantics to select/mselect?
  *	TODO: Add form level validation
@@ -155,7 +154,7 @@ $contact_form = Form('contact', './')
 		->add( URL('url', 'Website', 'Your URL here (optional)')
    		)
 		->add( Hidden('secret','123') )
-		->add( Password('pass', 'Your Password', 'Enter a password')
+		->add( Password('pass', 'Your Password', 'Enter a password of 10 characters or more')
 			->required()
 			->minlength(10)
    		)
