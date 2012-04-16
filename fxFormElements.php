@@ -632,6 +632,29 @@ class fxFormFieldset extends fxFormElementSet
 }
 
 
+class fxFormCheckbox extends fxFormInput
+{
+	public function __construct( $name, $label, $val )
+	{
+		parent::__construct( $name, $label );
+		$this->value = $val;
+		$this->type = 'checkbox';
+	}
+
+
+	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
+	{
+		if( $this->value === $this->_value )
+			$this->checked();
+
+		return parent::renderUsing( $r, $f, $parent_id );
+	}
+
+	public function _getHTMLType()
+	{
+		return 'fxFormInput';
+	}
+}
 
 
 class fxFormCheckboxset extends fxFormElementSet

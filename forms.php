@@ -14,6 +14,7 @@ require_once( 'fxBasicHTMLFormRenderer.php' );
  **/
 function Form		( $form_name, $action, $method="post" )	{ return new fxForm( $form_name, $action, $method ); }
 function Checkboxes	( $name, $label, $members_array ) 		{ return new fxFormCheckboxset( $name, $label, $members_array ); }
+function Checkbox  	( $name, $label, $val )           		{ return new fxFormCheckbox($name, $label, $val); }
 function Radios		( $name, $label, $members_array )	 	{ return new fxFormRadioset( $name, $label, $members_array ); }
 function Select  	( $name, $label, $options_array )		{ return new fxFormSelect( $name, $label, $options_array ); }
 function MSelect 	( $name, $label, $options_array )		{ return new fxFormMSelect( $name, $label, $options_array ); }
