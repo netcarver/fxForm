@@ -25,6 +25,7 @@
  * Things yet to be done...
  *
  *	TODO: Add support for the new date/time based collection of inputs.
+ *	TODO: Add support for conditional enabling/disabling of dependent fields.
  *	TODO: Add an unsigned type?
  *	TODO: Add minlength and maxlength parameters (maxlength is HTML, so allow in rendered output) + validation
  *	TODO: Add error msg substitutions like {value}, {name}, {id} etc
