@@ -24,7 +24,6 @@
  *
  * Things yet to be done...
  *
- *	TODO: Add nicer support for single-item checkbox sets (or just a checkbox type?)
  *	TODO: Add method to toggle the states of an element and its children (if any)
  *	TODO: Add support for the new date/time based collection of inputs.
  *	TODO: Add output elements to range controls
@@ -145,7 +144,7 @@ $contact_form = Form('contact', './')
 		//->disabled()
 		//->_show_html()
 
-		->add( Checkboxes( 'control', 'Collect Personal Details', array('ok' => 'Yes, collect.') )
+		->add( Checkbox( 'control', '>Collect Personal Details', 'ok')
 			->_ignore_parent_fields('disabled,readonly,required')
 			//->_toggle( 'id="^form-contact-about-"', 'disabled' )	// TODO add jQuery code to toggle the given elements' attribute
 		)
