@@ -132,6 +132,7 @@ abstract class fxFormElement extends fxNamedSet
 	public function readonly()
 	{
 		$this->_data['readonly'] = 'readonly';
+		return $this;
 	}
 
 	public function type($t)
