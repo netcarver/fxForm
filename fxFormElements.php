@@ -74,6 +74,10 @@ abstract class fxFormElement extends fxNamedSet
 			$msg = "Value must match the pattern: \"$pattern\"";
 		$this->_fvalidator->addRegexRule( $this->name, $pattern, $msg );
 		$this->_data['pattern'] = $pattern;	// HTML5 can take a pattern parameter!
+
+		if( !$this->_inData('title') )
+			$this->title = $msg;
+
 		return $this;
 	}
 
