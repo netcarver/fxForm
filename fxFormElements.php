@@ -32,8 +32,41 @@ abstract class fxFormElement extends fxNamedSet
 		$this->_label_right = $label_right;
 
 		$this->_fvalidator = new fValidation();
+		$this->_meta['ignore_parent_fields'] = array();
 	}
 
+
+	/**
+	 * Called once an element is added to an element set.
+	 *
+	 * By default this has the elements inherit the disabled, readonly and required flags from their parent set.
+	 **/
+	protected function addedTo( &$parent )
+	{
+		$this->_parent_name = $parent->name;
+		if( $parent instanceof fxFormElementSet ) {
+			if( $parent->_inData('disabled') && !in_array( 'disabled', $this->_ignore_parent_fields ) )
+				$this->disabled();
+			if( $parent->_inData('readonly') && !in_array( 'readonly', $this->_ignore_parent_fields ) )
+				$this->readonly();
+			if( $parent->_inData('required') && !in_array( 'required', $this->_ignore_parent_fields ) )
+				$this->required();
+		}
+
+		return $this;
+	}
+
+
+	public function _ignore_parent_fields( $fields )
+	{
+		if( is_string($fields) )
+			$fields = explode(',', $fields );
+
+		fxAssert::isArray( $fields );
+
+		$this->_meta['ignore_parent_fields'] = $fields;
+		return $this;
+	}
 
 
 	/**
@@ -294,14 +327,15 @@ abstract class fxFormElementSet extends fxFormElement
 
 		if( $element instanceof fxFormElement ) {
 			$this->_elements[] = $element;
+			$element->addedTo( $this );
 		}
 		elseif( is_string( $element ) ) {
-			$this->_elements[] = new fxFormString( $element );
+			$this->_elements[] = $strel = new fxFormString( $element );
+			$strel->addedTo( $this );
 		}
 		else {
 			throw new fxProgrammerException( "Added element must be a string, fxFormElement or fxFormElementSet." );
 		}
-
 
 		return $this;
 	}
