@@ -26,7 +26,6 @@
  *
  *	TODO: Add support for the new date/time based collection of inputs.
  *	TODO: Add support for HTML5 datalist
- *	TODO: Add support for pattern description into the title field (if it's not already set).
  *	TODO: Add an unsigned type?
  *	TODO: Add minlength and maxlength parameters (maxlength is HTML, so allow in rendered output) + validation
  *	TODO: Add error msg substitutions like {value}, {name}, {id} etc
