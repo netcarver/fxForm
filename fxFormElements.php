@@ -103,6 +103,22 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+	public function minlength($min, $msg = null)
+	{
+		$this->_minlength = (int)$min;
+		$this->_minlength_msg = $msg;
+		return $this;
+	}
+
+
+	public function maxlength($max, $msg = null)
+	{
+		$this->_data['maxlength'] = (int)$max;
+		$this->_maxlength_msg = $msg;
+		return $this;
+	}
+
+
 	/**
 	 * Encode & store the submitted value (if any) in the meta info
 	 **/
@@ -185,6 +201,30 @@ abstract class fxFormElement extends fxNamedSet
 			if( $submitted > $max )
 				$this->_addError( "Value must be $max or less", $errors );
 		}
+
+		/**
+		 * Do min/max length sanity checks and validation checks (if needed).
+		 **/
+		$minlength = $this->_minlength;
+		$maxlength = $this->maxlength;
+		$len = mb_strlen($submitted);
+
+		if( $this->_inMeta('minlength') && $this->_inData('maxlength') ) {
+			if( $minlength > $maxlength )
+				throw new fProgrammerException( "Element {$this->name} has minlength[$minlength] > maxlength[$maxlength]" );
+		}
+		// Handle minlength checking (if applicable)
+		if( $this->_inMata('minlength') ) {
+			if( $len < $minlength )
+				$this->_addError( "Value must be $minlength characters or more", $errors );
+		}
+
+		// Handle maxlength checking (if applcable)
+		if( $this->_inData('maxlength') ) {
+			if( $len > $maxlength )
+				$this->_addError( "Value must be $maxlength characters or less", $errors );
+		}
+
 
 		if( is_callable( $cb ) ) {
 			$r = $cb( $this, $f );
