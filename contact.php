@@ -140,7 +140,6 @@ $contact_form = Form('contact', './')
 		->add( Input('sal',  'Title',     'Your title please')
 			->datalist( $salutations )
 			->required()
-			->_show_html()
 		)
 		->add( Input('name', 'Your Name', 'Your name please')
 			->autocomplete('off')		// prevent preivious matching input being shown
