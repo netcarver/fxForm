@@ -24,6 +24,10 @@
  *
  * Things yet to be done...
  *
+ *	TODO: Add output elements to range controls
+ *	TODO: Add method to toggle the states of an element and its children (if any)
+ *	TODO: Skip validation for disabled form elements?
+ *	TODO: Add nicer support for single-item checkbox sets (or just a checkbox type?)
  *	TODO: Add support for the new date/time based collection of inputs.
  *	TODO: Add support for conditional enabling/disabling of dependent fields.
  *	TODO: Add an unsigned type?
