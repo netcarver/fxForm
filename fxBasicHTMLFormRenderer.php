@@ -35,7 +35,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$datalist = '';
 		if( $e->_inMeta('datalist') && $e->_inMeta('datalist_id') ) {	// Add datalist to element...
 			$listname = $e->_datalist_id;
-			if( null === $listname ) $listname = $this->makeId($e, $parent_id, false).'-datalist';
+			if( null === $listname ) $listname = $this->makeId($e, $parent_id, false).'_datalist';
 			$datalist = self::makeDatalist( $listname, $e->_datalist );
 			$listname = " list=\"$listname\"";
 		}
