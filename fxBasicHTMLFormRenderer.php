@@ -6,17 +6,14 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 
 	public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
-		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id,type,pattern' ) );
-		$label  = htmlspecialchars($e->_name);
-		$subval = $e->_value;
-		$elval  = htmlspecialchars($e->value);
-		$itype  = $e->type;
-		$id     = $this->makeId($e, $parent_id);
-		$plce   = (string)$e->_note;
-		if( '' !== $plce && $this->target == 'html5' )
-			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
-		else
-			$plce = ''; // HTML4 doesn't have placeholder.
+		$attr    = $this->renderAtts( $e->_getInfoExcept( 'class,value,id,type,pattern' ) );
+		$label   = htmlspecialchars($e->_name);
+		$subval  = $e->_value;
+		$elval   = htmlspecialchars($e->value);
+		$itype   = $e->type;
+		$id      = $this->makeId($e, $parent_id);
+		$plce    = (string)$e->_note;
+		$pattern = self::makeHTMLPattern( $e->pattern );
 
 		$o = array();
 
@@ -32,7 +29,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$class = $this->getClasses($e);
 		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
 
-		$o[] = "<$type type=\"$itype\" $id$attr$plce$class";
+		$o[] = "<$type type=\"$itype\" $id$attr$plce$class$pattern";
 
 		if( 'submit' == $itype || 'reset' == $itype )
 			$o[] = "value=\"$elval\" />$label</button>";

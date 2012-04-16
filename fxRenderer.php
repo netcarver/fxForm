@@ -15,6 +15,35 @@ interface fxRenderer
 
 abstract class fxHTMLRenderer implements fxRenderer
 {
+
+	/**
+	 * Converts a regex like '/^(something|or|other)$/i' into an HTML5 compatible
+	 * regex that has no modifiers, pattern boundary markers or anchors;
+	 *
+	 * eg: '(something|or|other)'.
+	 **/
+	static protected function makeHTMLPattern( $regex )
+	{
+		if( '' == $regex )
+			return '';
+
+		$pat_char = substr( $regex,   0, 1 );
+		$last_pos = strrpos( $regex,  $pat_char );
+
+		if( false === $last_pos || 0 === $last_pos )
+			throw new fProgrammerException( "Regex [$regex] without matching boundary markers" );	// No consistent boundary marking so throw exception
+
+		$pattern  = substr( $regex,   0, $last_pos );
+		$pattern  = substr( $pattern, 1 );
+
+		$pattern  = ltrim( $pattern, '^' );
+		$pattern  = rtrim( $pattern, '$' );
+
+		return " pattern=\"$pattern\"";
+	}
+
+
+
 	protected $rendering_element_set = false;
 	protected $submitting            = false;
 	protected $element_prefix        = '';

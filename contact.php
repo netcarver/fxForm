@@ -25,7 +25,8 @@
  * Things yet to be done...
  *
  *	TODO: Add support for the new date/time based collection of inputs.
- *	TODO: Have placeholder string auto-trimmed for HTML5 output in renderer
+ *	TODO: Add support for HTML5 datalist
+ *	TODO: Add support for pattern description into the title field (if it's not already set).
  *	TODO: Add an unsigned type?
  *	TODO: Add minlength and maxlength parameters (maxlength is HTML, so allow in rendered output) + validation
  *	TODO: Add error msg substitutions like {value}, {name}, {id} etc
@@ -149,7 +150,8 @@ $contact_form = Form('contact', './')
 			->required()
    		)
 		->add( Tel('tel', 'Phone', 'A contact number please')
-			->pattern('/^[\s0-9]+$/')
+			->pattern('/^[\s]*[\+]?[0-9][-0-9]*[\s]*$/', 'Enter a valid phone number. This can start with an international code like +44 if needed.')
+			//->_show_html()
 		)
 		->add( Input('human', 'Are you human?')
 			->pattern('/^yes|yep|yeah|sure am|indeed$/i','Some form of affirmation is needed.')
