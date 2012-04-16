@@ -611,6 +611,10 @@ class fxFormCheckboxset extends fxFormElementSet
 				->value($simple_k)
 				->_label_right( $this->_label_right )
 				;
+			if( $this->_inData('disabled') )
+				$el->disabled();
+			if( $this->_inData('readonly') )
+				$el->readonly();
 			if( in_array($simple_k, $this->_value ) )
 				$el->checked();
 			$this->_elements[] = $el;
@@ -649,6 +653,10 @@ class fxFormRadioset extends fxFormElementSet
 				->value($simple_k)
 				->_label_right( $this->_label_right )
 				;
+			if( $this->_inData('disabled') )
+				$el->disabled();
+			if( $this->_inData('readonly') )
+				$el->readonly();
 			if( $this->_inData('required') )
 				$el->required();
 			if( $simple_k === $this->_value )
