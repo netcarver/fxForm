@@ -62,12 +62,12 @@ require_once( wire('config')->paths->root . "site/forms/forms.php" );	// Bring i
  **/
 $departments = array(	// This sets up the values for a multi-select element in the form.
 	'Inhuman Resources',
-	'Sales' => array(			// This will become an optgroup in the select element.
-		'bk'=>'Books',				// Keys don't have to be implicit. Use whatever key you need or makes sense to your app.
+	'Sales' => array(	// This will become an optgroup in the select element.
+		'bk'=>'Books',		// Keys don't have to be implicit. Use whatever key you need or makes sense to your app.
 		'Records',
 		'Post Complaint Therapy',
 	),
-	'Complaints' => array(		// Another optgroup
+	'Complaints' => array(	// Another optgroup
 		'Complaints about the Books dept.',
 		'Complaints about the Records dept.',
 		'Complaints about the Complaints dept.',
@@ -85,7 +85,7 @@ $checkboxes  = array(	// Values for a checkbox set in the form
 	'extra' => 'Extra frequently'
 );
 
-$salutations = array(
+$salutations = array(	// Values for an HTML5 datalist
 	'Mr.',
 	'Mrs.',
 	'Miss',
@@ -122,7 +122,7 @@ $r
  * item in a radioset using ->_value('name') -- in this case you are setting up
  * the element to appear as if that value was already submitted to it.
  *
- * This is all done to make form specification as terse and fluent as possible
+ * This is done to make form specification as terse and fluent as possible
  * -- yet still giving control where needed.
  *
  **/
@@ -141,11 +141,11 @@ $contact_form = Form('contact', './')
 	->add( Fieldset('About you...', 'about')
 		->class('about')
 
-		//->disabled()
-		//->_show_html()
+		//->disabled()		// Marking the fieldset as disabled makes all members disabled.
+		//->_show_html()	// Shows the entire fieldset's generated html (for debugging)
 
 		->add( Checkbox( 'control', '>Collect Personal Details', 'ok')
-			->_ignore_parent_fields('disabled,readonly,required')
+			->_ignore_parent_fields('disabled,readonly,required')	// Tells this checkbox to ignore these settings on the parent.
 			//->_toggle( 'id="^form-contact-about-"', 'disabled' )	// TODO add jQuery code to toggle the given elements' attribute
 		)
 		->add( Input('salutation', 'Title', 'Your title please')
