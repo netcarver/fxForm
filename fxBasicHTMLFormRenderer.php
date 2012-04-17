@@ -143,7 +143,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$o = array();
 		$class = $this->getClasses($e);
 		$id    = $this->makeId($e, $parent_id, false);
-		$fsid  = ' id="'.$id.'_fs"';
+		$fsid  = ' id="'.$id.'"';
 		$o[] = "\n<fieldset$fsid$class><legend>{$e->_label}</legend>";
 
 		foreach( $e->getElements() as $el ) {
