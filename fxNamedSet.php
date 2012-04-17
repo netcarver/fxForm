@@ -114,6 +114,19 @@ abstract class fxNamedSet
 
 
 	/**
+	 * Allows values in the _data and _meta arrays to be unset.
+	 **/
+	public function __unset($name)
+	{
+		if( self::_isMeta($name) ) {
+			unset( $this->_meta[ $name ] );
+		}
+		else
+			unset( $this->_data[$name] );
+	}
+
+
+	/**
 	 * Tests if the given key exists in the set's data array.
 	 **/
 	public function _inData($key)
