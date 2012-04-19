@@ -132,7 +132,7 @@ $contact_form = Form('contact', './')
 	//->_show_html(true)				// Causes the form's renderer to expose the generated HTML for the form.
 	//->_show_form_elements(true)		// Causes the form to show its internal structure
 	//->_show_form_errors(true)
-	//->match('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
+	//->validator('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
 	->onSuccess('MySuccessHandler')
 
 	->novalidate()						// Stop FF doing client-side evaluation whilst testing.
@@ -156,7 +156,7 @@ $contact_form = Form('contact', './')
 		->add( Input('name', 'Your Name', 'Your name please')
 			->autocomplete('off')		// prevent preivious matching input being shown
 			->required()
-			->match('myNameValidator')
+			->validator('myNameValidator')
 		)
 		->add( Email('email', 'Your Email', 'Your email address')
 			->required()
@@ -197,7 +197,7 @@ $contact_form = Form('contact', './')
 	->add( Fieldset('Legal stuff...')
 		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
 			->required('* Please select one of the options')
-			->match('myConditionValidator')
+			->validator('myConditionValidator')
 		)
 		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
 			->required()
@@ -295,7 +295,7 @@ function myAffixFormatter( $element, $owner_name, $index, $max )
 /**
  * A custom validation callback for the 'agree' radioset.
  *
- * Make sure the agree radioset's ->match() method is uncommented and
+ * Make sure the agree radioset's ->validator() method is uncommented and
  * pointing here for it to get called
  **/
 function myConditionValidator( fxFormElement &$e, fxForm &$f )
@@ -307,7 +307,7 @@ function myConditionValidator( fxFormElement &$e, fxForm &$f )
 /**
  * A custom validation callback for the 'Name' input.
  *
- * Make sure the name input's ->match() method is uncommented and
+ * Make sure the name input's ->validator() method is uncommented and
  * pointing here for it to get called
  **/
 function myNameValidator( fxFormElement &$e, fxForm &$f )

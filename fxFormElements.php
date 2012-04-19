@@ -78,11 +78,11 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+
 	/**
-	 * Adds a validation callback
-	 * Calls to new method type() can be used to add certain rules like URL / Email
+	 * Adds a validation callback routine.
 	 **/
-	public function match($cb)
+	public function validator( $cb )
 	{
 		fxAssert::isCallable($cb, 'cb');
 		$this->_validation_cb = $cb;
