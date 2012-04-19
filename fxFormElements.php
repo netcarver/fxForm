@@ -102,7 +102,6 @@ abstract class fxFormElement extends fxNamedSet
 	public function pattern( $pattern, $msg='' )
 	{
 		fxAssert::isNonEmptyString($pattern);
-		//fxAssert::isString($msg);
 		if( '' == $msg )
 			$msg = "Value must match the pattern: \"$pattern\"";
 		$this->_fvalidator->addRegexRule( $this->name, $pattern, $msg );
@@ -140,9 +139,7 @@ abstract class fxFormElement extends fxNamedSet
 		fxAssert::isNonEmptyString($t);
 
 		$t = strtolower($t);
-		$this->_data['type'] = $t;	// TODO Although this might be set to an HTML5 supported value, like 'email',
-									// 		an html4 renderer would need to render this as an input of type=text
-
+		$this->_data['type'] = $t;
 		return $this;
 	}
 
@@ -512,6 +509,7 @@ class fxFormTextArea extends fxFormElement
 	{
 		parent::__construct($name, $label, $note);
 		$this->maxlength = 2000;
+		$this->_html = 'textarea';
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
