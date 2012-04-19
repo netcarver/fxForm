@@ -22,6 +22,24 @@ abstract class fxFormElement extends fxNamedSet
 	protected $_fvalidator = null;
 
 
+	/**
+	 * Static helper that takes an array or a comma separated list (as a string) and
+	 * converts it to an array with each value trimmed.
+	 **/
+	static public function asTrimmedArray($in)
+	{
+		if( is_string($in) )
+			$in = explode( ',', $in );
+
+		fxAssert::isArray($in);
+
+		foreach( $in as &$v ) {
+			$v = trim( $v );
+		}
+
+		return $in;
+	}
+
 
 	public function __construct($name, $label = null, $note = null)
 	{
@@ -743,6 +761,13 @@ class fxFormCheckboxset extends fxFormElementSet
 		}
 		return $r->renderElementSet($this, $f, $parent_id );
 	}
+
+
+	public function value( $v )
+	{
+		$v = self::asTrimmedArray($v);
+		return parent::value( $v );
+	}
 }
 
 
@@ -840,6 +865,12 @@ class fxFormSelect extends fxFormElementSet
 		return $o;
 	}
 
+
+	public function value( $v )
+	{
+		$v = self::asTrimmedArray($v);
+		return parent::value( $v );
+	}
 
 
 	public function __construct($name, $label, $members)
