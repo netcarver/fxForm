@@ -287,15 +287,6 @@ abstract class fxFormElement extends fxNamedSet
 
 
 	/**
-	 * Allow Form Elements to determine what HTML tag to use in the markup. eg fxSubmit can orchistrate the output of a button element.
-	 **/
-	public function _getHTMLType()
-	{
-		return get_class($this);
-	}
-
-
-	/**
 	 * Each element will be asked to use the given renderer to get itself output.
 	 **/
 	abstract public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id );
@@ -529,11 +520,6 @@ class fxFormSubmit extends fxFormButton
 		$this->type = 'submit';
 	}
 
-	public function _getHTMLType()
-	{
-		return 'fxFormButton';
-	}
-
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
 		return $r->renderButton($this, $f, $parent_id );
@@ -550,11 +536,6 @@ class fxFormReset extends fxFormButton
 		parent::__construct($text);
 		$this->type = 'reset';
 	}
-
-	public function _getHTMLType()
-	{
-		return 'fxFormButton';
-	}
 }
 
 
@@ -566,12 +547,6 @@ class fxFormPassword extends fxFormInput
 	{
 		parent::__construct($name, $label, $note);
 		$this->type = 'password';
-		$this->_html = 'input';
-	}
-
-	public function _getHTMLType()
-	{
-		return 'fxFormInput';
 	}
 }
 
@@ -586,12 +561,6 @@ class fxFormHidden extends fxFormInput
 		$this->type = 'hidden';
 		$this->value = $value;
 		$this->_nolabel = true;
-		$this->_html = 'input';
-	}
-
-	public function _getHTMLType()
-	{
-		return 'fxFormInput';
 	}
 }
 
@@ -646,11 +615,6 @@ class fxFormCheckbox extends fxFormInput
 			$this->checked();
 
 		return parent::renderUsing( $r, $f, $parent_id );
-	}
-
-	public function _getHTMLType()
-	{
-		return 'fxFormInput';
 	}
 }
 

@@ -29,7 +29,8 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		}
 
 		$class = $this->getClasses($e);
-		$type  = htmlspecialchars( strtr( strtolower($e->_getHTMLType()), array('fxform'=>'') ) );
+
+		$html = $e->_html;
 
 		$listname = '';
 		$datalist = '';
@@ -40,7 +41,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 			$listname = " list=\"$listname\"";
 		}
 
-		$o[] = "<$type type=\"$itype\" $id$attr$plce$class$pattern$listname";
+		$o[] = "<$html type=\"$itype\" $id$attr$plce$class$pattern$listname";
 
 		if( 'submit' == $itype || 'reset' == $itype )
 			$o[] = "value=\"$elval\" />$label</button>";
