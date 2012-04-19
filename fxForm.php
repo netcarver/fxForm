@@ -93,15 +93,10 @@ class fxForm extends fxFormElementSet
 	}
 
 
-	/* public function match($pattern) */
-	/* { */
-	/* 	$this->_validator = $pattern; */
-	/* 	return $this; */
-	/* } */
-
-
-
-	public function getValueOf($name)
+	/**
+	 * Gets the form element matching the give name (if any).
+	 **/
+	public function getElementByName($name)
 	{
 		if( !empty($this->_elements ) ) {
 			foreach( $this->_elements as $e ) {
@@ -114,13 +109,25 @@ class fxForm extends fxFormElementSet
 
 					foreach( $fs_elements as $fse ) {
 						if( self::_simplify($name) == $fse->name )
-							return $fse->_value;
+							return $fse;
 					}
 				}
 				elseif( self::_simplify($name) == $e->name )
-					return $e->_value;
+					return $e;
 			}
 		}
+		return NULL;
+	}
+
+
+	/**
+	 * Gets the value of the form element matching the given name (if any).
+	 **/
+	public function getValueOf($name)
+	{
+		$el = $this->getElementByName( $name );
+		if( $el instanceof fxFormElement )
+			return $el->_value;
 		return NULL;
 	}
 
