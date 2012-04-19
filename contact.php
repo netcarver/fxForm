@@ -206,12 +206,12 @@ $contact_form = Form('contact', './')
 		)
 		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
 			->required()
-			->value( array( 'spam_me' ) )	// Configures the initial checked values.
-											// Add more keys from the $checkboxes array for multiple checkmarks.
+			->value( 'spam_me' )	// Configures the initial checked values.
+									// Add more keys from the $checkboxes array for multiple checkmarks.
 		)
 		->add( MSelect('depts', 'Forward to which departments?', $departments)
 			->required('Please choose at least one department')
-			->value( array( 'complaints-2', 'complaints-3', 'sales-0') ) // Select some initial values.
+			->value( 'complaints-2 , complaints-3 , sales-0' ) // Select some initial values.
 		)
 	)
 
