@@ -42,6 +42,7 @@ abstract class fxFormElement extends fxNamedSet
 
 		$this->_fvalidator = new fValidation();
 		$this->_meta['ignore_parent_fields'] = array();
+		$this->_meta['match_elements'] = array();
 	}
 
 
@@ -128,6 +129,18 @@ abstract class fxFormElement extends fxNamedSet
 		if( !$this->_inData('title') )
 			$this->title = $msg;
 
+		return $this;
+	}
+
+
+
+	/**
+	 * Adds a validation rule that requires the submitted value of this element
+	 * equals (matches) the value of another element.
+	 **/
+	public function matches( $el_name, $msg='* Mismatch')
+	{
+		$this->_meta['match_elements'][$el_name] = $msg;
 		return $this;
 	}
 
@@ -332,6 +345,15 @@ abstract class fxFormElement extends fxNamedSet
 				$this->_addError( (!empty($this->_maxlength_msg )) ? $this->_maxlength_msg : "Value must be $maxlength characters or less", $errors );
 		}
 
+
+		// Check that the element's value equals all the other 'must-match' elements' values
+		if( !empty($this->_match_elements) ) {
+			foreach( $this->_match_elements as $k=>$v ) {
+				$other_value = $f->getValueOf( $k );
+				if( $this->_value !== $other_value )
+				   $this->_addError( $v, $errors );
+			}
+		}
 
 		if( is_callable( $cb ) ) {
 			$r = $cb( $this, $f );
