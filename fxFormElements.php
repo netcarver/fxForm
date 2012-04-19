@@ -10,9 +10,18 @@
  **/
 abstract class fxFormElement extends fxNamedSet
 {
+	/**
+	 *	Anything in this list is treated as a 'radio' set...
+	 **/
 	static public $radio_types = array('radio','checkbox');
 
+
+	/**
+	 * Holds an fValidation instance for the element.
+	 **/
 	protected $_fvalidator = null;
+
+
 
 	public function __construct($name, $label = null, $note = null)
 	{
@@ -81,7 +90,12 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
-
+	/**
+	 * Adds a simple list of valid submission values to the element.
+	 *
+	 * The submitted value will be checked against this list during the validation
+	 * phase of form processing.
+	 **/
 	public function whitelist($list)
 	{
 		if( is_string($list) )
@@ -98,7 +112,11 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
-
+	/**
+	 * Sets up a regex validation rule on the element and also causes
+	 * the HTML pattern attribute to be output in the renderer after
+	 * suitable simplification.
+	 **/
 	public function pattern( $pattern, $msg='' )
 	{
 		fxAssert::isNonEmptyString($pattern);
@@ -114,6 +132,12 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+	/**
+	 * Marks an element as required.
+	 *
+	 * This causes the rendered HTML to include a required attribute and adds a server-side
+	 * required validation rule.
+	 **/
 	public function required( $msg = null )
 	{
 		$this->_data['required'] = 'required';
@@ -122,18 +146,39 @@ abstract class fxFormElement extends fxNamedSet
 		return $this;
 	}
 
+
+	/**
+	 * Marks an element as disabled.
+	 *
+	 * Disabled elements will not have data submitted and are excluded from the validation
+	 * checks.
+	 **/
 	public function disabled()
 	{
 		$this->_data['disabled'] = 'disabled';
 		return $this;
 	}
 
+
+	/**
+	 * Marks the element as readonly.
+	 *
+	 * Readonly elements cannot be edited in the client but do have values submitted
+	 * so they are included in validation checks.
+	 **/
 	public function readonly()
 	{
 		$this->_data['readonly'] = 'readonly';
 		return $this;
 	}
 
+
+	/**
+	 * Sets the type attribute to the given value.
+	 *
+	 * The type of an element will also control some of the validation checks that will be
+	 * applied. (See fxFormInput::type() for more)
+	 **/
 	public function type($t)
 	{
 		fxAssert::isNonEmptyString($t);
@@ -144,20 +189,31 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
-	//	Minlength is *not* an HTML5 attribute, so we store this in the _meta.
-	public function minlength($min, $msg = null)
-	{
-		$this->_minlength = (int)$min;
-		$this->_minlength_msg = $msg;
-		return $this;
-	}
 
-
-	//	Maxlength is an HTML5 attribute so we store this in the _data.
+	/**
+	 * Sets the maxlength of an input field.
+	 *
+	 * This is both an HTML attribute and a validation rule.
+	 **/
 	public function maxlength($max, $msg = null)
 	{
 		$this->_data['maxlength'] = (int)$max;
 		$this->_maxlength_msg = $msg;
+		return $this;
+	}
+
+
+
+	/**
+	 * Sets the minimum length of an input field.
+	 *
+	 * Minlength is *not* an HTML5 attribute, so we store this in the _meta and
+	 * set a validation rule on the submitted length.
+	 **/
+	public function minlength($min, $msg = null)
+	{
+		$this->_minlength = (int)$min;
+		$this->_minlength_msg = $msg;
 		return $this;
 	}
 
@@ -167,7 +223,7 @@ abstract class fxFormElement extends fxNamedSet
 	 **/
 	public function _getSubmittedValue()
 	{
-		$input = fRequest::encode($this->name);
+		$input = fRequest::encode($this->name); // TODO: Cast to approprate type?
 		if( is_string( $input ) )
 			$input = trim($input);
 		$this->_value = $input;
@@ -185,6 +241,10 @@ abstract class fxFormElement extends fxNamedSet
 
 
 
+	/**
+	 * Adds the given error message to the supplied error array and the element's
+	 * error array.
+	 **/
 	public function _addError( $msg = '', &$errors = null  )
 	{
 		fxAssert::isNonEmptyString($msg, '$msg');
@@ -197,6 +257,7 @@ abstract class fxFormElement extends fxNamedSet
 
 
 	/**
+ 	 * Validates the submitted value.
 	 * Override this in derived classes if needed.
 	 **/
 	public function _validate( &$errors, fxForm &$f )
@@ -306,7 +367,6 @@ abstract class fxFormElementSet extends fxFormElement
 	public function __construct( $name, $label, $note = null )
 	{
 		parent::__construct($name, $label, $note);
-		//$this->_note = $note;
 		$this->_elements = array();
 	}
 
@@ -378,6 +438,10 @@ class fxFormString extends fxFormElement
 		$this->value = $text;
 	}
 
+
+	/**
+	 * There are no validation checks to be carried out on strings -- they are always valid.
+	 **/
 	public function _validate( &$errors, fxForm &$f )
 	{
 		return $this;
@@ -395,6 +459,7 @@ class fxFormString extends fxFormElement
 class fxFormInput extends fxFormElement
 {
 	static $numberTypes = array('number','integer');
+
 
 	public function __construct($name, $label, $note=null)
 	{
