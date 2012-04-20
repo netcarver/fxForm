@@ -63,19 +63,11 @@ class fxForm extends fxFormElementSet
 	}
 
 
-	/* public function dump( $wrap='h3') */
-	/* { */
-	/* 	echo "<$wrap>", htmlspecialchars($this->_name),"</$wrap><pre>",htmlspecialchars( var_export( $this, true ) ),"</pre>"; */
-	/* 	return $this; */
-	/* } */
-
-
 	/**
 	 * Can be used to convert strings such as textual labels into simpler strings suitable for use as an HTML statement's id.
 	 **/
 	static public function _simplify($name)
 	{
-		//$o = wire()->sanitizer->pageName($name, true);
 		$o = fURL::makeFriendly( $name );
 		return strtr( $o, array('[]'=>'','-'=>'_') );
 	}
@@ -151,6 +143,7 @@ class fxForm extends fxFormElementSet
 		$this->_renderer = $r;
 		return $this;
 	}
+
 
 
 	/**

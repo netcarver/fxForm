@@ -396,6 +396,8 @@ abstract class fxFormElement extends fxNamedSet
 
 
 
+
+
 /**
  * Radiosets, Fieldsets, Checkboxes and Selects are implemented by having multiple elements.
  **/
@@ -704,6 +706,7 @@ class fxFormFieldset extends fxFormElementSet
 }
 
 
+
 class fxFormCheckbox extends fxFormInput
 {
 	public function __construct( $name, $label, $val )
@@ -722,6 +725,7 @@ class fxFormCheckbox extends fxFormInput
 		return parent::renderUsing( $r, $f, $parent_id );
 	}
 }
+
 
 
 class fxFormCheckboxset extends fxFormElementSet
