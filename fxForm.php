@@ -237,9 +237,9 @@ class fxForm extends fxFormElementSet
 		fxCSRFToken::clear( $this->_form_id );
 		$this->_form_token = fxCSRFToken::generate( $this->_form_id );
 
-		if( true == $this->_show_form_elements )
+		if( $this->_inMeta('show_form_elements') )
 			fCore::expose($this);
-		elseif( true == $this->_show_form_errors )
+		elseif( true == $this->_inMeta('show_form_errors') )
 			fCore::expose($this->errors);
 
 		if( !$this->_form_id || !$this->_form_token )
