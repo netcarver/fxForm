@@ -362,6 +362,10 @@ function mySuccessHandler( fxForm &$form )
 		div.error, input.error, textarea.error, select.error {
 			border: 2px solid #cf3030;
 		}
+		div.disabled, input.disabled, textarea.disabled, select.disabled {
+			background-color: #ccc;
+			border: 1px solid;
+		}
 		fieldset legend {
 			padding-top: 10px;
 		}
