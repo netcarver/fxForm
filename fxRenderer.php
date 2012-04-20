@@ -271,14 +271,14 @@ abstract class fxHTMLRenderer implements fxRenderer
 		if( $e->class )
 			$classes[] = htmlspecialchars($e->class);
 
-		if( $e->disabled )
+		if( $e->disabled || $e->readonly )
 			$classes[] = 'disabled';
 		elseif( !$this->rendering_element_set ) {
 			if( !$this->submitting && $e->_inData('required') && empty($e->_value) )
 				$classes[] = 'required';
 			if( $this->submitting && !$e->_isValid() )
 				$classes[] = 'error';
-			if( $this->submitting && $e->_inData('required') && $e->_isValid() )
+			if( $this->submitting && !empty($e->_value) && $e->_isValid() )
 				$classes[] = 'ok';
 		}
 
