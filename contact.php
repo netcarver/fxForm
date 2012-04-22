@@ -24,16 +24,14 @@
  *
  * Things yet to be done...
  *
- *	TODO: Add method to toggle the states of an element and its children (if any)
+ *	WIP>> Add support for conditional enabling/disabling of dependent fields.
+ *	TODO: Add client-side maxlength countdown? << Needs a target element to write into.
  *	TODO: Add support for the new date/time based collection of inputs.
  *	TODO: Add output elements to range controls
- *	TODO: Add support for conditional enabling/disabling of dependent fields.
  *	TODO: Add an unsigned type?
- *	TODO: Add error msg substitutions like {value}, {name}, {id} etc
- *	TODO: Add whitelist semantics to select/mselect?
+ *	TODO: Add error msg substitutions like {value}, {name}, {id} etc ??
  *	TODO: Add form level validation
  *			Where should form-level errors be placed?
- *	TODO: Add conditional requirements on elements?
  *	TODO: How to handle notes on html4 elements that don't support the placeholder tag?
  *		  Perhaps use the elementError formatter?
  *	TODO: Add Bootstrap renderer
@@ -132,90 +130,116 @@ $contact_form = Form('contact', './')
 	//->_show_html()				// Causes the form's renderer to expose the generated HTML for the form.
 	//->_show_form_elements()		// Causes the form to show its internal structure
 	//->_show_form_errors()
-	//->_show_validations()
+	//->_show_validations()			// Causes the form to show validation sequence debug
 	//->validator('myContactFormValidator')	// Adds a validator to the form. You can use a form-level validator to add complex inter-item validation.
 	->onSuccess('MySuccessHandler')
 	->novalidate()						// Stop FF doing client-side evaluation whilst testing.
 
+	->add(
+		Checkbox( 'control', '>Collect Personal Details', 'ok')
+		//->_value('ok')
+		->onchange("fxtoggle( '[id^=\'form_contact_about_\']', 'readonly', this );")
+	)
+
 	// Here come the form elements...
-	->add( Fieldset('About you...', 'about')
-		->class('about')
+	->add(
+		Fieldset('About you...', 'about')
+		->enabledIf( 'control.checked' )
+		//->_show_deps()
 
-		//->disabled()		// Marking the fieldset as disabled makes all members disabled.
-		//->_show_html()	// Shows the entire fieldset's generated html (for debugging)
-
-		->add( Checkbox( 'control', '>Collect Personal Details', 'ok')
-			->_ignore_parent_fields('disabled,readonly,required')	// Tells this checkbox to ignore these settings on the parent.
-			//->_toggle( 'id="^form-contact-about-"', 'disabled' )	// TODO add jQuery code to toggle the given elements' attribute
-		)
-		->add( Input('salutation', 'Title', 'Your title please')
+		->add(
+			Input('salutation', 'Title', 'Your title please')
 			->autofocus()
 			->datalist( $salutations )
 			->required()
 		)
-		->add( Input('name', 'Your Name', 'Your name please')
+		->add(
+			Input('name', 'Your Name', 'Your name please')
 			->autocomplete('off')		// prevent preivious matching input being shown
 			->required()
 			->validator('myNameValidator')
 		)
-		->add( Email('email', 'Your Email', 'Your email address')
+		->add(
+			URL('url', 'Website', 'Your URL here (optional)')
+			->enabledIf( 'email.valid' )
+			//->_show_deps()	// Show any dependencies this element has.
+		)
+		->add(
+			Email('email', 'Your Email', 'Your email address')
 			->required()
 			->autocomplete('off')
 		)
-		->add( URL('url', 'Website', 'Your URL here (optional)')
-   		)
-		->add( Hidden('secret','123') )
-		->add( Password('pass', 'Your Password', 'Enter a password of 10 characters or more')
+		->add(
+			Hidden('secret','123')
+		)
+		->add(
+			Password('pass', 'Your Password', 'Enter a password of 10 characters or more')
 			->required()
 			->minlength(10, '10+ chars. please')
    		)
-		->add( Password('oth', 'Repeat Password', 'Enter password again')
+		->add(
+			Password('oth', 'Repeat Password', 'Enter password again')
 			->required()
 			->minlength(10, '10+ chars. please')
-			->matches( 'pass', 'This must match what you typed in the "Your Password" field.' )
+			->matches( 'pass', 'This must match "Your Password".' )
    		)
-		->add( Tel('tel', 'Phone', 'A contact number please')
+		->add(
+			Tel('tel', 'Phone', 'A contact number please')
 			->pattern('/^[\s]*[\+]?[0-9][-0-9]*[\s-0-9]*[\s]*$/', 'Enter a valid phone number. This can start with an international code like +44 if needed.')
 		)
-		->add( Input('human', 'Are you human?', 'No bots please')
+		->add(
+			Input('human', 'Are you human?', 'No bots please')
 			->pattern('/^yes|yep|yeah|sure am|indeed$/i','Some form of affirmation is needed.')
 			->required()
 		)
-		->add( YesNo('alive', 'Were you alive when you celebrated your last birthday?', 'Babies excluded.', 'Just yes or no please.')
+		->add(
+			YesNo('alive', 'Were you alive when you celebrated your last birthday?', 'Babies excluded.', 'Just yes or no please.')
 			->required()
 		)
-		->add( Integer('age', 'How old are you?')
+		->add(
+			Integer('age', 'How old are you?')
 			->value(5)
 			->min(2)
 			->max(10)
 		)
 	)
 
-	->add( Fieldset('Your message...')
-		->add( TextArea('msg', 'Message', 'Your message to us')
+	->add(
+		Fieldset('Your message...')
+		->add(
+			TextArea('msg', 'Message', 'Your message to us')
 			->required()
 			->pattern('/^[^0-9]*$/','No numbers please!')	// Defines server-side regex for validation. Can add second string parameter for the error message
 			->whitelist('great,good,fantastic,amazing')
 		)
 	)
 
-	->add( Fieldset('Legal stuff...')
-		->add( Radios('agreement', '>Do you agree to our terms?', $conditions)
+	->add(
+		Fieldset('Legal stuff...')
+		->add(
+			Radios('agreement', '>Do you agree to our terms?', $conditions)
 			->required('* Please select one of the options')
 			->validator('myConditionValidator')
 		)
-		->add( Checkboxes('options', 'Additional Options...', $checkboxes)
+		->add(
+			Checkboxes('options', 'Additional Options...', $checkboxes)
 			->required()
 			->value( 'spam_me' )	// Configures the initial checked values.
 									// Add more keys from the $checkboxes array for multiple checkmarks.
+			->enabledIf('agreement.value!=n')
+			//->_show_html()
+			//->_show_deps()
 		)
-		->add( MSelect('depts', 'Forward to which departments?', $departments)
+		->add(
+			MSelect('depts', 'Forward to which departments?', $departments)
 			->required('Please choose at least one department')
-			->value( 'complaints-2 , complaints-3 , sales-0' ) // Select some initial values.
+			->value( 'complaints-2, complaints-3, sales-0' ) // Select some initial values.
 		)
 	)
 
-	->add( Submit('Send') )
+	->add(
+		Submit('Send')
+	)
 
 	->process()
 	;
@@ -379,7 +403,22 @@ function mySuccessHandler( fxForm &$form )
 		<?= $contact_form  ?>
 	</div>
 </div>
+
 	</section>
+<script type="text/javascript">
+<!--
+function fxtoggle( sel, attrib, el ) {
+	if( el.checked ) {
+		var set = $(sel);
+		$(sel).removeAttr(attrib).removeClass('disabled');
+	}
+	else {
+		var set = $(sel);
+		$(sel).attr(attrib,attrib).addClass('disabled');
+	}
+}
+-->
+</script>
 <?php
 include("./foot.inc");
 unset( $f );
