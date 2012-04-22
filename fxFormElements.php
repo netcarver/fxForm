@@ -1,5 +1,8 @@
 <?php
 
+
+
+
 /**
  * Basic HTML form element.
  *
@@ -85,6 +88,9 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+	/**
+	 * Configure which of its parent's attributes this element is to ignore when they are propogated.
+	 **/
 	public function _ignore_parent_fields( $fields )
 	{
 		if( is_string($fields) )
@@ -287,6 +293,7 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+
 	/**
  	 * Validates the submitted value.
 	 * Override this in derived classes if needed.
@@ -398,6 +405,8 @@ abstract class fxFormElement extends fxNamedSet
 
 
 
+
+
 /**
  * Radiosets, Fieldsets, Checkboxes and Selects are implemented by having multiple elements.
  **/
@@ -469,6 +478,9 @@ abstract class fxFormElementSet extends fxFormElement
 
 
 
+
+
+
 /**
  * @class fxFormString	Allows for static text to be added to forms. This is not an input widget.
  **/
@@ -498,6 +510,10 @@ class fxFormString extends fxFormElement
 
 
 
+
+
+
+
 class fxFormInput extends fxFormElement
 {
 	static $numberTypes = array('number','integer');
@@ -511,6 +527,9 @@ class fxFormInput extends fxFormElement
 	}
 
 
+	/**
+	 * Sets the min attribute on number types.
+	 **/
 	public function min($v)
 	{
 		fxAssert::isInArray($this->type, self::$numberTypes );
@@ -519,6 +538,9 @@ class fxFormInput extends fxFormElement
 	}
 
 
+	/**
+	 * Sets the max attribute on number types.
+	 **/
 	public function max($v)
 	{
 		fxAssert::isInArray($this->type, self::$numberTypes );
@@ -540,6 +562,9 @@ class fxFormInput extends fxFormElement
 	}
 
 
+	/**
+	 * Sets the input type and adds validation rules where applicable.
+	 **/
 	public function type($t)
 	{
 		$t = strtolower( $t );
@@ -577,6 +602,9 @@ class fxFormInput extends fxFormElement
 		return $r->render($this, $f, $parent_id);
 	}
 }
+
+
+
 
 
 
@@ -619,6 +647,9 @@ class fxFormTextArea extends fxFormElement
 
 
 
+
+
+
 class fxFormSubmit extends fxFormButton
 {
 	public function __construct($text)
@@ -636,6 +667,9 @@ class fxFormSubmit extends fxFormButton
 
 
 
+
+
+
 class fxFormReset extends fxFormButton
 {
 	public function __construct($text)
@@ -648,6 +682,9 @@ class fxFormReset extends fxFormButton
 
 
 
+
+
+
 class fxFormPassword extends fxFormInput
 {
 	public function __construct($name, $label, $note)
@@ -656,6 +693,9 @@ class fxFormPassword extends fxFormInput
 		$this->type = 'password';
 	}
 }
+
+
+
 
 
 
@@ -683,10 +723,14 @@ class fxFormFieldset extends fxFormElementSet
 		parent::__construct( fxForm::_simplify($name) ,$label);
 	}
 
+
+
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
 		return $r->renderFieldset($this, $f, $parent_id );
 	}
+
+
 
 	public function _getSubmittedValue()
 	{
@@ -740,6 +784,12 @@ class fxFormCheckboxset extends fxFormElementSet
 		$this->class('checkboxset');
 	}
 
+
+
+	/**
+	 * Iterates over the members array creating the actual individual checkboxes
+	 * only when needed for rendering of the form.
+	 **/
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
 		$members = $this->_members;
@@ -747,6 +797,7 @@ class fxFormCheckboxset extends fxFormElementSet
 			$simple_v = $simple_k = fxForm::_simplify($v);
 			if( is_string( $k ) )
 				$simple_k = fxForm::_simplify($k);
+
 			$el = new fxFormInput($this->name, $v);
 			$el
 				->type('checkbox')
@@ -755,12 +806,14 @@ class fxFormCheckboxset extends fxFormElementSet
 				->value($simple_k)
 				->_label_right( $this->_label_right )
 				;
-			if( $this->_inData('disabled') )
-				$el->disabled();
-			if( $this->_inData('readonly') )
-				$el->readonly();
-			if( in_array($simple_k, $this->_value ) )
-				$el->checked();
+
+			// Assign our state to the child checkbox...
+			if( $this->_inData('disabled') ) $el->disabled();
+			if( $this->_inData('readonly') ) $el->readonly();
+
+			// Set checked state of this box...
+			if( in_array($simple_k, $this->_value ) ) $el->checked();
+
 			$this->_elements[] = $el;
 		}
 		return $r->renderElementSet($this, $f, $parent_id );
@@ -777,6 +830,12 @@ class fxFormCheckboxset extends fxFormElementSet
 
 
 
+
+/**
+ * Implements a set of radio controls.
+ *
+ * Delays creation of its internal inputs until render time.
+ **/
 class fxFormRadioset extends fxFormElementSet
 {
 	public function __construct($name, $label, $members)
@@ -789,6 +848,7 @@ class fxFormRadioset extends fxFormElementSet
 		$this->_members = $members;
 		$this->class('radioset');
 	}
+
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
 	{
@@ -804,19 +864,22 @@ class fxFormRadioset extends fxFormElementSet
 				->value($simple_k)
 				->_label_right( $this->_label_right )
 				;
-			if( $this->_inData('disabled') )
-				$el->disabled();
-			if( $this->_inData('readonly') )
-				$el->readonly();
-			if( $this->_inData('required') )
-				$el->required();
-			if( $simple_k === $this->_value )
-				$el->checked();
+
+			// Assign our state to the child...
+			if( $this->_inData('disabled') ) $el->disabled();
+			if( $this->_inData('readonly') ) $el->readonly();
+			if( $this->_inData('required') ) $el->required();	// << Needed to add client-side HTML5 required validation
+
+			// Set the checked state of this component radiobox
+			if( $simple_k === $this->_value ) $el->checked();
+
 			$this->_elements[] = $el;
 		}
 		return $r->renderElementSet( $this, $f, $parent_id );
 	}
 }
+
+
 
 
 
@@ -895,6 +958,8 @@ class fxFormSelect extends fxFormElementSet
 		return $r->renderSelect($this, $f, $parent_id );
 	}
 }
+
+
 
 
 

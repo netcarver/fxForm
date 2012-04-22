@@ -197,7 +197,7 @@ class fxForm extends fxFormElementSet
 				return '<p>An unexpected error occured. Token mismatch.</p>';
 
 			//
-			//	Iterate over elements, populating their values & evaluating them
+			//	Iterate over elements, populating their values, propagating enabled states & validating...
 			//
 			foreach( $this->_elements as $e ) {
 				if( !is_string($e) ) {
