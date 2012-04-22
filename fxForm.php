@@ -178,13 +178,19 @@ class fxForm extends fxFormElementSet
 
 		$r->setSubmitting($submitted);
 
-		if( $submitted ) {
-			if( true == $this->_meta['show_submitted'] )
-				fCore::expose( array( $array=>$GLOBALS[$array] ) );
 
-			// Signal to the renderer that a submission is underway. This allows it to conditionally add
-			// classes when rendering
-			$r->setSubmitting(true);
+		if( !$submitted ) {
+			//	We are not submitting but still need to propagate initial enabled states...
+			$errors = array();
+			foreach( $this->_elements as $e ) {
+				if( !is_string($e) ) {
+					$e->_evalEnabledIf( $errors, $this );
+				}
+			}
+		}
+		else {
+			if( $this->_inMeta('show_submitted') )
+				fCore::expose( array( $array=>$GLOBALS[$array] ) );
 
 			// Do the id and token match what is expected?
 			$id_ok = ($this->_form_id === fRequest::get('_form_id') );

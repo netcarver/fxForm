@@ -68,7 +68,8 @@ abstract class fxFormElement extends fxNamedSet
 
 
 	/**
-	 * Called once an element is added to an element set.
+	 * Called once an element is added to an element set or when there is a propagation of enabled state
+	 * within the form.
 	 *
 	 * By default this has the elements inherit the disabled, readonly and required flags from their parent set.
 	 **/
@@ -197,6 +198,26 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+
+	/**
+	 * enabledIf. Conditionally enables the element if the condition is met.
+	 *
+	 * Because HTML elements are enabled unless they have the 'disabled' attribute, this
+	 * actually generates a 'disabled' attribute when the condition is not met.
+	 *
+	 * This should allow...
+	 * 1) the auto-generation of jQuery for the client that implements the rule.
+	 * 2) server-side cascade of dependencies and evaluation.
+	 **/
+	public function enabledIf( $condition )
+	{
+		fxAssert::isNonEmptyString( $condition );
+		$this->_enabled_if = strtolower($condition);
+		return $this;
+	}
+
+
+
 	/**
 	 * Marks the element as readonly.
 	 *
@@ -277,6 +298,115 @@ abstract class fxFormElement extends fxNamedSet
 	}
 
 
+	protected function _validateControllingElement( &$errors, &$controller, &$f )
+	{
+		if( $this->_inMeta('show_deps') )
+			fCore::expose( get_class($this) .  " '{$this->_name}' depends upon '$controller'" );
+
+		list( $master_name, $attr ) = explode( '.', $controller );
+		$master = $f->getElementByName( $master_name );
+
+		if( !$master ) {
+			throw new fProgrammerException( "Could not locate form element [$master_name]." );
+		}
+		else {
+			switch( $attr ) {
+			case 'valid' :
+				if( true !== $master->_validated ) {
+					if( $f->_inMeta('show_validations') )
+						fCore::expose( "\tForcing early validation of $controller" );
+
+					$master->_validate( $errors, $f );
+				}
+				return $master->_isValid();
+				break;
+			case 'checked' :
+				return $master->_inData('checked');
+				break;
+			case 'required' :
+				return $master->_inData('required');
+				break;
+			}
+
+			if( 'value' == $attrib = substr( $attr, 0, 5 ) ) {
+				$tmp = substr( $attr, 5 );
+				preg_match( "/^\s*(=|>=|>|<>|!=|<|<=)\s*(.)+$/", $tmp, $m );
+				list(, $op, $expected ) = $m;
+				$value = $master->_getSubmittedValue()->_value;
+				//fCore::expose( array( 'master' => $master_name, 'attr' => $attrib, 'op' => $op, 'expected' => $expected, "{$master_name}->_value" => $value) );
+				//fCore::expose( array( 'master->_meta' => $master->_getMeta() ) );
+
+				if( '' == $value ) {
+					return false;
+				}
+				else {
+					switch( $op ) {
+					case '=' :
+						return ($value == $expected);
+						break;
+					case '!=' :
+					case '<>' :
+						return ($value != $expected);
+						break;
+					case '>' :
+						return ($value >  $expected);
+						break;
+					case '>=' :
+						return ($value >= $expected);
+						break;
+					case '<' :
+						return ($value <  $expected);
+						break;
+					case '<=' :
+						return ($value <= $expected);
+						break;
+					}
+				}
+			}
+		}
+		//$this->readonly();
+		return true;	// By default we enable the element => validation will apply to it.
+	}
+
+
+	/**
+	 * Kicks off an evaluation of the enabledIf condition (if any) upon the element.
+	 *
+	 * Currently sets or removes the readonly attribute on the element. This is done to
+	 * allow anything that has been entered prior to the 'disabling' of the element to be
+	 * retained.
+	 **/
+	protected function _evalEnabledIf( &$errors, fxForm &$f )
+	{
+//fCore::expose( "Visiting ".(get_class($this))." {$this->name}" );
+		if( $controller = $this->_enabled_if ) {
+			if( $this->_validateControllingElement( $errors, $controller, $f ) ) {
+				if( $f->_inMeta('show_validations') )
+					fCore::expose( get_class($this)." '{$this->name}' Enabling." );
+				unset( $this->readonly );
+			}
+			else {
+				if( $f->_inMeta('show_validations') )
+					fCore::expose( get_class($this)." '{$this->name}' Disabling." );
+				$this->readonly();
+			}
+		}
+	}
+
+
+
+	/**
+	 * Marks the element's validation as done.
+	 **/
+	protected function _validationDone( fxForm &$f )
+	{
+		if( $f->_inMeta('show_validations') )
+			fCore::expose( get_class($this). " '$this->name' validation done." );
+		$this->_validated = true;
+		return $this;
+	}
+
+
 
 	/**
 	 * Adds the given error message to the supplied error array and the element's
@@ -304,14 +434,27 @@ abstract class fxFormElement extends fxNamedSet
 		$required  = $this->_inData('required');
 		$cb        = $this->_validation_cb;
 
-		if( $this->disabled )
+
+		if( $this->_validated ) { 	// Already evaluated, so skip.
+			if( $f->_inMeta('show_validations') )
+				fCore::expose( get_class($this)." '{$this->name}' already validated: skipping." );
 			return $this;
+		}
+
+		// If we depend on another element -- then it will need to be evaluated first...
+		$this->_evalEnabledIf( $errors, $f );
+
+
+		if( $this->disabled || $this->readonly ) // Skip any further validation...
+			return $this->_validationDone( $f );
 
 		if( !$required && '' == $submitted )	// Not required and no input => always ok.
-			return $this;
+			return $this->_validationDone( $f );
 
-		if( $required && '' == $submitted )		// A required value but no input => always a fail. If a custom fail message was supplied, use that.
-			return $this->_addError( (($this->_meta['required_message']) ? $this->_meta['required_message'] : '* Requires your input') ,$errors);
+		if( $required && '' == $submitted )	{	// A required value but no input => always a fail. If a custom fail message was supplied, use that.
+			$this->_addError( (($this->_meta['required_message']) ? $this->_meta['required_message'] : '* Requires your input') ,$errors);
+			return $this->_validationDone( $f );
+		}
 
 		try {
 			$validation_errors = $this->_fvalidator->validate( TRUE, TRUE );	// We are only getting errors for this element, so we can safely remove the names.
@@ -323,7 +466,7 @@ abstract class fxFormElement extends fxNamedSet
 			// fValidation found some error(s)...
 			$this->_meta['errors'] = array_values($validation_errors);
 			$errors[$this->name]   = array_values($validation_errors);
-			return $this;
+			return $this->_validationDone( $f );
 		}
 
 		$min = $this->min;	// Could be null (if not present)
@@ -390,7 +533,7 @@ abstract class fxFormElement extends fxNamedSet
 				throw new fProgrammerException( "Validator function for {$this->name} must return (bool)true or a non-empty string." );
 		}
 
-		return $this;
+		return $this->_validationDone( $f );
 	}
 
 
@@ -498,7 +641,7 @@ class fxFormString extends fxFormElement
 	 **/
 	public function _validate( &$errors, fxForm &$f )
 	{
-		return $this;
+		return $this->_validationDone( $f );
 	}
 
 	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
@@ -714,6 +857,15 @@ class fxFormHidden extends fxFormInput
 
 
 
+
+
+/**
+ * Implements a fieldset.
+ *
+ * As this is a set of other controls, it overrides some of the underlying methods
+ * (like _getSubmittedValue, _validate & _evalEnabledIf), extending them to apply
+ * to the entire set.
+ **/
 class fxFormFieldset extends fxFormElementSet
 {
 	public function __construct( $label, $name=null )
@@ -740,17 +892,59 @@ class fxFormFieldset extends fxFormElementSet
 		return $this;
 	}
 
+
+
+	public function _evalEnabledIf( &$errors, fxForm &$f )
+	{
+		//	Evaluate our own enabled state...
+		parent::_evalEnabledIf( $errors, $f );
+
+		//	Propagate this to our children...
+		foreach( $this->_elements as $el ) {
+			if( $el instanceof fxFormElement ) {
+				$el->addedTo( $this ); // <<< TODO rename as inheritPropertiesFrom() ??
+			}
+		}
+
+		// 	If we are enabled and read/write then let our children decide apply their own rules...
+		if( !$this->_inData('disabled') && !$this->_inData('readonly') ) {
+			foreach( $this->_elements as $el ) {
+				if( $el instanceof fxFormElement )
+					$el->_evalEnabledIf( $errors, $f );
+			}
+		}
+		return $this;
+	}
+
+
+
 	public function _validate( &$errors, fxForm &$f )
 	{
-		foreach( $this->_elements as $el )
-			if( $el instanceof fxFormElement )
-				$el->_validate( $errors, $f );
-		return $this;
+		// If we depend on another element -- then it will need to be evaluated first...
+		$this->_evalEnabledIf( $errors, $f );
+
+		if( $this->disabled || $this->readonly )
+			return $this->_validationDone( $f );
+
+		foreach( $this->_elements as $el ) {
+			if( $el instanceof fxFormElement ) {
+				//$el->addedTo( $this ); // <<< TODO rename as inheritPropertiesFrom() ??
+				if( !$this->disabled && !$this->readonly )
+					$el->_validate( $errors, $f );
+			}
+		}
+
+		return $this->_validationDone( $f );
 	}
 }
 
 
 
+
+
+/**
+ * Implements a single, standalone, checkbox.
+ **/
 class fxFormCheckbox extends fxFormInput
 {
 	public function __construct( $name, $label, $val )
@@ -761,12 +955,23 @@ class fxFormCheckbox extends fxFormInput
 	}
 
 
-	public function renderUsing( fxRenderer &$r, fxForm &$f, $parent_id )
-	{
+	protected function _setChecked() {
 		if( $this->value === $this->_value )
 			$this->checked();
+		return $this;
+	}
 
-		return parent::renderUsing( $r, $f, $parent_id );
+
+	public function _value($v) {
+		parent::_value($v);
+		return $this->_setChecked();
+	}
+
+
+	public function _getSubmittedValue()
+	{
+		parent::_getSubmittedValue();
+		return $this->_setChecked();
 	}
 }
 
