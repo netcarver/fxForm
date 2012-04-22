@@ -772,12 +772,16 @@ class fxFormButton extends fxFormElement
 
 
 
+
+
+
+
 class fxFormTextArea extends fxFormElement
 {
 	public function __construct($name, $label, $note=null)
 	{
 		parent::__construct($name, $label, $note);
-		$this->maxlength = 2000;
+		$this->maxlength = 2000;					// << Should this be here?
 		$this->_html = 'textarea';
 	}
 
@@ -977,6 +981,14 @@ class fxFormCheckbox extends fxFormInput
 
 
 
+
+
+
+/**
+ * Implements a set of checkboxes.
+ *
+ * Delays creation of its internal inputs until render time.
+ **/
 class fxFormCheckboxset extends fxFormElementSet
 {
 	public function __construct($name, $label, $members)
