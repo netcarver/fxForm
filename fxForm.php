@@ -100,11 +100,11 @@ class fxForm extends fxFormElementSet
 						break;
 
 					foreach( $fs_elements as $fse ) {
-						if( self::_simplify($name) == $fse->name )
+						if( self::_simplify($name) == strtr($fse->name,array('[]'=>'')) )
 							return $fse;
 					}
 				}
-				elseif( self::_simplify($name) == $e->name )
+				elseif( self::_simplify($name) == strtr($e->name,array('[]'=>'')) )
 					return $e;
 			}
 		}
