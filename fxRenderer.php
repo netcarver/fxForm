@@ -54,7 +54,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 		$o[] = '<datalist id="'.$name.'">';
 		if( !empty( $options ) ) {
 			foreach( $options as $v ) {
-				$o[] = "\t<option value=\"".htmlspecialchars($v).'">';
+				$o[] = "\t<option value=\"".htmlspecialchars($v, ENT_QUOTES, 'UTF-8').'">';
 			}
 		}
 		$o[] = '</datalist>';
@@ -169,7 +169,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 		$o = '';
 		if( !empty( $atts ) ) {
 			foreach( $atts as $k=>$v ) {
-				$k = htmlspecialchars( $k );
+				$k = htmlspecialchars( $k, ENT_QUOTES, 'UTF-8' );
 
 				// NULL values lead to output like <XYZ ... readonly ...>
 				if( NULL === $v ) {
@@ -178,7 +178,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 
 				// Otherwise we get <XYZ ... class="abc" ... >
 				else {
-					$v = htmlspecialchars( $v );
+					$v = htmlspecialchars( $v, ENT_QUOTES, 'UTF-8' );
 					$o .= " $k=\"$v\"";
 				}
 			}
@@ -206,7 +206,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 					if( '' !== $msg ) $o = $msg;	// Callback can return an empty string to surpress per-element error messages.
 			}
 			else {
-				$o = '<span class="error-msg">'.htmlspecialchars($e->_errors[0]).'</span>';
+				$o = '<span class="error-msg">'.htmlspecialchars($e->_errors[0], ENT_QUOTES, 'UTF-8').'</span>';
 			}
 		}
 		return $o;
@@ -220,13 +220,13 @@ abstract class fxHTMLRenderer implements fxRenderer
 			return $thing;
 
 		if( $for_set ) {
-			$label  = '<span>'.htmlspecialchars($e->_label).'</span>';
+			$label  = '<span>'.htmlspecialchars($e->_label, ENT_QUOTES, 'UTF-8').'</span>';
 			$o = $label . "\n" . $thing;
 		}
 		else {
 			$lclass = ( '' !== $this->label_class ) ? ' class="'.$this->label_class.'"' : '';
 			$id     = $this->makeId($e, $parent_id, false);
-			$label  = '<label for="'.htmlspecialchars($id).'"'.$lclass.'>'.htmlspecialchars($e->_label).'</label>';
+			$label  = '<label for="'.htmlspecialchars($id, ENT_QUOTES, 'UTF-8').'"'.$lclass.'>'.htmlspecialchars($e->_label, ENT_QUOTES, 'UTF-8').'</label>';
 			$o = ($e->_label_right) ? $thing . "\n" . $label : $label . "\n" . $thing;
 		}
 
@@ -269,7 +269,7 @@ abstract class fxHTMLRenderer implements fxRenderer
 			$classes = array();
 
 		if( $e->class )
-			$classes[] = htmlspecialchars($e->class);
+			$classes[] = htmlspecialchars($e->class, ENT_QUOTES, 'UTF-8');
 
 		if( $e->disabled || $e->readonly )
 			$classes[] = 'disabled';

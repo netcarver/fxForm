@@ -280,7 +280,7 @@ function myFormErrorsFormatter( fxForm &$f )
  **/
 function myElementErrorsFormatter( fxFormElement &$e, fxForm &$f )
 {
-	return '<h4>'.htmlspecialchars($e->_errors[0]).'</h4><br>';
+	return '<h4>'.htmlspecialchars($e->_errors[0], ENT_QUOTES, 'UTF-8').'</h4><br>';
 }
 
 

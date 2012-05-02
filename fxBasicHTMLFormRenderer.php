@@ -7,14 +7,14 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 	public function render( fxFormElement &$e, fxForm &$f, $parent_id )
 	{
 		$attr    = $this->renderAtts( $e->_getInfoExcept( 'class,value,id,type,pattern' ) );
-		$label   = htmlspecialchars($e->_name);
+		$label   = htmlspecialchars($e->_name, ENT_QUOTES, 'UTF-8');
 		$subval  = $e->_value;
-		$elval   = htmlspecialchars($e->value);
+		$elval   = htmlspecialchars($e->value, ENT_QUOTES, 'UTF-8');
 		$itype   = $e->type;
 		$id      = $this->makeId($e, $parent_id);
 		$plce    = (string)$e->_note;
 		if( '' !== $plce )
-			$plce = ' placeholder="'.htmlspecialchars($plce).'"';
+			$plce = ' placeholder="'.htmlspecialchars($plce, ENT_QUOTES, 'UTF-8').'"';
 		$pattern = self::makeHTMLPattern( $e->pattern );
 
 		$o = array();
@@ -167,13 +167,13 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		if( !empty( $options ) ) {
 			foreach( $options as $k => $v ) {
 				if( is_array( $v ) ) {
-					$o[] = '<optgroup label="'.htmlspecialchars($k).'">';
+					$o[] = '<optgroup label="'.htmlspecialchars($k, ENT_QUOTES, 'UTF-8').'">';
 					$o[] = $this->renderOptions($v, $e, $f, $parent.fxForm::_simplify($k) );
 					if( !$html5 ) $o[] = "</optgroup>";
 				}
 				else {
 					$selected = in_array( $parent.fxForm::_simplify($k), $e->_value) ? ' selected' : '' ;
-					$o[] = "<option$selected value=\"".$parent.fxForm::_simplify($k)."\">".htmlspecialchars($v)."</option>";
+					$o[] = "<option$selected value=\"".$parent.fxForm::_simplify($k)."\">".htmlspecialchars($v, ENT_QUOTES, 'UTF-8')."</option>";
 				}
 			}
 		}
@@ -187,7 +187,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$o = array();
 		$attr   = $this->renderAtts( $e->_getInfoExcept( 'class,value,id' ) );
 		$id     = $this->makeId($e, $parent_id);
-		$label  = htmlspecialchars( $e->_name );
+		$label  = htmlspecialchars( $e->_name, ENT_QUOTES, 'UTF-8' );
 		$multi  = $e->_inData('multiple');
 		$class  = $this->getClasses( $e, ($multi) ? 'mselect' : 'select' );
 
@@ -222,7 +222,7 @@ class fxBasicHTMLFormRenderer extends fxHTMLRenderer
 		$attr  = $this->renderAtts($e->_getInfoExcept( 'class,value,id' ));
 		$id    = $this->makeId($e, $parent_id);
 		$class = $this->getClasses($e);
-		$label = htmlspecialchars($e->_label);
+		$label = htmlspecialchars($e->_label, ENT_QUOTES, 'UTF-8');
 		$o = "<button $id$attr$class>$label</button>";
 		$this->checkExposure( $e, $o );
 		return $o;
