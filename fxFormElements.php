@@ -106,6 +106,16 @@ abstract class fxFormElement extends fxNamedSet
 
 
 	/**
+	 * Allows the use of HTML's value attribute to set an initial value by simulating submission
+	 **/
+	public function value($v)
+	{
+		$this->_value($v);
+		$this->_data['value'] = $v;
+		return $this;
+	}
+
+	/**
 	 * Adds a validation callback routine.
 	 **/
 	public function validator( $cb )
@@ -607,15 +617,6 @@ abstract class fxFormElementSet extends fxFormElement
 		return $this;
 	}
 
-
-	/**
-	 * Allows the use of HTML's value attribute to set an initial value by simulating submission
-	 **/
-	public function value($v)
-	{
-		$this->_value($v);
-		return $this;
-	}
 }
 
 
