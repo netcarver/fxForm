@@ -874,7 +874,7 @@ class fxFormFieldset extends fxFormElementSet
 {
 	public function __construct( $label, $name=null )
 	{
-		if( !is_string($name) || '' === $string )
+		if( !is_string($name) || '' === $name )
 			$name = $label;
 		parent::__construct( fxForm::_simplify($name) ,$label);
 	}
