@@ -1,12 +1,12 @@
 h1. An experimental HTML Form class and supporting elements.
 
-Built using some components and ideas from Will Bond's Flourish library and with a little inspiration from ProcessWire by Ryan Cramer.
+Built using some components and ideas from Will Bond's "Flourish library":http://flourishlib.com and with a little inspiration from "ProcessWire":http://processwire.com by Ryan Cramer.
 
 h2. Installation
 
 * Setup a PW testbed
 * Download and install flourish into siteroot/.flourish
-* Follow these instructions to get flourish's classes autoloading: http://processwire.com/talk/topic/1111-integrating-flourish-with-processwire/
+* "Follow these instructions to get flourish's classes autoloading":http://processwire.com/talk/topic/1111-integrating-flourish-with-processwire/
 * Create a directory at siteroot/forms and copy all the files here *except* contact.php into it.
 * Copy contact.php into siteroot/templates
 * Login to ProcessWire and go to Setup > Templates and hit the 'Add New Template' button. Select contact.php and create a template called 'contact', add a title field (if not present) and save the template.
@@ -23,9 +23,9 @@ h2. Feedback
 
 Any feedback on #processwire, by email to processwire@netcarving.com or PM in the ProcessWire forums please.
 
-h2. Confidentiality
+h2. License
 
-*Please treat this code as confidential until such time as I decide to release it publicly.*
+GPLv2
 
 Thank you for taking an interest, and enjoy!
 --
