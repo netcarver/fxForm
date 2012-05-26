@@ -21,7 +21,7 @@ The supplied contact.php file is a simple demonstration of some of the features 
 
 h2. Feedback
 
-Any feedback on #processwire, by email to processwire@netcarving.com or PM in the ProcessWire forums please.
+Any feedback on #processwire on irc.freenode.net, by posting or PM in the ProcessWire forums please.
 
 h2. License
 
