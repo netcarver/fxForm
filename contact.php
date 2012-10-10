@@ -97,8 +97,7 @@ $salutations = array(	// Values for an HTML5 datalist
  * the form-level errors, element-level errors and for prefix/suffix on
  * checkbox and radiobox sets.
  **/
-$r = new fxBasicHTMLFormRenderer( '', '<br>' );				// Defines the prefix (blank) and suffix ('<br>') to use on each form element. If you like divs, '<div class="blah">', '</div>' should go in here.
-$r
+$r = BasicHTMLRenderer( '', '<br>' )				// Defines the prefix (blank) and suffix ('<br>') to use on each form element. If you like divs, '<div class="blah">', '</div>' should go in here.
 	->setTarget('html5')									// You can use this to provide formatting hints to your renderer.
 	->setAffixFormatter('myAffixFormatter')					// Provides a formatting callback that can add custom wrapping around radiobox and checkbox set elements
 	//->setErrorBlockFormatter('myFormErrorsFormatter')		// Provides an error formatting routine for the head of the form. You can print a summary, or an entire list of errors -- it's up to you!
@@ -137,7 +136,8 @@ $contact_form = Form('contact', './')
 
 	->add(
 		Checkbox( 'control', '>Collect Personal Details', 'ok')
-		//->_value('ok')
+		//->value('ok')
+		//->checked()
 		->onchange("fxtoggle( '[id^=\'form_contact_about_\']', 'readonly', this );")
 	)
 

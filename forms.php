@@ -34,4 +34,7 @@ function Submit		( $text ) 	     						{ return new fxFormSubmit( $text ); }
 //function Reset 		( $text ) 	 							{ return new fxFormReset( $text ); }
 function Fieldset	( $legend, $name=null )					{ return new fxFormFieldset( $legend, $name ); }
 
+function BasicHTMLRenderer( $prefix = '', $suffix = '<br>', $label_class = '' )
+															{ return new fxBasicHTMLFormRenderer( $prefix, $suffix, $label_class ); }
+
 #eof
